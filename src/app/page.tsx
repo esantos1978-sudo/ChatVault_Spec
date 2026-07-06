@@ -109,7 +109,7 @@ function NotesManager({ user }: { user: any }) {
     setError(null);
     setSuccess(null);
 
-    if (!title.trim()) {
+   if (sourceType !== "url" && !title.trim()) {
       setError("El título es obligatorio");
       return;
     }
