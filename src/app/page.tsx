@@ -71,6 +71,8 @@ function NotesManager({ user }: { user: any }) {
   const [tag, setTag] = useState(""); 
   // 🚀 NUEVO: Estado para el filtro de fecha ('all' | 'today' | 'week' | 'month')
   const [dateFilter, setDateFilter] = useState<"all" | "today" | "week" | "month">("all");
+  const [startDate, setStartDate] = useState<string>("");
+  const [endDate, setEndDate] = useState<string>("");
   const [iaModel, setIaModel] = useState("gemini"); 
   const [summary, setSummary] = useState("");
 
@@ -243,16 +245,22 @@ function NotesManager({ user }: { user: any }) {
 
   const filteredNotes = notes
     .filter((n) => (selectedTag ? n.tag === selectedTag : true))
+    // 🚀 AQUÍ EMPIEZA NUESTRO FILTRO TEMPORAL INTEGRADO (Botones + Calendario)
     .filter((n) => {
-      // 🚀 FILTRO TEMPORAL
-      if (dateFilter === "all") return true;
-      
       const noteDate = new Date(n.created_at);
       const now = new Date();
       
-      if (dateFilter === "today") {
-        return noteDate.toDateString() === now.toDateString();
+      // Si el usuario ha usado el calendario (ad-hoc), este filtro tiene prioridad absoluta
+      if (startDate || endDate) {
+        const noteString = noteDate.toISOString().split("T")[0]; // Formato 'YYYY-MM-DD'
+        if (startDate && noteString < startDate) return false;
+        if (endDate && noteString > endDate) return false;
+        return true;
       }
+
+      // Si no hay calendario, se aplican los botones rápidos laterales
+      if (dateFilter === "all") return true;
+      if (dateFilter === "today") return noteDate.toDateString() === now.toDateString();
       
       if (dateFilter === "week") {
         const oneWeekAgo = new Date();
@@ -268,6 +276,9 @@ function NotesManager({ user }: { user: any }) {
       
       return true;
     })
+    // 🚀 AQUÍ TERMINA EL FILTRO TEMPORAL
+
+    // --- LÍNEAS DE ABAJO (CONTEXTO) ---
     .filter((n) => {
       const query = searchQuery.toLowerCase().trim();
       if (!query) return true;
@@ -276,7 +287,8 @@ function NotesManager({ user }: { user: any }) {
         (n.content && n.content.toLowerCase().includes(query)) ||
         (n.summary && n.summary.toLowerCase().includes(query))
       );
-    });
+    }); // <-- Asegúrate de que este cierre esté bien puesto
+  // -----------------------------------
 
   // 🚀 CHIVATO DE CONTROL DE RENDERIZADO
   useEffect(() => {
