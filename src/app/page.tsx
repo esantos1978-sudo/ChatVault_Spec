@@ -94,9 +94,11 @@ function NotesManager({ user }: { user: User }) {
 
     setSaving(true);
 
+    // Usamos el 'user' que ya viene directo de las propiedades del componente
     const { error: insertError } = await supabase.from("notes").insert({
       title: title.trim(),
       content: content.trim(),
+      user_id: user.id, // ¡Llave maestra inyectada limpiamente!
     });
 
     setSaving(false);
@@ -105,6 +107,37 @@ function NotesManager({ user }: { user: User }) {
       setError("Error al guardar la nota: " + insertError.message);
       return;
     }
+
+    setTitle("");
+    setContent("");
+    setSuccess("¡Nota guardada correctamente!");
+    setTimeout(() => setSuccess(null), 3000);
+
+    fetchNotes();
+  }
+
+// 1. Obtenemos el usuario autenticado
+const { data: { user }, error: userError } = await supabase.auth.getUser();
+setSaving(true);
+if (userError || !user) {
+  setError("Error: No se pudo identificar al usuario.");
+  setSaving(false);
+  return;
+}
+
+// 2. Incluimos el user_id en el objeto de inserción
+const { error: insertError } = await supabase.from("notes").insert({
+  title: title.trim(),
+  content: content.trim(),
+  user_id: user.id, // ¡Aquí está la llave maestra!
+});
+
+setSaving(false);
+
+if (insertError) {
+  setError("Error al guardar la nota: " + insertError.message);
+  return;
+}
 
     setTitle("");
     setContent("");
