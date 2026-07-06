@@ -51,39 +51,38 @@ export default function Home() {
   return <NotesManager user={user} />;
 }
 
-function NotesManager({ user }: { user: User }) {
-  const [notes, setNotes] = useState<Note[]>([]);
+function NotesManager({ user }: { user: any }) {
+  const [notes, setNotes] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false)
-
-  const fetchNotes = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-
-    const { data, error: fetchError } = await supabase
-      .from("notes")
-      .select("*")
-      .order("created_at", { ascending: false });
-
-    if (fetchError) {
-      setError("Error al cargar notas: " + fetchError.message);
-    } else {
-      setNotes(data ?? []);
-    }
-
-    setLoading(false);
-  }, []);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     fetchNotes();
-  }, [fetchNotes]);
+  }, []);
 
- async function handleSubmit() {
+  async function fetchNotes() {
+    try {
+      setLoading(true);
+      const { data, error: fetchError } = await supabase
+        .from("notes")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (fetchError) throw fetchError;
+      setNotes(data || []);
+    } catch (err: any) {
+      setError("Error al cargar las notas: " + err.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleSubmit() {
     setError(null);
     setSuccess(null);
 
@@ -110,22 +109,19 @@ function NotesManager({ user }: { user: User }) {
     setTitle("");
     setContent("");
     setSuccess("¡Nota guardada correctamente!");
-    setIsModalOpen(false);
+    setIsModalOpen(false); 
     setTimeout(() => setSuccess(null), 3000);
-    
 
     fetchNotes();
   }
 
   async function handleDeleteNote(id: number) {
-    // Confirmación para evitar sustos
     if (!confirm("¿Estás seguro de que quieres eliminar esta nota?")) {
       return;
     }
 
     setError(null);
 
-    // 🚀 Línea corregida y simplificada al máximo:
     const { error: deleteError } = await supabase
       .from("notes")
       .delete()
@@ -134,7 +130,6 @@ function NotesManager({ user }: { user: User }) {
     if (deleteError) {
       setError("Error al eliminar la nota: " + deleteError.message);
     } else {
-      // Actualizamos la lista de notas automáticamente tras borrar
       fetchNotes();
     }
   }
@@ -181,7 +176,6 @@ function NotesManager({ user }: { user: User }) {
           </div>
         )}
 
-        {/* Formulario */}
         {/* Botón para abrir el Modal */}
         <div className="mb-6 flex justify-end">
           <button
@@ -197,8 +191,8 @@ function NotesManager({ user }: { user: User }) {
 
         {/* Ventana Flotante (Modal) */}
         {isModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm animate-fade-in">
-            <form className="w-full max-w-lg rounded-xl border border-zinc-200 bg-white p-6 shadow-xl dark:border-zinc-800 dark:bg-zinc-900">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
+            <div className="w-full max-w-lg rounded-xl border border-zinc-200 bg-white p-6 shadow-xl dark:border-zinc-800 dark:bg-zinc-900">
               <div className="mb-4 flex items-center justify-between">
                 <h2 className="text-lg font-semibold text-zinc-800 dark:text-zinc-200">
                   Crear nueva nota
@@ -259,6 +253,74 @@ function NotesManager({ user }: { user: User }) {
                   {saving ? "Guardando..." : "Guardar nota"}
                 </button>
               </div>
-            </form>
+            </div>
           </div>
         )}
+
+        {/* Lista de notas */}
+        <section>
+          <h2 className="mb-4 text-lg font-semibold text-zinc-800 dark:text-zinc-200">
+            Tus notas
+            {notes.length > 0 && (
+              <span className="ml-2 text-sm font-normal text-zinc-400">
+                ({notes.length})
+              </span>
+            )}
+          </h2>
+
+          {loading ? (
+            <div className="flex items-center justify-center py-12">
+              <div className="h-8 w-8 animate-spin rounded-full border-4 border-zinc-300 border-t-blue-600 dark:border-zinc-700 dark:border-t-blue-400" />
+            </div>
+          ) : notes.length === 0 ? (
+            <div className="rounded-xl border border-dashed border-zinc-300 py-12 text-center dark:border-zinc-700">
+              <p className="text-zinc-500 dark:text-zinc-400">
+                No hay notas todavía. ¡Crea tu primera nota!
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {notes.map((note) => (
+                <article
+                  key={note.id}
+                  className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900"
+                >
+                  <div className="mb-1 flex items-start justify-between gap-4">
+                    <h3 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">
+                      {note.title}
+                    </h3>
+                    <div className="flex items-center gap-3 shrink-0">
+                      <time className="text-xs text-zinc-400">
+                        {new Date(note.created_at).toLocaleDateString("es-ES", {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </time>
+                      <button
+                        onClick={() => handleDeleteNote(note.id)}
+                        className="rounded p-1 text-zinc-400 hover:bg-zinc-100 hover:text-red-600 dark:hover:bg-zinc-800 transition-colors"
+                        title="Eliminar nota"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.34 6m-4.74 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                  {note.content && (
+                    <p className="mt-2 whitespace-pre-wrap text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
+                      {note.content}
+                    </p>
+                  )}
+                </article>
+              ))}
+            </div>
+          )}
+        </section>
+      </div>
+    </div>
+  );
+}
