@@ -54,3 +54,5 @@ Desktop.ini
 
 # Supabase
 supabase/.temp
+
+.vercel

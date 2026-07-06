@@ -71,15 +71,13 @@ function NotesManager({ user }: { user: any }) {
   const [tag, setTag] = useState(""); 
   const [iaModel, setIaModel] = useState("gemini"); 
   const [summary, setSummary] = useState("");
-  
+
   // Control de la pestaña activa en el modal: 'text' | 'url' | 'file'
   const [sourceType, setSourceType] = useState<"text" | "url" | "file">("text");
   const [sourceUrl, setSourceUrl] = useState("");
-
   const [selectedTag, setSelectedTag] = useState<string | null>(null); 
   const [searchQuery, setSearchQuery] = useState("");
   const [editingNoteId, setEditingNoteId] = useState<number | null>(null);
-
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -110,8 +108,8 @@ function NotesManager({ user }: { user: any }) {
     setSuccess(null);
 
     console.log("=== 🛠️ PROBANDO ENVÍO === Tipo de origen:", sourceType, "| Título actual:", `"${title}"`);
-
-   if (sourceType !== "url" && !title.trim()) {
+    
+    if (sourceType !== "url" && !title.trim()) {
       setError("El título es obligatorio");
       return;
     }
@@ -138,17 +136,26 @@ function NotesManager({ user }: { user: any }) {
         if (!res.ok) throw new Error(data.error || "Error al escanear la URL");
         
         finalContent = `URL original: ${sourceUrl}\n\n${data.content}`;
-        if (!finalTitle) finalTitle = data.title;
+        
+        // Si el usuario NO escribió un título, usamos el de la API.
+        // Si el usuario SÍ escribió algo, nos quedamos con el del usuario.
+        if (!title.trim()) {
+          finalTitle = data.title;
+        } else {
+          finalTitle = title.trim();
+        }
       } catch (err: any) {
         setError("Error al extraer enlace: " + err.message + ". Guardando solo la URL.");
         finalContent = `URL del chat: ${sourceUrl}\n\n${content}`;
+        if (!finalTitle) finalTitle = "Enlace Guardado";
       }
     } else if (sourceType === "file") {
       finalContent = `[Archivo subido pendientes de procesar]\n\n${content}`;
     }
 
+    // 🔥 FIX: Aquí asignamos 'finalTitle' y 'finalContent' corregidos
     const noteData = {
-      title: title.trim(),
+      title: finalTitle,
       content: finalContent,
       tag: tag.trim().toLowerCase() || null, 
       ia_model: iaModel,
@@ -158,7 +165,6 @@ function NotesManager({ user }: { user: any }) {
     };
 
     let resultError = null;
-
     if (editingNoteId) {
       const { error: updateError } = await supabase
         .from("notes")
@@ -378,6 +384,7 @@ function NotesManager({ user }: { user: any }) {
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm overflow-y-auto">
           <div className="w-full max-w-xl rounded-xl border border-zinc-200 bg-white p-6 shadow-xl dark:border-zinc-800 dark:bg-zinc-900 my-8">
+            
             <div className="mb-4 flex items-center justify-between">
               <h2 className="text-lg font-semibold text-zinc-800 dark:text-zinc-200">
                 {editingNoteId ? "Modificar registro de IA" : "Guardar conversación con IA"}
