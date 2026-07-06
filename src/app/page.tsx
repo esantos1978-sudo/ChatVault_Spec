@@ -71,17 +71,7 @@ function NotesManager({ user }: { user: any }) {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  // 🚀 CHIVATO DE DIAGNÓSTICO (Añade esto aquí):
-  useEffect(() => {
-    console.log("=== 🔍 RASTREO DE PANTALLA EN NEGRO ===");
-    console.log("1. ¿Usuario autenticado?:", !!user);
-    console.log("2. ¿Estado 'loading' activo?:", loading);
-    console.log("3. ¿Estado 'saving' activo?:", saving);
-    console.log("4. Notas totales traídas de Supabase:", notes.length);
-    console.log("5. Notas filtradas para renderizar:", filteredNotes.length);
-    console.log("=======================================");
-  }, [loading, saving, notes, filteredNotes, user]);
+  
 
   useEffect(() => {
     fetchNotes();
@@ -223,6 +213,16 @@ function NotesManager({ user }: { user: any }) {
       );
     });
 
+    useEffect(() => {
+    console.log("=== 🔍 RASTREO DE PANTALLA EN NEGRO ===");
+    console.log("1. ¿Usuario autenticado?:", !!user);
+    console.log("2. ¿Estado 'loading' activo?:", loading);
+    console.log("3. ¿Estado 'saving' activo?:", saving);
+    console.log("4. Notas totales traídas de Supabase:", notes.length);
+    console.log("5. Notas filtradas para renderizar:", filteredNotes.length);
+    console.log("=======================================");
+  }, [loading, saving, notes, filteredNotes, user]);
+  
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950">
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-4 gap-8">
