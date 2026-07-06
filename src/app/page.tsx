@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import AuthForm from "@/components/AuthForm";
 import type { User } from "@supabase/supabase-js";
@@ -10,15 +10,18 @@ type Note = {
   created_at: string;
   title: string;
   content: string;
-  tags: string[];
+  tag: string | null;
+  ia_model?: string;
+  source_type?: string;
+  summary?: string;
 };
 
 export default function Home() {
   const [user, setUser] = useState<User | null>(null);
   const [loadingSession, setLoadingSession] = useState(true);
 
-  // 🚀 AGREGA ESTA LÍNEA DE CHIVATO AQUÍ ABAJO:
-  console.log("=== 🏠 RASTREO EN HOME === User:", user, "| AuthLoading:", authLoading);
+  // 🚀 CHIVATO CORREGIDO (Usa la variable real loadingSession)
+  console.log("=== 🏠 RASTREO EN HOME === User:", user?.email, "| LoadingSession:", loadingSession);
 
   // Verificar sesión al montar
   useEffect(() => {
@@ -50,7 +53,13 @@ export default function Home() {
     return <AuthForm onAuth={() => {}} />;
   }
 
-  // Usuario autenticado — mostrar el gestor de notas
+  // Si hay usuario, renderizamos el panel pasándole los datos del usuario
+  return <NotesManager user={user} />;
+}
+
+// ============================================================================
+// COMPONENTE GESTOR DE CHATS (Separado e independiente para evitar bugs)
+// ============================================================================
 function NotesManager({ user }: { user: any }) {
   const [notes, setNotes] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -60,10 +69,10 @@ function NotesManager({ user }: { user: any }) {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [tag, setTag] = useState(""); 
-  const [iaModel, setIaModel] = useState("gemini"); // Por defecto Gemini
+  const [iaModel, setIaModel] = useState("gemini"); 
   const [summary, setSummary] = useState("");
   
-  // 🚀 Control de la pestaña activa en el modal: 'text' | 'url' | 'file'
+  // Control de la pestaña activa en el modal: 'text' | 'url' | 'file'
   const [sourceType, setSourceType] = useState<"text" | "url" | "file">("text");
   const [sourceUrl, setSourceUrl] = useState("");
 
@@ -74,7 +83,6 @@ function NotesManager({ user }: { user: any }) {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  
 
   useEffect(() => {
     fetchNotes();
@@ -108,8 +116,6 @@ function NotesManager({ user }: { user: any }) {
 
     setSaving(true);
 
-    // Si elige URL, el contenido principal temporalmente será la URL. 
-    // Si elige archivo, avisamos que está en desarrollo por ahora.
     let finalContent = content.trim();
     if (sourceType === "url") {
       finalContent = `URL del chat: ${sourceUrl}\n\n${content}`;
@@ -149,7 +155,6 @@ function NotesManager({ user }: { user: any }) {
       return;
     }
 
-    // Limpieza total
     setTitle("");
     setContent("");
     setTag(""); 
@@ -216,15 +221,15 @@ function NotesManager({ user }: { user: any }) {
       );
     });
 
-    useEffect(() => {
-    console.log("=== 🔍 RASTREO DE PANTALLA EN NEGRO ===");
-    console.log("1. ¿Usuario autenticado?:", !!user);
-    console.log("2. ¿Estado 'loading' activo?:", loading);
-    console.log("3. ¿Estado 'saving' activo?:", saving);
-    console.log("4. Notas totales traídas de Supabase:", notes.length);
-    console.log("5. Notas filtradas para renderizar:", filteredNotes.length);
+  // 🚀 CHIVATO DE CONTROL DE RENDERIZADO
+  useEffect(() => {
+    console.log("=== 🔍 RASTREO EN PANEL DE CONTROL ===");
+    console.log("1. ¿Usuario activo?:", !!user);
+    console.log("2. ¿Cargando notas de Supabase?:", loading);
+    console.log("3. Notas totales en DB:", notes.length);
+    console.log("4. Notas visibles filtradas:", filteredNotes.length);
     console.log("=======================================");
-  }, [loading, saving, notes, filteredNotes, user]);
+  }, [loading, notes, filteredNotes, user]);
 
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950">
@@ -234,7 +239,7 @@ function NotesManager({ user }: { user: any }) {
         <aside className="lg:col-span-1 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-5 shadow-sm h-fit space-y-6">
           <div>
             <h1 className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">ChatVault</h1>
-            <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400 truncate">{user.email}</p>
+            <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400 truncate">{user?.email}</p>
           </div>
 
           <hr className="border-zinc-200 dark:border-zinc-800" />
@@ -314,7 +319,7 @@ function NotesManager({ user }: { user: any }) {
                     <div className="mb-2 flex items-start justify-between gap-4">
                       <div>
                         <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300">
-                          🤖 {note.ia_model}
+                          🤖 {note.ia_model || "Sin Modelo"}
                         </span>
                         <h3 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 mt-1 line-clamp-2">{note.title}</h3>
                       </div>
@@ -324,7 +329,6 @@ function NotesManager({ user }: { user: any }) {
                       </div>
                     </div>
                     
-                    {/* Sección destacada para el Resumen */}
                     {note.summary && (
                       <div className="mb-3 p-2.5 rounded-lg bg-amber-50/60 dark:bg-amber-950/20 border border-amber-100 dark:border-amber-900/30 text-xs text-zinc-700 dark:text-zinc-300">
                         <span className="font-bold block text-amber-800 dark:text-amber-400 mb-0.5">📌 Resumen:</span>
@@ -355,11 +359,10 @@ function NotesManager({ user }: { user: any }) {
                 {editingNoteId ? "Modificar registro de IA" : "Guardar conversación con IA"}
               </h2>
               <button type="button" onClick={closeModal} className="rounded-lg p-1 text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800">
-                <svg xmlns="http://www.w3.org/2000/xl" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-5 w-5"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" /></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-5 w-5"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" /></svg>
               </button>
             </div>
 
-            {/* Dos columnas superiores: Título e IA */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
               <div>
                 <label className="mb-1 block text-xs font-medium text-zinc-700 dark:text-zinc-300">Título de la sesión</label>
@@ -377,7 +380,6 @@ function NotesManager({ user }: { user: any }) {
               </div>
             </div>
 
-            {/* Fila intermedia: Etiquetas y Resumen Manual */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
               <div>
                 <label className="mb-1 block text-xs font-medium text-zinc-700 dark:text-zinc-300">Etiqueta (Tag)</label>
@@ -389,7 +391,6 @@ function NotesManager({ user }: { user: any }) {
               </div>
             </div>
 
-            {/* ================= SECTOR HÁNDICAP: SISTEMA DE PESTAÑAS (TABS) ================= */}
             <div className="mb-4 border-b border-zinc-200 dark:border-zinc-800">
               <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-zinc-400">Origen del contenido</label>
               <div className="flex gap-2">
@@ -405,7 +406,6 @@ function NotesManager({ user }: { user: any }) {
               </div>
             </div>
 
-            {/* Contenido dinámico según la pestaña activa */}
             <div className="mb-5">
               {sourceType === "text" && (
                 <div>
@@ -450,5 +450,3 @@ function NotesManager({ user }: { user: any }) {
     </div>
   );
 }
-}
-
