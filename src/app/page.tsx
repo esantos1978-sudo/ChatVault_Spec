@@ -57,10 +57,12 @@ function NotesManager({ user }: { user: any }) {
   const [saving, setSaving] = useState(false);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  // 🚀 Nuevos estados para las etiquetas:
   const [tag, setTag] = useState(""); 
   const [selectedTag, setSelectedTag] = useState<string | null>(null); 
   
+  // 🚀 NUEVO ESTADO: Guarda el ID de la nota si estamos editando (null si es nota nueva)
+  const [editingNoteId, setEditingNoteId] = useState<number | null>(null);
+
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -86,6 +88,7 @@ function NotesManager({ user }: { user: any }) {
     }
   }
 
+  // 🚀 FUNCIÓN ADAPTADA: Ahora maneja tanto CREAR como EDITAR
   async function handleSubmit() {
     setError(null);
     setSuccess(null);
@@ -97,29 +100,65 @@ function NotesManager({ user }: { user: any }) {
 
     setSaving(true);
 
-    // Guardamos la nota incluyendo el tag en minúsculas y limpio
-    const { error: insertError } = await supabase.from("notes").insert({
+    const noteData = {
       title: title.trim(),
       content: content.trim(),
       tag: tag.trim().toLowerCase() || null, 
       user_id: user.id,
-    });
+    };
+
+    let resultError = null;
+
+    if (editingNoteId) {
+      // 📝 SI ESTAMOS EDITANDO: Hacemos un UPDATE en Supabase
+      const { error: updateError } = await supabase
+        .from("notes")
+        .update(noteData)
+        .eq("id", editingNoteId);
+      resultError = updateError;
+    } else {
+      // 🆕 SI ES NUEVA: Hacemos un INSERT clásico
+      const { error: insertError } = await supabase
+        .from("notes")
+        .insert(noteData);
+      resultError = insertError;
+    }
 
     setSaving(false);
 
-    if (insertError) {
-      setError("Error al guardar la nota: " + insertError.message);
+    if (resultError) {
+      setError("Error al guardar la nota: " + resultError.message);
       return;
     }
 
+    // Limpieza de estados tras el éxito
     setTitle("");
     setContent("");
-    setTag(""); // Limpiamos el campo del tag
-    setSuccess("¡Nota guardada correctamente!");
+    setTag(""); 
+    setEditingNoteId(null); // Reseteamos el modo edición
+    setSuccess(editingNoteId ? "¡Nota actualizada correctamente!" : "¡Nota guardada correctamente!");
     setIsModalOpen(false); 
     setTimeout(() => setSuccess(null), 3000);
 
     fetchNotes();
+  }
+
+  // 🚀 NUEVA FUNCIÓN: Abre el modal cargando los datos de la nota elegida para editar
+  function startEdit(note: any) {
+    setEditingNoteId(note.id);
+    setTitle(note.title);
+    setContent(note.content || "");
+    setTag(note.tag || "");
+    setIsModalOpen(true);
+  }
+
+  // 🚀 FUNCIÓN: Controla el cierre limpio del modal
+  function closeModal() {
+    setIsModalOpen(false);
+    setEditingNoteId(null);
+    setTitle("");
+    setContent("");
+    setTag("");
   }
 
   async function handleDeleteNote(id: number) {
@@ -139,12 +178,10 @@ function NotesManager({ user }: { user: any }) {
     await supabase.auth.signOut();
   }
 
-  // 🧠 MAGIA DE REACT: Extraemos todas las etiquetas únicas que existen en tus notas
   const allTags = Array.from(
     new Set(notes.map((n) => n.tag).filter((t) => t !== null && t !== ""))
   ) as string[];
 
-  // 🧠 FILTRADO: Si hay un tag seleccionado, filtramos la lista en tiempo real
   const filteredNotes = selectedTag
     ? notes.filter((n) => n.tag === selectedTag)
     : notes;
@@ -162,7 +199,6 @@ function NotesManager({ user }: { user: any }) {
 
           <hr className="border-zinc-200 dark:border-zinc-800" />
 
-          {/* Menú de Filtros */}
           <nav className="space-y-1">
             <p className="px-2 text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2">Navegación</p>
             <button 
@@ -175,7 +211,6 @@ function NotesManager({ user }: { user: any }) {
 
           <hr className="border-zinc-200 dark:border-zinc-800" />
 
-          {/* 🚀 LISTA DE ETIQUETAS DINÁMICAS */}
           <div className="space-y-1">
             <p className="px-2 text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2">#️⃣ Etiquetas</p>
             {allTags.length === 0 ? (
@@ -219,7 +254,6 @@ function NotesManager({ user }: { user: any }) {
             </button>
           </div>
 
-          {/* Renderizado de notas filtradas */}
           {loading ? (
             <div className="flex items-center justify-center py-12"><div className="h-8 w-8 animate-spin rounded-full border-4 border-zinc-300 border-t-blue-600 dark:border-zinc-700" /></div>
           ) : filteredNotes.length === 0 ? (
@@ -233,14 +267,24 @@ function NotesManager({ user }: { user: any }) {
                   <div>
                     <div className="mb-2 flex items-start justify-between gap-4">
                       <h3 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 line-clamp-2">{note.title}</h3>
-                      <button onClick={() => handleDeleteNote(note.id)} className="rounded p-1 text-zinc-400 hover:text-red-600 dark:hover:bg-zinc-800 transition-colors shrink-0">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4"><path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.34 6m-4.74 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" /></svg>
-                      </button>
+                      
+                      {/* 🚀 GRUPO DE BOTONES: EDITAR Y BORRAR */}
+                      <div className="flex items-center gap-1 shrink-0">
+                        {/* Botón de Editar (Icono de lápiz) */}
+                        <button onClick={() => startEdit(note)} className="rounded p-1 text-zinc-400 hover:bg-zinc-100 hover:text-blue-600 dark:hover:bg-zinc-800 transition-colors" title="Editar nota">
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
+                          </svg>
+                        </button>
+                        {/* Botón de Borrar */}
+                        <button onClick={() => handleDeleteNote(note.id)} className="rounded p-1 text-zinc-400 hover:bg-zinc-100 hover:text-red-600 dark:hover:bg-zinc-800 transition-colors" title="Eliminar nota">
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4"><path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.34 6m-4.74 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" /></svg>
+                        </button>
+                      </div>
                     </div>
                     {note.content && <p className="whitespace-pre-wrap text-sm leading-relaxed text-zinc-600 dark:text-zinc-400 line-clamp-4">{note.content}</p>}
                   </div>
                   <div className="mt-4 pt-3 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between">
-                    {/* Badge visual de la etiqueta en la tarjeta */}
                     {note.tag ? (
                       <span className="text-[10px] font-semibold bg-blue-50 text-blue-600 dark:bg-blue-950/40 dark:text-blue-400 px-2 py-0.5 rounded capitalize">
                         #{note.tag}
@@ -257,13 +301,16 @@ function NotesManager({ user }: { user: any }) {
         </main>
       </div>
 
-      {/* ================= MODAL FLOTANTE (Con input de etiqueta añadido) ================= */}
+      {/* ================= MODAL FLOTANTE MODIFICADO ================= */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-lg rounded-xl border border-zinc-200 bg-white p-6 shadow-xl dark:border-zinc-900">
+          <div className="w-full max-w-lg rounded-xl border border-zinc-200 bg-white p-6 shadow-xl dark:border-zinc-800 dark:bg-zinc-900">
             <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-zinc-800 dark:text-zinc-200">Crear nueva nota</h2>
-              <button type="button" onClick={() => setIsModalOpen(false)} className="rounded-lg p-1 text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800">
+              {/* 🚀 CAMBIO VISUAL DE TÍTULO DEPENDIENDO DEL MODO */}
+              <h2 className="text-lg font-semibold text-zinc-800 dark:text-zinc-200">
+                {editingNoteId ? "Editar nota" : "Crear nueva nota"}
+              </h2>
+              <button type="button" onClick={closeModal} className="rounded-lg p-1 text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-5 w-5"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" /></svg>
               </button>
             </div>
@@ -273,7 +320,6 @@ function NotesManager({ user }: { user: any }) {
               <input id="title" type="text" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Escribe un título..." className="w-full rounded-lg border border-zinc-300 px-4 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
             </div>
 
-            {/* 🚀 NUEVO INPUT PARA EL TAG */}
             <div className="mb-4">
               <label htmlFor="tag" className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300">Etiqueta / Categoría (Opcional)</label>
               <input id="tag" type="text" value={tag} onChange={(e) => setTag(e.target.value)} placeholder="Ej: trabajo, ideas, personal..." className="w-full rounded-lg border border-zinc-300 px-4 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
@@ -285,7 +331,7 @@ function NotesManager({ user }: { user: any }) {
             </div>
 
             <div className="flex justify-end gap-3">
-              <button type="button" onClick={() => setIsModalOpen(false)} className="rounded-lg border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 dark:border-zinc-700 dark:text-zinc-300">Cancelar</button>
+              <button type="button" onClick={closeModal} className="rounded-lg border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 dark:border-zinc-700 dark:text-zinc-300">Cancelar</button>
               <button type="button" onClick={handleSubmit} disabled={saving} className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50">
                 {saving ? "Guardando..." : "Guardar nota"}
               </button>
