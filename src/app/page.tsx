@@ -140,134 +140,86 @@ function NotesManager({ user }: { user: any }) {
 
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950">
-      <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
-        {/* Encabezado con usuario */}
-        <header className="mb-10">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
-                ChatVault
-              </h1>
-              <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
-                Conectado como{" "}
-                <span className="font-medium text-zinc-700 dark:text-zinc-300">
-                  {user.email}
-                </span>
-              </p>
+      {/* Contenedor Grid Principal: 1 columna en móvil, 4 en pantallas grandes (lg) */}
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-4 gap-8">
+        
+        {/* ================= COLUMNA IZQUIERDA: SIDEBAR ================= */}
+        <aside className="lg:col-span-1 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-5 shadow-sm h-fit space-y-6">
+          {/* Nombre de la App y Usuario */}
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
+              ChatVault
+            </h1>
+            <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400 truncate">
+              {user.email}
+            </p>
+          </div>
+
+          <hr className="border-zinc-200 dark:border-zinc-800" />
+
+          {/* Bloque de Filtros */}
+          <nav className="space-y-1">
+            <p className="px-2 text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2">
+              Filtros
+            </p>
+            <button className="flex w-full items-center gap-3 rounded-lg bg-blue-50 dark:bg-blue-950/30 px-3 py-2 text-sm font-medium text-blue-600 dark:text-blue-400">
+              <span>🤖</span> Chat con IA
+            </button>
+            <button className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800/50 transition-colors">
+              <span>#️⃣</span> Etiquetas (Tags)
+            </button>
+            <button className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800/50 transition-colors">
+              <span>📅</span> Por Fecha
+            </button>
+          </nav>
+
+          <hr className="border-zinc-200 dark:border-zinc-800" />
+
+          {/* Botón Cerrar Sesión en la parte inferior del Sidebar */}
+          <button
+            onClick={handleLogout}
+            className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 px-4 py-2 text-xs font-medium text-zinc-600 dark:text-zinc-400 transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800"
+          >
+            Cerrar sesión
+          </button>
+        </aside>
+
+        {/* ================= COLUMNA CENTRAL/DERECHA: TABLÓN DE NOTAS ================= */}
+        <main className="lg:col-span-3 space-y-6">
+          {/* Mensajes de feedback del sistema */}
+          {error && (
+            <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-800 dark:bg-red-950 dark:text-red-400">
+              {error}
             </div>
+          )}
+          {success && (
+            <div className="rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700 dark:border-green-800 dark:bg-green-950 dark:text-green-400">
+              {success}
+            </div>
+          )}
+
+          {/* Barra superior del tablón: Título y Botón de Nueva Nota */}
+          <div className="flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 pb-4">
+            <h2 className="text-xl font-bold text-zinc-800 dark:text-zinc-200">
+              Tus notas
+              {notes.length > 0 && (
+                <span className="ml-2 text-sm font-normal text-zinc-400">
+                  ({notes.length})
+                </span>
+              )}
+            </h2>
             <button
-              onClick={handleLogout}
-              className="rounded-lg border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-600 transition-colors hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-800"
+              onClick={() => setIsModalOpen(true)}
+              className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
             >
-              Cerrar sesión
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="h-4 w-4">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+              </svg>
+              Nueva nota
             </button>
           </div>
-        </header>
 
-        {/* Mensajes */}
-        {error && (
-          <div className="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-800 dark:bg-red-950 dark:text-red-400">
-            {error}
-          </div>
-        )}
-        {success && (
-          <div className="mb-6 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700 dark:border-green-800 dark:bg-green-950 dark:text-green-400">
-            {success}
-          </div>
-        )}
-
-        {/* Botón para abrir el Modal */}
-        <div className="mb-6 flex justify-end">
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="h-4 w-4">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-            </svg>
-            Nueva nota
-          </button>
-        </div>
-
-        {/* Ventana Flotante (Modal) */}
-        {isModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
-            <div className="w-full max-w-lg rounded-xl border border-zinc-200 bg-white p-6 shadow-xl dark:border-zinc-800 dark:bg-zinc-900">
-              <div className="mb-4 flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-zinc-800 dark:text-zinc-200">
-                  Crear nueva nota
-                </h2>
-                <button
-                  type="button"
-                  onClick={() => setIsModalOpen(false)}
-                  className="rounded-lg p-1 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-600 dark:hover:bg-zinc-800"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-5 w-5">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-                  </svg>
-                </button>
-              </div>
-
-              <div className="mb-4">
-                <label htmlFor="title" className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                  Título
-                </label>
-                <input
-                  id="title"
-                  type="text"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  placeholder="Escribe un título..."
-                  className="w-full rounded-lg border border-zinc-300 px-4 py-2 text-sm text-zinc-900 placeholder-zinc-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:placeholder-zinc-500"
-                />
-              </div>
-
-              <div className="mb-5">
-                <label htmlFor="content" className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                  Contenido
-                </label>
-                <textarea
-                  id="content"
-                  rows={4}
-                  value={content}
-                  onChange={(e) => setContent(e.target.value)}
-                  placeholder="Escribe el contenido de tu nota..."
-                  className="w-full resize-none rounded-lg border border-zinc-300 px-4 py-2 text-sm text-zinc-900 placeholder-zinc-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:placeholder-zinc-500"
-                />
-              </div>
-
-              <div className="flex justify-end gap-3">
-                <button
-                  type="button"
-                  onClick={() => setIsModalOpen(false)}
-                  className="rounded-lg border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="button"
-                  onClick={handleSubmit}
-                  disabled={saving}
-                  className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  {saving ? "Guardando..." : "Guardar nota"}
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Lista de notas */}
-        <section>
-          <h2 className="mb-4 text-lg font-semibold text-zinc-800 dark:text-zinc-200">
-            Tus notas
-            {notes.length > 0 && (
-              <span className="ml-2 text-sm font-normal text-zinc-400">
-                ({notes.length})
-              </span>
-            )}
-          </h2>
-
+          {/* Grid de notas en formato tarjetas (2 columnas de notas) */}
           {loading ? (
             <div className="flex items-center justify-center py-12">
               <div className="h-8 w-8 animate-spin rounded-full border-4 border-zinc-300 border-t-blue-600 dark:border-zinc-700 dark:border-t-blue-400" />
@@ -279,29 +231,20 @@ function NotesManager({ user }: { user: any }) {
               </p>
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {notes.map((note) => (
                 <article
                   key={note.id}
-                  className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900"
+                  className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900 flex flex-col justify-between"
                 >
-                  <div className="mb-1 flex items-start justify-between gap-4">
-                    <h3 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">
-                      {note.title}
-                    </h3>
-                    <div className="flex items-center gap-3 shrink-0">
-                      <time className="text-xs text-zinc-400">
-                        {new Date(note.created_at).toLocaleDateString("es-ES", {
-                          year: "numeric",
-                          month: "short",
-                          day: "numeric",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
-                      </time>
+                  <div>
+                    <div className="mb-2 flex items-start justify-between gap-4">
+                      <h3 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 line-clamp-2">
+                        {note.title}
+                      </h3>
                       <button
                         onClick={() => handleDeleteNote(note.id)}
-                        className="rounded p-1 text-zinc-400 hover:bg-zinc-100 hover:text-red-600 dark:hover:bg-zinc-800 transition-colors"
+                        className="rounded p-1 text-zinc-400 hover:bg-zinc-100 hover:text-red-600 dark:hover:bg-zinc-800 transition-colors shrink-0"
                         title="Eliminar nota"
                       >
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
@@ -309,18 +252,97 @@ function NotesManager({ user }: { user: any }) {
                         </svg>
                       </button>
                     </div>
+                    {note.content && (
+                      <p className="whitespace-pre-wrap text-sm leading-relaxed text-zinc-600 dark:text-zinc-400 line-clamp-4">
+                        {note.content}
+                      </p>
+                    )}
                   </div>
-                  {note.content && (
-                    <p className="mt-2 whitespace-pre-wrap text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
-                      {note.content}
-                    </p>
-                  )}
+                  <div className="mt-4 pt-3 border-t border-zinc-100 dark:border-zinc-800 flex justify-end">
+                    <time className="text-[10px] text-zinc-400">
+                      {new Date(note.created_at).toLocaleDateString("es-ES", {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </time>
+                  </div>
                 </article>
               ))}
             </div>
           )}
-        </section>
+        </main>
       </div>
+
+      {/* ================= MODAL FLOTANTE (Sigue funcionando igual) ================= */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-lg rounded-xl border border-zinc-200 bg-white p-6 shadow-xl dark:border-zinc-800 dark:bg-zinc-900">
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-zinc-800 dark:text-zinc-200">
+                Crear nueva nota
+              </h2>
+              <button
+                type="button"
+                onClick={() => setIsModalOpen(false)}
+                className="rounded-lg p-1 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-600 dark:hover:bg-zinc-800"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-5 w-5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="mb-4">
+              <label htmlFor="title" className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                Título
+              </label>
+              <input
+                id="title"
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="Escribe un título..."
+                className="w-full rounded-lg border border-zinc-300 px-4 py-2 text-sm text-zinc-900 placeholder-zinc-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:placeholder-zinc-500"
+              />
+            </div>
+
+            <div className="mb-5">
+              <label htmlFor="content" className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                Contenido
+              </label>
+              <textarea
+                id="content"
+                rows={4}
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                placeholder="Escribe el contenido de tu nota..."
+                className="w-full resize-none rounded-lg border border-zinc-300 px-4 py-2 text-sm text-zinc-900 placeholder-zinc-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:placeholder-zinc-500"
+              />
+            </div>
+
+            <div className="flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => setIsModalOpen(false)}
+                className="rounded-lg border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={handleSubmit}
+                disabled={saving}
+                className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {saving ? "Guardando..." : "Guardar nota"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
