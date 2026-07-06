@@ -465,7 +465,7 @@ function NotesManager({ user }: { user: any }) {
             <div className="flex justify-end gap-3">
               <button type="button" onClick={closeModal} className="rounded-lg border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 dark:border-zinc-700 dark:text-zinc-300">Cancelar</button>
               <button type="button" onClick={handleSubmit} disabled={saving} className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50">
-                {saving ? "Guardando..." : "Guardar sesión"}
+                {saving ? "Guardando..." : "Probar API de URLs 🚀"}
               </button>
             </div>
           </div>
