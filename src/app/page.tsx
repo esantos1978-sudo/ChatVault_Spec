@@ -94,6 +94,9 @@ function NotesManager({ user }: { user: User }) {
 
     setSaving(true);
 
+    // 🚨 AÑADE ESTA LÍNEA DE DIAGNÓSTICO:
+    alert(`DIAGNÓSTICO:\nID de usuario en React: "${user.id}"\nTítulo: "${title.trim()}"\nContenido: "${content.trim()}"`);
+
     // Usamos el 'user' que ya viene directo de las propiedades del componente
     const { error: insertError } = await supabase.from("notes").insert({
       title: title.trim(),
@@ -191,8 +194,8 @@ if (insertError) {
 
         {/* Formulario */}
         <form
-          onSubmit={handleSubmit}
-          className="mb-12 rounded-xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900"
+          
+          classNameonSubmit="mb-12 rounded-xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900"
         >
           <h2 className="mb-4 text-lg font-semibold text-zinc-800 dark:text-zinc-200">
             Nueva nota
@@ -233,7 +236,8 @@ if (insertError) {
           </div>
 
           <button
-            type="submit"
+            type="button" // 👈 Cambiado a button
+            onClick={handleSubmit} // 👈 Añadido el click manual
             disabled={saving}
             className="inline-flex w-full items-center justify-center rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
           >
