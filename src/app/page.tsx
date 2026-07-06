@@ -114,6 +114,29 @@ function NotesManager({ user }: { user: User }) {
     fetchNotes();
   }
 
+  async function handleDeleteNote(id: number) {
+    // Confirmación para evitar sustos
+    if (!confirm("¿Estás seguro de que quieres eliminar esta nota?")) {
+      return;
+    }
+
+    setError(null);
+
+    const { error: deleteError } = await supabase
+      .from("notes")
+      .select("*") // Verificación previa si fuera necesaria, pero el delete es directo:
+      .from("notes")
+      .delete()
+      .eq("id", id); // ¡Crucial! Solo borramos la nota con este ID específico
+
+    if (deleteError) {
+      setError("Error al eliminar la nota: " + deleteError.message);
+    } else {
+      // Actualizamos la lista de notas automáticamente tras borrar
+      fetchNotes();
+    }
+  }
+
   async function handleLogout() {
     await supabase.auth.signOut();
   }
