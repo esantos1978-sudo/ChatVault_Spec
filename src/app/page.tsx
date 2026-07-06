@@ -122,12 +122,11 @@ function NotesManager({ user }: { user: User }) {
 
     setError(null);
 
+    // 🚀 Línea corregida y simplificada al máximo:
     const { error: deleteError } = await supabase
       .from("notes")
-      .select("*") // Verificación previa si fuera necesaria, pero el delete es directo:
-      .from("notes")
       .delete()
-      .eq("id", id); // ¡Crucial! Solo borramos la nota con este ID específico
+      .eq("id", id); 
 
     if (deleteError) {
       setError("Error al eliminar la nota: " + deleteError.message);
