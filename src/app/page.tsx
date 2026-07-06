@@ -82,8 +82,7 @@ function NotesManager({ user }: { user: User }) {
     fetchNotes();
   }, [fetchNotes]);
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
+ async function handleSubmit() {
     setError(null);
     setSuccess(null);
 
@@ -94,14 +93,10 @@ function NotesManager({ user }: { user: User }) {
 
     setSaving(true);
 
-    // 🚨 AÑADE ESTA LÍNEA DE DIAGNÓSTICO:
-    alert(`DIAGNÓSTICO:\nID de usuario en React: "${user.id}"\nTítulo: "${title.trim()}"\nContenido: "${content.trim()}"`);
-
-    // Usamos el 'user' que ya viene directo de las propiedades del componente
     const { error: insertError } = await supabase.from("notes").insert({
       title: title.trim(),
       content: content.trim(),
-      user_id: user.id, // ¡Llave maestra inyectada limpiamente!
+      user_id: user.id,
     });
 
     setSaving(false);
@@ -110,37 +105,6 @@ function NotesManager({ user }: { user: User }) {
       setError("Error al guardar la nota: " + insertError.message);
       return;
     }
-
-    setTitle("");
-    setContent("");
-    setSuccess("¡Nota guardada correctamente!");
-    setTimeout(() => setSuccess(null), 3000);
-
-    fetchNotes();
-  }
-
-// 1. Obtenemos el usuario autenticado
-const { data: { user }, error: userError } = await supabase.auth.getUser();
-setSaving(true);
-if (userError || !user) {
-  setError("Error: No se pudo identificar al usuario.");
-  setSaving(false);
-  return;
-}
-
-// 2. Incluimos el user_id en el objeto de inserción
-const { error: insertError } = await supabase.from("notes").insert({
-  title: title.trim(),
-  content: content.trim(),
-  user_id: user.id, // ¡Aquí está la llave maestra!
-});
-
-setSaving(false);
-
-if (insertError) {
-  setError("Error al guardar la nota: " + insertError.message);
-  return;
-}
 
     setTitle("");
     setContent("");
@@ -193,10 +157,7 @@ if (insertError) {
         )}
 
         {/* Formulario */}
-        <form
-          
-          classNameonSubmit="mb-12 rounded-xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900"
-        >
+        <form className="mb-12 rounded-xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
           <h2 className="mb-4 text-lg font-semibold text-zinc-800 dark:text-zinc-200">
             Nueva nota
           </h2>
@@ -236,8 +197,8 @@ if (insertError) {
           </div>
 
           <button
-            type="button" // 👈 Cambiado a button
-            onClick={handleSubmit} // 👈 Añadido el click manual
+            type="button"
+            onClick={handleSubmit}
             disabled={saving}
             className="inline-flex w-full items-center justify-center rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
           >
