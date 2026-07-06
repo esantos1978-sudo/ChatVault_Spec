@@ -258,19 +258,31 @@ function NotesManager({ user }: { user: User }) {
                   className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900"
                 >
                   <div className="mb-1 flex items-start justify-between gap-4">
-                    <h3 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">
-                      {note.title}
-                    </h3>
-                    <time className="shrink-0 text-xs text-zinc-400">
-                      {new Date(note.created_at).toLocaleDateString("es-ES", {
-                        year: "numeric",
-                        month: "short",
-                        day: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                    </time>
-                  </div>
+  <h3 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">
+    {note.title}
+  </h3>
+  <div className="flex items-center gap-3 shrink-0">
+    <time className="text-xs text-zinc-400">
+      {new Date(note.created_at).toLocaleDateString("es-ES", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      })}
+    </time>
+    <button
+      onClick={() => handleDeleteNote(note.id)}
+      className="rounded p-1 text-zinc-400 hover:bg-zinc-100 hover:text-red-600 dark:hover:bg-zinc-800 transition-colors"
+      title="Eliminar nota"
+    >
+      {/* Icono de papelera minimalista en SVG */}
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
+        <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.34 6m-4.74 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+      </svg>
+    </button>
+  </div>
+</div>
                   {note.content && (
                     <p className="mt-2 whitespace-pre-wrap text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
                       {note.content}
