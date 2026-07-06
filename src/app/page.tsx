@@ -72,6 +72,17 @@ function NotesManager({ user }: { user: any }) {
   const [success, setSuccess] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  // 🚀 CHIVATO DE DIAGNÓSTICO (Añade esto aquí):
+  useEffect(() => {
+    console.log("=== 🔍 RASTREO DE PANTALLA EN NEGRO ===");
+    console.log("1. ¿Usuario autenticado?:", !!user);
+    console.log("2. ¿Estado 'loading' activo?:", loading);
+    console.log("3. ¿Estado 'saving' activo?:", saving);
+    console.log("4. Notas totales traídas de Supabase:", notes.length);
+    console.log("5. Notas filtradas para renderizar:", filteredNotes.length);
+    console.log("=======================================");
+  }, [loading, saving, notes, filteredNotes, user]);
+
   useEffect(() => {
     fetchNotes();
   }, []);
