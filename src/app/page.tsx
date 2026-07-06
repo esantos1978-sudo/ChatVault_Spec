@@ -436,3 +436,5 @@ function NotesManager({ user }: { user: any }) {
     </div>
   );
 }
+}
+
