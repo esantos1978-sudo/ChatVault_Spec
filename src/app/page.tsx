@@ -117,8 +117,30 @@ function NotesManager({ user }: { user: any }) {
     setSaving(true);
 
     let finalContent = content.trim();
+    let finalTitle = title.trim();
+
     if (sourceType === "url") {
-      finalContent = `URL del chat: ${sourceUrl}\n\n${content}`;
+      if (!sourceUrl.trim()) {
+        setError("La URL del chat es obligatoria");
+        setSaving(false);
+        return;
+      }
+      try {
+        // Llamamos a nuestra nueva API interna para extraer el texto
+        const res = await fetch("/api/scrape", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url: sourceUrl.trim() }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Error al escanear la URL");
+        
+        finalContent = `URL original: ${sourceUrl}\n\n${data.content}`;
+        if (!finalTitle) finalTitle = data.title;
+      } catch (err: any) {
+        setError("Error al extraer enlace: " + err.message + ". Guardando solo la URL.");
+        finalContent = `URL del chat: ${sourceUrl}\n\n${content}`;
+      }
     } else if (sourceType === "file") {
       finalContent = `[Archivo subido pendientes de procesar]\n\n${content}`;
     }
