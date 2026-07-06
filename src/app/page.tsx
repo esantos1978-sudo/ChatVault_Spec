@@ -109,6 +109,8 @@ function NotesManager({ user }: { user: any }) {
     setError(null);
     setSuccess(null);
 
+    console.log("=== 🛠️ PROBANDO ENVÍO === Tipo de origen:", sourceType, "| Título actual:", `"${title}"`);
+
    if (sourceType !== "url" && !title.trim()) {
       setError("El título es obligatorio");
       return;
