@@ -17,6 +17,9 @@ export default function Home() {
   const [user, setUser] = useState<User | null>(null);
   const [loadingSession, setLoadingSession] = useState(true);
 
+  // 🚀 AGREGA ESTA LÍNEA DE CHIVATO AQUÍ ABAJO:
+  console.log("=== 🏠 RASTREO EN HOME === User:", user, "| AuthLoading:", authLoading);
+
   // Verificar sesión al montar
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -222,7 +225,7 @@ function NotesManager({ user }: { user: any }) {
     console.log("5. Notas filtradas para renderizar:", filteredNotes.length);
     console.log("=======================================");
   }, [loading, saving, notes, filteredNotes, user]);
-  
+
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950">
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-4 gap-8">
