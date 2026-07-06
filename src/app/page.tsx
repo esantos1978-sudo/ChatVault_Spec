@@ -69,6 +69,8 @@ function NotesManager({ user }: { user: any }) {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [tag, setTag] = useState(""); 
+  // 🚀 NUEVO: Estado para el filtro de fecha ('all' | 'today' | 'week' | 'month')
+  const [dateFilter, setDateFilter] = useState<"all" | "today" | "week" | "month">("all");
   const [iaModel, setIaModel] = useState("gemini"); 
   const [summary, setSummary] = useState("");
 
@@ -242,6 +244,31 @@ function NotesManager({ user }: { user: any }) {
   const filteredNotes = notes
     .filter((n) => (selectedTag ? n.tag === selectedTag : true))
     .filter((n) => {
+      // 🚀 FILTRO TEMPORAL
+      if (dateFilter === "all") return true;
+      
+      const noteDate = new Date(n.created_at);
+      const now = new Date();
+      
+      if (dateFilter === "today") {
+        return noteDate.toDateString() === now.toDateString();
+      }
+      
+      if (dateFilter === "week") {
+        const oneWeekAgo = new Date();
+        oneWeekAgo.setDate(now.getDate() - 7);
+        return noteDate >= oneWeekAgo;
+      }
+      
+      if (dateFilter === "month") {
+        const oneMonthAgo = new Date();
+        oneMonthAgo.setMonth(now.getMonth() - 1);
+        return noteDate >= oneMonthAgo;
+      }
+      
+      return true;
+    })
+    .filter((n) => {
       const query = searchQuery.toLowerCase().trim();
       if (!query) return true;
       return (
@@ -277,33 +304,63 @@ function NotesManager({ user }: { user: any }) {
           <nav className="space-y-1">
             <p className="px-2 text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2">Navegación</p>
             <button 
-              onClick={() => { setSelectedTag(null); setSearchQuery(""); }}
-              className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${!selectedTag ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/30 dark:text-blue-400' : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800/50'}`}
+              onClick={() => { setSelectedTag(null); setDateFilter("all"); setSearchQuery(""); }}
+              className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${!selectedTag && dateFilter === "all" ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/30 dark:text-blue-400' : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800/50'}`}
             >
               <span>📁</span> Todos los chats
             </button>
+
+            {/* 🕒 FILTROS TEMPORALES COMPLEMENTARIOS */}
+            <div className="pt-2 mt-2 border-t border-zinc-100 dark:border-zinc-800/50 space-y-1">
+              <p className="px-2 text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1">🕒 Por Fecha</p>
+              
+              <button 
+                onClick={() => setDateFilter("today")}
+                className={`flex w-full items-center gap-3 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${dateFilter === "today" ? 'bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400' : 'text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800/50'}`}
+              >
+                <span>☀️</span> Hoy
+              </button>
+
+              <button 
+                onClick={() => setDateFilter("week")}
+                className={`flex w-full items-center gap-3 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${dateFilter === "week" ? 'bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400' : 'text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800/50'}`}
+              >
+                <span>📅</span> Últimos 7 días
+              </button>
+
+              <button 
+                onClick={() => setDateFilter("month")}
+                className={`flex w-full items-center gap-3 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${dateFilter === "month" ? 'bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400' : 'text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800/50'}`}
+              >
+                <span>🗓️</span> Últimos 30 días
+              </button>
+            </div>
           </nav>
 
           <hr className="border-zinc-200 dark:border-zinc-800" />
 
           <div className="space-y-1">
             <p className="px-2 text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2">#️⃣ Etiquetas</p>
-            {allTags.length === 0 ? (
-              <p className="px-2 text-xs text-zinc-400 italic">No hay etiquetas</p>
-            ) : (
-              allTags.map((t) => (
-                <button
-                  key={t}
-                  onClick={() => setSelectedTag(t)}
-                  className={`flex w-full items-center justify-between rounded-lg px-3 py-1.5 text-sm font-medium capitalize transition-colors ${selectedTag === t ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/30 dark:text-blue-400' : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800/50'}`}
-                >
-                  <span># {t}</span>
-                  <span className="text-xs bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded-full text-zinc-400">
-                    {notes.filter(n => n.tag === t).length}
-                  </span>
-                </button>
-              ))
-            )}
+            
+            {/* 🚀 CONTENEDOR CON SCROLL INTERNO BLINDADO */}
+            <div className="max-h-48 overflow-y-auto pr-1 space-y-1 scrollbar-thin">
+              {allTags.length === 0 ? (
+                <p className="px-2 text-xs text-zinc-400 italic">No hay etiquetas</p>
+              ) : (
+                allTags.map((t) => (
+                  <button
+                    key={t}
+                    onClick={() => setSelectedTag(t)}
+                    className={`flex w-full items-center justify-between rounded-lg px-3 py-1.5 text-sm font-medium capitalize transition-colors ${selectedTag === t ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/30 dark:text-blue-400' : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800/50'}`}
+                  >
+                    <span># {t}</span>
+                    <span className="text-xs bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded-full text-zinc-400">
+                      {notes.filter(n => n.tag === t).length}
+                    </span>
+                  </button>
+                ))
+              )}
+            </div>
           </div>
 
           <hr className="border-zinc-200 dark:border-zinc-800" />
@@ -411,13 +468,29 @@ function NotesManager({ user }: { user: any }) {
               </div>
             </div>
 
-            {/* Fila de Etiqueta sola a la izquierda */}
+            {/* Fila de Etiqueta Inteligente con Sugerencias */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
               <div>
                 <label className="mb-1 block text-xs font-medium text-zinc-700 dark:text-zinc-300">Etiqueta (Tag)</label>
-                <input type="text" value={tag} onChange={(e) => setTag(e.target.value)} placeholder="Ej: programacion, cocina" className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 focus:outline-none" />
+                <div className="relative">
+                  <input 
+                    type="text" 
+                    value={tag} 
+                    onChange={(e) => setTag(e.target.value)} 
+                    placeholder="Escribe o selecciona una..." 
+                    list="existing-tags"
+                    className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 focus:outline-none" 
+                  />
+                  {/* El datalist muestra sugerencias automáticas de las etiquetas existentes */}
+                  <datalist id="existing-tags">
+                    {allTags.map(existingTag => (
+                      <option key={existingTag} value={existingTag} />
+                    ))}
+                  </datalist>
+                </div>
+                <p className="mt-1 text-[10px] text-zinc-400">Puedes elegir una de la lista o escribir una nueva.</p>
               </div>
-              <div></div> {/* Columna vacía para mantener la estética */}
+              <div></div>
             </div>
 
             {/* Nuevo bloque de Resumen a pantalla completa y multilínea */}
