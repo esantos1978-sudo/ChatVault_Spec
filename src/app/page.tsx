@@ -9,8 +9,8 @@ interface Note {
   title: string;
   content: string;
   summary?: string;
-  tag?: string; // Lo mantenemos por compatibilidad, pero usaremos tags
-  tags?: string[]; // NUEVO: array de etiquetas
+  tag?: string;
+  tags?: string[];
   ai_model?: string;
   source_type?: string;
   source_url?: string;
@@ -76,9 +76,13 @@ function NotesManager({ user }: { user: any }) {
   const [content, setContent] = useState("");
   const [summary, setSummary] = useState("");
 
-  // 🏷️ NUEVO: Estado para múltiples etiquetas
   const [tags, setTags] = useState<string[]>([]);
-  const [tagsInput, setTagsInput] = useState(""); // Texto que escribe el usuario
+  const [tagsInput, setTagsInput] = useState("");
+
+  // 🏷️ ESTADOS PARA AUTOSUGERENCIA
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [selectedSuggestion, setSelectedSuggestion] = useState(-1);
 
   const [aiModel, setAiModel] = useState("DeepSeek-R1");
   const [sourceUrl, setSourceUrl] = useState("");
@@ -112,7 +116,6 @@ function NotesManager({ user }: { user: any }) {
     }
   }
 
-  // 🏷️ NUEVO: Extraer etiquetas únicas de TODAS las notas (de los arrays)
   const allTags = Array.from(new Set(notes.flatMap((n) => n.tags || [])));
 
   const openModal = () => {
@@ -122,6 +125,9 @@ function NotesManager({ user }: { user: any }) {
     setSummary("");
     setTags([]);
     setTagsInput("");
+    setSuggestions([]);
+    setShowSuggestions(false);
+    setSelectedSuggestion(-1);
     setSourceUrl("");
     setSourceType("text");
     setError(null);
@@ -143,12 +149,29 @@ function NotesManager({ user }: { user: any }) {
     setSummary(note.summary || "");
     setTags(note.tags || []);
     setTagsInput((note.tags || []).join(", "));
+    setSuggestions([]);
+    setShowSuggestions(false);
+    setSelectedSuggestion(-1);
     setAiModel(note.ai_model || "DeepSeek-R1");
     setSourceType((note.source_type as "text" | "url" | "file") || "text");
     setSourceUrl(note.source_url || "");
     setError(null);
     setSuccess(null);
     setIsModalOpen(true);
+  };
+
+  // 🏷️ Función para añadir una sugerencia
+  const addSuggestion = (index: number) => {
+    const suggestion = suggestions[index];
+    if (!suggestion) return;
+
+    const lastTagIndex = tags.length - 1;
+    const newTags = tags.filter((_, i) => i !== lastTagIndex);
+    const updatedTags = [...newTags, suggestion];
+    setTags(updatedTags);
+    setTagsInput(updatedTags.join(", "));
+    setShowSuggestions(false);
+    setSelectedSuggestion(-1);
   };
 
   const handleDeleteNote = async (id: string) => {
@@ -244,12 +267,11 @@ function NotesManager({ user }: { user: any }) {
         }
       }
 
-      // 🏷️ NUEVO: Guardamos el array de tags
       const noteData = {
         title: finalTitle || "Conversación sin título",
         content: finalContent || "Contenido vacío",
         summary: summary || null,
-        tags: tags.length > 0 ? tags : null, // Guardamos el array
+        tags: tags.length > 0 ? tags : null,
         ai_model: aiModel,
         source_type: sourceType,
         source_url: sourceType === "url" ? sourceUrl : null,
@@ -281,7 +303,6 @@ function NotesManager({ user }: { user: any }) {
 
   // ==================== FILTROS ====================
   const filteredNotes = notes
-    // 🏷️ NUEVO: Filtrar por etiqueta usando el array
     .filter((n) => (selectedTag ? (n.tags || []).includes(selectedTag) : true))
     .filter((n) => {
       const noteDate = new Date(n.created_at);
@@ -453,7 +474,6 @@ function NotesManager({ user }: { user: any }) {
 
         <hr className="border-zinc-200 dark:border-zinc-800" />
 
-        {/* 🏷️ ETIQUETAS CON SCROLL (ACTUALIZADO) */}
         <div className="space-y-1 flex-1 overflow-hidden">
           <p className="px-2 text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2">
             #️⃣ Etiquetas
@@ -569,21 +589,16 @@ function NotesManager({ user }: { user: any }) {
                   key={note.id}
                   className="group relative flex flex-col rounded-2xl border border-zinc-200/60 dark:border-zinc-800/60 bg-gradient-to-br from-white to-zinc-50/50 dark:from-zinc-900 dark:to-zinc-900/80 p-5 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ease-out justify-between min-h-[240px] overflow-hidden"
                 >
-                  {/* Efecto de brillo sutil en la esquina superior izquierda */}
                   <div className="absolute -top-24 -left-24 w-48 h-48 bg-gradient-to-br from-blue-500/5 to-transparent rounded-full blur-2xl pointer-events-none group-hover:opacity-100 opacity-0 transition-opacity duration-500" />
-
-                  {/* Efecto de borde brillante en hover */}
                   <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-transparent group-hover:ring-blue-500/20 transition-all duration-300 pointer-events-none" />
 
                   <div className="relative z-10">
-                    {/* Cabecera: IA + Etiquetas + Botones */}
                     <div className="flex items-start justify-between gap-2 mb-3">
                       <div className="flex flex-wrap items-center gap-2">
                         <span className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-zinc-100 to-zinc-200/80 dark:from-zinc-800 dark:to-zinc-700/80 px-3 py-1 text-[10px] font-semibold text-zinc-700 dark:text-zinc-300 shadow-sm">
                           <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                           {note.ai_model || "Desconocido"}
                         </span>
-                        {/* 🏷️ MÚLTIPLES ETIQUETAS */}
                         {note.tags && note.tags.length > 0 && (
                           <div className="flex flex-wrap gap-1">
                             {note.tags.map((t) => (
@@ -643,12 +658,10 @@ function NotesManager({ user }: { user: any }) {
                       </div>
                     </div>
 
-                    {/* Título */}
                     <h3 className="text-base font-bold text-zinc-900 dark:text-zinc-50 line-clamp-1 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-200">
                       {note.title}
                     </h3>
 
-                    {/* Resumen */}
                     {note.summary && (
                       <div className="mt-2.5 p-2.5 rounded-xl bg-gradient-to-r from-amber-50/80 to-amber-100/40 dark:from-amber-950/30 dark:to-amber-900/20 border border-amber-200/50 dark:border-amber-800/30">
                         <p className="text-xs text-amber-800/80 dark:text-amber-300/80 font-medium line-clamp-2 leading-relaxed">
@@ -657,7 +670,6 @@ function NotesManager({ user }: { user: any }) {
                       </div>
                     )}
 
-                    {/* Contenido clickeable */}
                     <div
                       onClick={() => startEdit(note)}
                       className="cursor-pointer mt-3 group/content"
@@ -668,7 +680,6 @@ function NotesManager({ user }: { user: any }) {
                     </div>
                   </div>
 
-                  {/* Pie de tarjeta */}
                   <div className="relative z-10 mt-4 pt-3 border-t border-zinc-200/50 dark:border-zinc-800/50 flex items-center justify-between text-[10px] text-zinc-400">
                     <div className="flex items-center gap-1.5">
                       <svg
@@ -736,7 +747,6 @@ function NotesManager({ user }: { user: any }) {
             className="w-full max-w-4xl rounded-2xl bg-white/95 dark:bg-zinc-900/95 backdrop-blur-xl shadow-2xl border border-white/20 dark:border-zinc-800/50 p-8 my-8 animate-in fade-in zoom-in-95 duration-200"
             style={{ boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)" }}
           >
-            {/* HEADER */}
             <div className="flex items-center justify-between mb-6 pb-4 border-b border-zinc-200/50 dark:border-zinc-800/50">
               <div>
                 <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50 tracking-tight">
@@ -769,7 +779,6 @@ function NotesManager({ user }: { user: any }) {
               </button>
             </div>
 
-            {/* PESTAÑAS */}
             <div className="mb-6 flex gap-1 border-b border-zinc-200/50 dark:border-zinc-800/50">
               <button
                 type="button"
@@ -812,7 +821,6 @@ function NotesManager({ user }: { user: any }) {
               </button>
             </div>
 
-            {/* CONTENIDO DEL MODAL */}
             <div className="space-y-5">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
@@ -834,7 +842,7 @@ function NotesManager({ user }: { user: any }) {
                   </select>
                 </div>
 
-                {/* 🏷️ NUEVO INPUT DE ETIQUETAS MÚLTIPLES */}
+                {/* 🏷️ ETIQUETAS CON AUTOSUGERENCIA */}
                 <div>
                   <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1.5">
                     🏷️ Etiquetas (separadas por comas)
@@ -846,17 +854,94 @@ function NotesManager({ user }: { user: any }) {
                       onChange={(e) => {
                         const raw = e.target.value;
                         setTagsInput(raw);
-                        // Convertir el texto en array de etiquetas limpias
                         const array = raw
                           .split(",")
                           .map((t) => t.trim())
                           .filter((t) => t.length > 0);
                         setTags(array);
+                        const lastTag =
+                          array.length > 0 ? array[array.length - 1] : "";
+                        if (lastTag.length > 0) {
+                          const filtered = allTags.filter((t) =>
+                            t.toLowerCase().includes(lastTag.toLowerCase()),
+                          );
+                          setSuggestions(filtered);
+                          setShowSuggestions(filtered.length > 0);
+                        } else {
+                          setShowSuggestions(false);
+                        }
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "ArrowDown") {
+                          e.preventDefault();
+                          setSelectedSuggestion((prev) =>
+                            prev < suggestions.length - 1 ? prev + 1 : prev,
+                          );
+                        } else if (e.key === "ArrowUp") {
+                          e.preventDefault();
+                          setSelectedSuggestion((prev) =>
+                            prev > 0 ? prev - 1 : -1,
+                          );
+                        } else if (
+                          e.key === "Enter" &&
+                          selectedSuggestion >= 0
+                        ) {
+                          e.preventDefault();
+                          addSuggestion(selectedSuggestion);
+                        } else if (e.key === "Escape") {
+                          setShowSuggestions(false);
+                          setSelectedSuggestion(-1);
+                        }
+                      }}
+                      onFocus={() => {
+                        if (tagsInput.length > 0) {
+                          const lastTag =
+                            tagsInput.split(",").pop()?.trim() || "";
+                          if (lastTag.length > 0) {
+                            const filtered = allTags.filter((t) =>
+                              t.toLowerCase().includes(lastTag.toLowerCase()),
+                            );
+                            setSuggestions(filtered);
+                            setShowSuggestions(filtered.length > 0);
+                          }
+                        }
                       }}
                       placeholder="Ej: programacion, deepseek, fix"
                       className="w-full rounded-xl border-0 bg-zinc-100/80 dark:bg-zinc-800/80 px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-blue-500/50 dark:focus:ring-blue-400/50 transition-all duration-200"
                     />
-                    {/* Vista previa de etiquetas mientras escribes */}
+
+                    {showSuggestions && suggestions.length > 0 && (
+                      <div className="absolute z-20 mt-1 w-full max-h-48 overflow-y-auto rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 shadow-lg py-1">
+                        {suggestions.map((suggestion, index) => (
+                          <button
+                            key={suggestion}
+                            type="button"
+                            onClick={() => addSuggestion(index)}
+                            className={`w-full px-4 py-2 text-left text-sm transition-colors ${
+                              index === selectedSuggestion
+                                ? "bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300"
+                                : "text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-700/50"
+                            }`}
+                          >
+                            <span className="inline-flex items-center gap-2">
+                              <span className="text-[10px] text-zinc-400">
+                                #
+                              </span>
+                              {suggestion}
+                              <span className="text-[10px] text-zinc-400 ml-auto">
+                                {
+                                  notes.filter((n) =>
+                                    (n.tags || []).includes(suggestion),
+                                  ).length
+                                }{" "}
+                                notas
+                              </span>
+                            </span>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+
                     {tags.length > 0 && (
                       <div className="mt-2 flex flex-wrap gap-1">
                         {tags.map((t, idx) => (
@@ -865,6 +950,19 @@ function NotesManager({ user }: { user: any }) {
                             className="inline-flex items-center gap-1 rounded-full bg-blue-50 dark:bg-blue-950/50 px-2 py-0.5 text-[10px] font-medium text-blue-700 dark:text-blue-300 border border-blue-200/50 dark:border-blue-800/30"
                           >
                             #{t}
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const newTags = tags.filter(
+                                  (_, i) => i !== idx,
+                                );
+                                setTags(newTags);
+                                setTagsInput(newTags.join(", "));
+                              }}
+                              className="hover:text-red-500 transition-colors"
+                            >
+                              ✕
+                            </button>
                           </span>
                         ))}
                       </div>
@@ -964,7 +1062,6 @@ function NotesManager({ user }: { user: any }) {
               </div>
             </div>
 
-            {/* FOOTER */}
             <div className="mt-8 pt-5 border-t border-zinc-200/50 dark:border-zinc-800/50 flex items-center justify-end gap-3">
               <button
                 type="button"
