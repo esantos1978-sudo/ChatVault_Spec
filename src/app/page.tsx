@@ -649,6 +649,7 @@ function NotesManager({ user }: { user: any }) {
       </main>
 
       {/* ================= MODAL PREMIUM ================= */}
+      {/* ================= MODAL PREMIUM ================= */}
       {isModalOpen && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto"
