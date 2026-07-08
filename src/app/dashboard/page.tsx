@@ -556,12 +556,41 @@ export default function Dashboard({ user }: { user: any }) {
           </h1>
         </div>
 
-        {/* TABS */}
+        {/* TABS: Notas / Prompts / Arena */}
         <div className="flex rounded-lg bg-zinc-200/50 dark:bg-zinc-800/50 p-1">
-          {/* ... tus tabs ... */}
+          <button
+            onClick={() => setActiveTab("notes")}
+            className={`flex-1 rounded-md px-3 py-1.5 text-xs font-medium transition-all ${
+              activeTab === "notes"
+                ? "bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 shadow-sm"
+                : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-300"
+            }`}
+          >
+            📝 Notas
+          </button>
+          <button
+            onClick={() => setActiveTab("prompts")}
+            className={`flex-1 rounded-md px-3 py-1.5 text-xs font-medium transition-all ${
+              activeTab === "prompts"
+                ? "bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 shadow-sm"
+                : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-300"
+            }`}
+          >
+            📚 Prompts
+          </button>
+          <button
+            onClick={() => setActiveTab("arena")}
+            className={`flex-1 rounded-md px-3 py-1.5 text-xs font-medium transition-all ${
+              activeTab === "arena"
+                ? "bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 shadow-sm"
+                : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-300"
+            }`}
+          >
+            🥊 Arena
+          </button>
         </div>
 
-        {/* 🆕 1. FILTRO POR IA (PRIMERO) */}
+        {/* 1. FILTRO POR IA (PRIMERO) */}
         {activeTab === "notes" && allAiModels.length > 0 && (
           <div className="space-y-1">
             <p className="px-2 text-xs font-semibold text-zinc-400 uppercase tracking-wider">
@@ -754,13 +783,50 @@ export default function Dashboard({ user }: { user: any }) {
         {/* CATEGORÍAS (Solo visibles en la tab de Prompts) */}
         {activeTab === "prompts" && (
           <div className="space-y-1 pt-2 border-t border-zinc-100 dark:border-zinc-800/50">
-            {/* ... tus categorías ... */}
+            <p className="px-2 text-xs font-semibold text-zinc-400 uppercase tracking-wider">
+              📂 Categorías
+            </p>
+            <div className="space-y-0.5">
+              {["imagen", "texto", "codigo", "video", "mcp", "otro"].map(
+                (cat) => {
+                  const count = prompts.filter(
+                    (p) => p.category === cat,
+                  ).length;
+                  return (
+                    <button
+                      key={cat}
+                      onClick={() =>
+                        setSelectedPromptCategory(
+                          selectedPromptCategory === cat ? null : cat,
+                        )
+                      }
+                      className={`flex w-full items-center justify-between rounded-lg px-3 py-1.5 text-sm font-medium capitalize transition-colors ${
+                        selectedPromptCategory === cat
+                          ? "bg-blue-50 text-blue-600 dark:bg-blue-950/30 dark:text-blue-400"
+                          : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800/50"
+                      }`}
+                    >
+                      <span>{cat}</span>
+                      <span className="text-xs bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded-full text-zinc-400">
+                        {count}
+                      </span>
+                    </button>
+                  );
+                },
+              )}
+            </div>
           </div>
         )}
 
         {/* CERRAR SESIÓN */}
         <div className="mt-auto pt-4 border-t border-zinc-200 dark:border-zinc-800">
-          {/* ... botón de cerrar sesión ... */}
+          <button
+            onClick={handleLogout}
+            className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/20 transition-colors"
+          >
+            <span>🚪</span>
+            Cerrar sesión
+          </button>
         </div>
       </aside>
 
