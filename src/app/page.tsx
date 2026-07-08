@@ -2,7 +2,53 @@
 
 import { useState, useEffect } from "react";
 import { supabase } from "../SupabaseClient";
+import AuthForm from "../components/AuthForm"; // Ajusta la ruta si es necesario
 
+// ==================== COMPONENTE PRINCIPAL (HOME) ====================
+export default function Home() {
+  const [user, setUser] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Obtener sesión al cargar
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      console.log("👤 Sesión obtenida en Home:", session?.user?.id);
+      setUser(session?.user ?? null);
+      setLoading(false);
+    });
+
+    // Escuchar cambios de autenticación
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      console.log("👤 Cambio de autenticación en Home:", session?.user?.id);
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  // Mostrar loading mientras se verifica la sesión
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-zinc-950">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-zinc-300 border-t-blue-600"></div>
+      </div>
+    );
+  }
+
+  // Si no hay usuario, mostrar el formulario de login
+  if (!user) {
+    console.log("🔐 No hay usuario, mostrando AuthForm");
+    return <AuthForm onAuth={() => {}} />;
+  }
+
+  // Si hay usuario, mostrar el panel de notas
+  console.log("✅ Usuario logueado:", user.id);
+  return <NotesManager user={user} />;
+}
+
+// ==================== COMPONENTE NOTESMANAGER ====================
 interface Note {
   id: string;
   title: string;
@@ -15,21 +61,21 @@ interface Note {
   created_at: string;
 }
 
-export default function NotesManager() {
-  // Estados principales
+function NotesManager({ user }: { user: any }) {
+  // ==================== ESTADOS ====================
   const [notes, setNotes] = useState<Note[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
 
-  // Estados para Filtros Temporales (Botones + Calendario)
+  // Filtros Temporales
   const [dateFilter, setDateFilter] = useState<
     "all" | "today" | "week" | "month"
   >("all");
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
 
-  // Estados del Formulario del Modal
+  // Formulario del Modal
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [sourceType, setSourceType] = useState<"text" | "url" | "file">("text");
   const [title, setTitle] = useState("");
@@ -42,12 +88,16 @@ export default function NotesManager() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
-  // Cargar notas desde Supabase al arrancar
+  // ==================== EFECTOS ====================
   useEffect(() => {
     fetchNotes();
   }, []);
 
+  // ==================== FUNCIONES ====================
+
+  // Cargar notas
   async function fetchNotes() {
+    console.log("📥 fetchNotes iniciado");
     try {
       setLoading(true);
       const { data, error } = await supabase
@@ -57,124 +107,186 @@ export default function NotesManager() {
 
       if (error) throw error;
       setNotes(data || []);
+      console.log("✅ notes actualizado:", data?.length || 0, "notas");
     } catch (err: any) {
-      console.error("Error cargando notas:", err.message);
+      console.error("❌ Error en fetchNotes:", err.message);
     } finally {
       setLoading(false);
     }
   }
 
-  // Extraer etiquetas únicas de tus notas actuales para el Sidebar e Input inteligente
+  // Extraer etiquetas únicas
   const allTags = Array.from(
     new Set(notes.map((n) => n.tag).filter((t): t is string => !!t)),
   );
 
-  // Abrir y cerrar modal limpiando campos viejos
+  // Abrir modal
   const openModal = () => {
+    console.log("📂 Abriendo modal");
     setTitle("");
     setContent("");
     setSummary("");
     setTag("");
     setSourceUrl("");
     setSourceType("text");
+    setError(null);
+    setSuccess(null);
     setIsModalOpen(true);
   };
-  const closeModal = () => setIsModalOpen(false);
 
-  // Acción del botón principal para guardar la nota
+  // Cerrar modal
+  const closeModal = () => {
+    console.log("📂 Cerrando modal");
+    setIsModalOpen(false);
+    setError(null);
+    setSuccess(null);
+  };
+
+  // Editar nota
+  const startEdit = (note: Note) => {
+    console.log("✏️ Editando nota:", note.id);
+    setTitle(note.title);
+    setContent(note.content);
+    setSummary(note.summary || "");
+    setTag(note.tag || "");
+    setAiModel(note.ai_model || "DeepSeek-R1");
+    setSourceType((note.source_type as "text" | "url" | "file") || "text");
+    setSourceUrl(note.source_url || "");
+    setError(null);
+    setSuccess(null);
+    setIsModalOpen(true);
+  };
+
+  // Borrar nota
+  const handleDeleteNote = async (id: string) => {
+    console.log("🗑️ Borrando nota:", id);
+    if (!confirm("¿Estás seguro de que quieres eliminar esta nota?")) return;
+
+    try {
+      const { error } = await supabase.from("notes").delete().eq("id", id);
+      if (error) throw error;
+      console.log("✅ Nota borrada correctamente");
+      fetchNotes();
+    } catch (err: any) {
+      console.error("❌ Error al borrar:", err.message);
+      alert("Error al eliminar: " + err.message);
+    }
+  };
+
+  // GUARDAR NOTA (handleSubmit)
   const handleSubmit = async () => {
+    console.log("🚀 handleSubmit ejecutado");
+    console.log("📝 sourceType:", sourceType);
+    console.log("📝 title:", title);
+    console.log("📝 sourceUrl:", sourceUrl);
+    console.log("👤 user recibido en NotesManager:", user?.id);
+
     setError(null);
     setSuccess(null);
 
-    // Validaciones iniciales
+    // Validaciones
     if (sourceType === "text" && !title.trim()) {
       setError("Por favor, escribe un título para guardar tu nota de texto.");
+      console.log("❌ Error: Título vacío en modo texto");
       return;
     }
     if (sourceType === "url" && !sourceUrl.trim()) {
       setError("Por favor, introduce una URL válida.");
+      console.log("❌ Error: URL vacía");
       return;
     }
 
     try {
       setSaving(true);
+      console.log("⏳ setSaving(true)");
+
       let finalTitle = title;
       let finalContent = content;
 
-      // Si es modo URL, disparamos a nuestra API del backend para raspar y limpiar
+      // Si es modo URL, disparamos a nuestra API del backend
       if (sourceType === "url") {
+        let cleanUrl = sourceUrl.trim();
+        if (
+          !cleanUrl.startsWith("http://") &&
+          !cleanUrl.startsWith("https://")
+        ) {
+          cleanUrl = "https://" + cleanUrl;
+          setSourceUrl(cleanUrl);
+        }
+        console.log("🌐 URL limpia:", cleanUrl);
+
         const res = await fetch("/api/scrape", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ url: sourceUrl }),
+          body: JSON.stringify({ url: cleanUrl }),
         });
+
+        console.log("📡 Status de scrape:", res.status);
+
         const scrapeData = await res.json();
+        console.log("📦 scrapeData:", scrapeData);
 
         if (res.ok) {
           finalTitle = title.trim() ? title : scrapeData.title;
           finalContent = scrapeData.content;
+          console.log("✅ Título final:", finalTitle);
         } else {
           finalTitle = title.trim() ? title : "Enlace Guardado";
-          finalContent = `[No se pudo leer automáticamente]: ${sourceUrl}`;
+          finalContent = `[No se pudo leer automáticamente]: ${cleanUrl}`;
+          console.log("⚠️ Fallo en scrape, usando datos de respaldo");
         }
       }
 
-      // 🔥 OBTENER EL USUARIO AUTENTICADO DESDE SUPABASE
-      const {
-        data: { user },
-        error: userError,
-      } = await supabase.auth.getUser();
-
-      if (userError || !user) {
+      // 🔥 USAR EL USER RECIBIDO COMO PROP
+      if (!user) {
         setError("Error: No se pudo identificar al usuario.");
         setSaving(false);
+        console.log("❌ Error: No hay usuario en NotesManager");
         return;
       }
 
-      // Guardamos la información limpia en Supabase
-      const { error } = await supabase.from("notes").insert([
-        {
-          title: finalTitle || "Conversación sin título",
-          content: finalContent,
-          summary: summary || null,
-          tag: tag.trim().toLowerCase() || null,
-          ai_model: aiModel,
-          source_type: sourceType,
-          source_url: sourceType === "url" ? sourceUrl : null,
-          user_id: user.id, // ✅ AHORA user.id ESTÁ DEFINIDO
-        },
-      ]);
+      // Datos a insertar con user.id
+      const noteData = {
+        title: finalTitle || "Conversación sin título",
+        content: finalContent || "Contenido vacío",
+        summary: summary || null,
+        tag: tag.trim().toLowerCase() || null,
+        ai_model: aiModel,
+        source_type: sourceType,
+        source_url: sourceType === "url" ? sourceUrl : null,
+        user_id: user.id,
+      };
+      console.log("📤 Datos a insertar:", noteData);
+      console.log("✅ user_id:", user.id);
 
-      setSaving(false);
+      const { error } = await supabase.from("notes").insert([noteData]);
+      console.log("📥 Respuesta Supabase:", error || "✅ Éxito");
 
-      if (error) {
-        setError("Error al guardar la nota: " + error.message);
-        return;
-      }
+      if (error) throw error;
 
-      // Limpiar formulario
-      setTitle("");
-      setContent("");
-      setTag("");
-      setSourceUrl("");
       setSuccess("¡Nota guardada correctamente!");
+      console.log("✅ Nota guardada correctamente");
+
       setTimeout(() => setSuccess(null), 3000);
-      setIsModalOpen(false);
+      closeModal();
       fetchNotes();
-    } catch (error: any) {
-      setError("Error al guardar: " + error.message);
+      console.log("🔄 fetchNotes() ejecutado después de guardar");
+    } catch (err: any) {
+      console.error("❌ Error en handleSubmit:", err);
+      setError("Error al guardar: " + err.message);
+    } finally {
       setSaving(false);
+      console.log("⏳ setSaving(false)");
     }
   };
 
-  // 🧠 EL SÚPER FILTRO INTELIGENTE DE NOTAS (Etiqueta + Fecha + Buscador)
+  // ==================== FILTROS ====================
   const filteredNotes = notes
     .filter((n) => (selectedTag ? n.tag === selectedTag : true))
     .filter((n) => {
       const noteDate = new Date(n.created_at);
       const now = new Date();
 
-      // Prioridad 1: Si hay rango manual en el calendario
       if (startDate || endDate) {
         const noteString = noteDate.toISOString().split("T")[0];
         if (startDate && noteString < startDate) return false;
@@ -182,23 +294,19 @@ export default function NotesManager() {
         return true;
       }
 
-      // Prioridad 2: Si no hay calendario, aplican los botones rápidos laterales
       if (dateFilter === "all") return true;
       if (dateFilter === "today")
         return noteDate.toDateString() === now.toDateString();
-
       if (dateFilter === "week") {
         const oneWeekAgo = new Date();
         oneWeekAgo.setDate(now.getDate() - 7);
         return noteDate >= oneWeekAgo;
       }
-
       if (dateFilter === "month") {
         const oneMonthAgo = new Date();
         oneMonthAgo.setMonth(now.getMonth() - 1);
         return noteDate >= oneMonthAgo;
       }
-
       return true;
     })
     .filter((n) => {
@@ -211,16 +319,16 @@ export default function NotesManager() {
       );
     });
 
+  // ==================== RENDER ====================
   return (
     <div className="flex h-screen w-screen bg-zinc-100 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-50 overflow-hidden">
-      {/* ================= SIDEBAR IZQUIERDO ================= */}
+      {/* SIDEBAR */}
       <aside className="w-64 border-r border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-800 dark:bg-zinc-900/50 flex flex-col gap-6 select-none">
         <div className="flex items-center gap-2 px-2">
           <span className="text-xl">🔒</span>
           <h1 className="text-lg font-bold tracking-tight">ChatVault</h1>
         </div>
 
-        {/* NAVEGACIÓN Y FILTROS TEMPORALES */}
         <nav className="space-y-1">
           <p className="px-2 text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2">
             Navegación
@@ -234,7 +342,11 @@ export default function NotesManager() {
               setEndDate("");
               setSearchQuery("");
             }}
-            className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${!selectedTag && dateFilter === "all" && !startDate && !endDate ? "bg-blue-50 text-blue-600 dark:bg-blue-950/30 dark:text-blue-400" : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800/50"}`}
+            className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+              !selectedTag && dateFilter === "all" && !startDate && !endDate
+                ? "bg-blue-50 text-blue-600 dark:bg-blue-950/30 dark:text-blue-400"
+                : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800/50"
+            }`}
           >
             <span>📁</span> Todos los chats
           </button>
@@ -243,7 +355,6 @@ export default function NotesManager() {
             <p className="px-2 text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1">
               🕒 Por Fecha
             </p>
-
             <button
               type="button"
               onClick={() => {
@@ -251,11 +362,14 @@ export default function NotesManager() {
                 setStartDate("");
                 setEndDate("");
               }}
-              className={`flex w-full items-center gap-3 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${dateFilter === "today" ? "bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400" : "text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800/50"}`}
+              className={`flex w-full items-center gap-3 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
+                dateFilter === "today"
+                  ? "bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400"
+                  : "text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800/50"
+              }`}
             >
               <span>☀️</span> Hoy
             </button>
-
             <button
               type="button"
               onClick={() => {
@@ -263,11 +377,14 @@ export default function NotesManager() {
                 setStartDate("");
                 setEndDate("");
               }}
-              className={`flex w-full items-center gap-3 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${dateFilter === "week" ? "bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400" : "text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800/50"}`}
+              className={`flex w-full items-center gap-3 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
+                dateFilter === "week"
+                  ? "bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400"
+                  : "text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800/50"
+              }`}
             >
               <span>📅</span> Últimos 7 días
             </button>
-
             <button
               type="button"
               onClick={() => {
@@ -275,12 +392,15 @@ export default function NotesManager() {
                 setStartDate("");
                 setEndDate("");
               }}
-              className={`flex w-full items-center gap-3 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${dateFilter === "month" ? "bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400" : "text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800/50"}`}
+              className={`flex w-full items-center gap-3 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
+                dateFilter === "month"
+                  ? "bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400"
+                  : "text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800/50"
+              }`}
             >
               <span>🗓️</span> Últimos 30 días
             </button>
 
-            {/* CALENDARIO AD-HOC (RANGOS PERSONALIZADOS) */}
             <div className="pt-2 mt-2 border-t border-zinc-100 dark:border-zinc-800/40 space-y-1.5">
               <p className="px-2 text-[9px] font-bold text-zinc-400 uppercase tracking-wider">
                 Rango personalizado
@@ -315,7 +435,6 @@ export default function NotesManager() {
                   />
                 </div>
               </div>
-
               {(startDate || endDate) && (
                 <button
                   type="button"
@@ -334,7 +453,6 @@ export default function NotesManager() {
 
         <hr className="border-zinc-200 dark:border-zinc-800" />
 
-        {/* CONTENEDOR DE ETIQUETAS CON SCROLL BLINDADO */}
         <div className="space-y-1">
           <p className="px-2 text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2">
             #️⃣ Etiquetas
@@ -350,7 +468,11 @@ export default function NotesManager() {
                   key={t}
                   type="button"
                   onClick={() => setSelectedTag(t)}
-                  className={`flex w-full items-center justify-between rounded-lg px-3 py-1.5 text-sm font-medium capitalize transition-colors ${selectedTag === t ? "bg-blue-50 text-blue-600 dark:bg-blue-950/30 dark:text-blue-400" : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800/50"}`}
+                  className={`flex w-full items-center justify-between rounded-lg px-3 py-1.5 text-sm font-medium capitalize transition-colors ${
+                    selectedTag === t
+                      ? "bg-blue-50 text-blue-600 dark:bg-blue-950/30 dark:text-blue-400"
+                      : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800/50"
+                  }`}
                 >
                   <span># {t}</span>
                   <span className="text-xs bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded-full text-zinc-400">
@@ -363,9 +485,8 @@ export default function NotesManager() {
         </div>
       </aside>
 
-      {/* ================= CONTENIDO CENTRAL ================= */}
+      {/* CONTENIDO CENTRAL */}
       <main className="flex-1 flex flex-col overflow-hidden bg-white dark:bg-zinc-950">
-        {/* BARRA SUPERIOR (BUSCADOR + BOTÓN ACCIÓN) */}
         <header className="flex items-center justify-between border-b border-zinc-200 p-4 dark:border-zinc-800">
           <div className="w-96">
             <input
@@ -384,6 +505,18 @@ export default function NotesManager() {
           </button>
         </header>
 
+        {/* Mensajes de error/success */}
+        {error && (
+          <div className="mx-6 mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600 dark:border-red-900 dark:bg-red-950/30 dark:text-red-400">
+            ❌ {error}
+          </div>
+        )}
+        {success && (
+          <div className="mx-6 mt-4 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-600 dark:border-green-900 dark:bg-green-950/30 dark:text-green-400">
+            ✅ {success}
+          </div>
+        )}
+
         {/* REJILLA DE TARJETAS */}
         <section className="flex-1 overflow-y-auto p-6 bg-zinc-50/50 dark:bg-zinc-950">
           {loading ? (
@@ -399,30 +532,80 @@ export default function NotesManager() {
               {filteredNotes.map((note) => (
                 <div
                   key={note.id}
-                  className="flex flex-col rounded-xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900 justify-between min-h-[220px]"
+                  className="group flex flex-col rounded-xl border border-zinc-200 bg-white p-5 shadow-sm hover:shadow-md transition-all dark:border-zinc-800 dark:bg-zinc-900 justify-between min-h-[220px]"
                 >
                   <div>
                     <div className="flex items-center justify-between gap-2 mb-2">
                       <span className="inline-flex items-center rounded-full bg-zinc-100 px-2.5 py-0.5 text-xs font-medium text-zinc-800 dark:bg-zinc-800 dark:text-zinc-200">
                         🤖 {note.ai_model || "Desconocido"}
                       </span>
-                      {note.tag && (
-                        <span className="text-xs font-semibold text-blue-600 dark:text-blue-400 capitalize">
-                          #{note.tag}
-                        </span>
-                      )}
+                      <div className="flex items-center gap-1">
+                        {note.tag && (
+                          <span className="text-xs font-semibold text-blue-600 dark:text-blue-400 capitalize">
+                            #{note.tag}
+                          </span>
+                        )}
+                        <button
+                          onClick={() => startEdit(note)}
+                          className="opacity-0 group-hover:opacity-100 transition-opacity rounded p-1 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-600 dark:hover:bg-zinc-800"
+                          title="Editar nota"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={1.5}
+                            stroke="currentColor"
+                            className="w-4 h-4"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
+                            />
+                          </svg>
+                        </button>
+                        <button
+                          onClick={() => handleDeleteNote(note.id)}
+                          className="opacity-0 group-hover:opacity-100 transition-opacity rounded p-1 text-zinc-400 hover:bg-zinc-100 hover:text-red-600 dark:hover:bg-zinc-800"
+                          title="Eliminar nota"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={1.5}
+                            stroke="currentColor"
+                            className="w-4 h-4"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
+                            />
+                          </svg>
+                        </button>
+                      </div>
                     </div>
+
                     <h3 className="text-base font-bold text-zinc-900 dark:text-zinc-50 line-clamp-1">
                       {note.title}
                     </h3>
+
                     {note.summary && (
                       <p className="mt-2 text-xs text-zinc-600 dark:text-zinc-400 font-medium bg-zinc-50 dark:bg-zinc-950 p-2 rounded border border-zinc-100 dark:border-zinc-800/60 line-clamp-2">
                         {note.summary}
                       </p>
                     )}
-                    <p className="mt-3 text-xs text-zinc-500 dark:text-zinc-400 line-clamp-4 overflow-hidden leading-relaxed">
-                      {note.content}
-                    </p>
+
+                    <div
+                      onClick={() => startEdit(note)}
+                      className="cursor-pointer mt-3"
+                    >
+                      <p className="text-xs text-zinc-500 dark:text-zinc-400 line-clamp-4 overflow-hidden leading-relaxed hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors">
+                        {note.content}
+                      </p>
+                    </div>
                   </div>
 
                   <div className="mt-4 pt-3 border-t border-zinc-100 dark:border-zinc-800/60 flex items-center justify-between text-[10px] text-zinc-400">
@@ -447,14 +630,13 @@ export default function NotesManager() {
         </section>
       </main>
 
-      {/* ================= MODAL AVANZADO ================= */}
+      {/* ================= MODAL ================= */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/40 backdrop-blur-sm p-4 overflow-y-auto">
           <div className="w-full max-w-3xl rounded-xl border border-zinc-200 bg-white p-6 shadow-xl dark:border-zinc-800 dark:bg-zinc-900 my-8">
-            {/* TÍTULO DEL MODAL */}
             <div className="mb-4 flex items-center justify-between border-b border-zinc-100 pb-3 dark:border-zinc-800">
               <h2 className="text-lg font-bold text-zinc-900 dark:text-zinc-50">
-                Guardar Historial de IA
+                {title ? "Editar Historial" : "Guardar Historial de IA"}
               </h2>
               <button
                 onClick={closeModal}
@@ -464,7 +646,6 @@ export default function NotesManager() {
               </button>
             </div>
 
-            {/* SECTOR DE PESTAÑAS */}
             <div className="mb-6 flex border-b border-zinc-200 dark:border-zinc-700">
               <button
                 type="button"
@@ -501,7 +682,6 @@ export default function NotesManager() {
               </button>
             </div>
 
-            {/* FORMULARIO DINÁMICO */}
             <div className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
@@ -632,7 +812,6 @@ export default function NotesManager() {
               </div>
             </div>
 
-            {/* BOTONES ACCIONES */}
             <div className="flex justify-end gap-3 mt-6 pt-3 border-t border-zinc-100 dark:border-zinc-800">
               <button
                 type="button"
