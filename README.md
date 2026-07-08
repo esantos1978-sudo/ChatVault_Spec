@@ -1,18 +1,25 @@
 # 🔒 ChatVault
 
+![Next.js](https://img.shields.io/badge/Next.js-16-black?style=flat-square&logo=next.js)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=flat-square&logo=typescript)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.0-38bdf8?style=flat-square&logo=tailwindcss)
+![Supabase](https://img.shields.io/badge/Supabase-2.0-green?style=flat-square&logo=supabase)
+![Vercel](https://img.shields.io/badge/Vercel-Deployed-black?style=flat-square&logo=vercel)
+
 **Tus notas seguras en la nube.** ChatVault es una aplicación web moderna para organizar, almacenar y buscar conversaciones con modelos de lenguaje (LLMs) como ChatGPT, DeepSeek, Claude y Gemini. Ofrece autenticación segura, un CRUD completo de notas, importación automática desde URLs públicas, un sistema de etiquetas múltiples con autosugerencia y filtros inteligentes combinables.
 
 ---
 
 ## 🚀 Tecnologías
 
-| Tecnología       | Propósito                                     |
-| ---------------- | --------------------------------------------- |
-| **Next.js 16**   | Framework React con App Router                |
-| **TypeScript**   | Tipado estricto (`strict: true`)              |
-| **Tailwind CSS** | Estilos utilitarios y diseño responsive       |
-| **Supabase**     | Backend como servicio (Auth + DB PostgreSQL)  |
-| **ESLint**       | Linting con configuración estándar de Next.js |
+| Tecnología          | Propósito                                     |
+| ------------------- | --------------------------------------------- |
+| **Next.js 16**      | Framework React con App Router                |
+| **TypeScript**      | Tipado estricto (`strict: true`)              |
+| **Tailwind CSS v4** | Última versión del framework de estilos       |
+| **Supabase**        | Backend como servicio (Auth + DB PostgreSQL)  |
+| **react-hot-toast** | Notificaciones toast elegantes y modernas     |
+| **ESLint**          | Linting con configuración estándar de Next.js |
 
 ---
 
@@ -41,7 +48,9 @@
 ### 🏷️ Sistema de etiquetas múltiples
 
 - Asigna **múltiples etiquetas** a cada nota, separadas por comas.
-- **Autosugerencia inteligente:** mientras escribes, aparecen sugerencias de etiquetas existentes en un `datalist`.
+- **Autosugerencia inteligente:** mientras escribes, aparece un menú desplegable con sugerencias de etiquetas existentes, filtradas en tiempo real.
+- Navegación por teclado (flechas ↑/↓, Enter para seleccionar, Escape para cerrar).
+- **Eliminación de etiquetas:** en el sidebar, cada etiqueta tiene un botón "✕" para eliminarla de todas las notas de forma global.
 - Vista rápida del conteo de notas por etiqueta en el sidebar.
 
 ### 🔍 Sistema de filtros avanzado
@@ -52,11 +61,29 @@
 - **Rango de fechas personalizado:** calendario con selector "Desde" y "Hasta" para filtrar por cualquier período.
 - **Combinación de filtros:** todos los filtros se pueden usar simultáneamente.
 
-### 🎨 Diseño responsive con modo oscuro
+### 🔔 Notificaciones Toast
+
+- Se han reemplazado todos los `alert()` por notificaciones elegantes con **react-hot-toast**.
+- Toasts de éxito, error y carga con iconos personalizados y animaciones suaves.
+- Posicionados en la esquina inferior derecha con duración configurable.
+
+### 🎨 Diseño responsive con animaciones premium
 
 - Interfaz adaptable a cualquier dispositivo (móvil, tablet, escritorio).
 - **Modo oscuro** integrado que respeta la preferencia del sistema operativo.
-- Transiciones suaves y efectos visuales modernos (sombras, hover, gradientes).
+- **Animaciones de entrada:** las tarjetas aparecen con un efecto `fade-in-up` escalonado (`animation-delay` progresivo) que crea una sensación de cascada visual.
+- **Efectos hover:** las tarjetas se elevan (`hover:-translate-y-1.5`) con sombras premium y un brillo sutil en la esquina superior izquierda.
+- **Transiciones suaves:** todas las interacciones usan `cubic-bezier(0.34,1.56,0.64,1)` para un rebote elástico natural.
+- **Modal con zoom:** el modal de creación/edición aparece con un efecto `zoom-in` y fondo semitransparente con blur.
+- **Efecto de borde brillante:** al hacer hover sobre una tarjeta, aparece un anillo brillante alrededor con transición de 500ms.
+- **Sombras premium:** sombras personalizadas (`shadow-premium`, `shadow-premium-hover`) que dan profundidad y sofisticación.
+
+### 🧩 Refactorización en componentes
+
+- El código se ha dividido en componentes más pequeños y reutilizables:
+  - **`NoteCard`**: tarjeta individual de nota, completamente independiente y auto-contenida.
+  - **`NoteModal`**: modal de creación/edición con lógica de autosugerencia y gestión de etiquetas.
+  - **`AuthForm`**: formulario de autenticación (login/registro).
 
 ---
 
@@ -110,9 +137,9 @@ ChatVault_Spec/
 ├── src/
 │   ├── app/                        # Rutas y páginas (App Router de Next.js)
 │   │   ├── api/
-│   │   │   └── scrape/             # API route para scraping de URLs
-│   │   ├── layout.tsx              # Layout raíz con fuentes Geist
-│   │   ├── page.tsx                # Página principal (~640 líneas)
+│   │   │   └── scrape/route.ts     # API route para scraping de URLs
+│   │   ├── layout.tsx              # Layout raíz con fuentes Geist + Toaster
+│   │   ├── page.tsx                # Página principal (~400 líneas)
 │   │   └── globals.css             # Estilos globales
 │   ├── components/                 # Componentes React reutilizables
 │   │   ├── AuthForm.tsx            # Formulario de autenticación (login/registro)
