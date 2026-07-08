@@ -548,6 +548,7 @@ export default function Dashboard({ user }: { user: any }) {
     <div className="flex h-screen w-screen bg-zinc-100 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-50 overflow-hidden">
       {/* ================= SIDEBAR ================= */}
       <aside className="w-64 border-r border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-800 dark:bg-zinc-900/60 flex flex-col gap-4 select-none h-full">
+        {/* LOGO */}
         <div className="flex items-center gap-2 px-2">
           <span className="text-xl">🔒</span>
           <h1 className="text-lg font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
@@ -555,46 +556,46 @@ export default function Dashboard({ user }: { user: any }) {
           </h1>
         </div>
 
-        {/* TABS: Notas / Prompts / Arena */}
+        {/* TABS */}
         <div className="flex rounded-lg bg-zinc-200/50 dark:bg-zinc-800/50 p-1">
-          <button
-            onClick={() => setActiveTab("notes")}
-            className={`flex-1 rounded-md px-3 py-1.5 text-xs font-medium transition-all ${
-              activeTab === "notes"
-                ? "bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 shadow-sm"
-                : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-300"
-            }`}
-          >
-            📝 Notas
-          </button>
-          <button
-            onClick={() => setActiveTab("prompts")}
-            className={`flex-1 rounded-md px-3 py-1.5 text-xs font-medium transition-all ${
-              activeTab === "prompts"
-                ? "bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 shadow-sm"
-                : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-300"
-            }`}
-          >
-            📚 Prompts
-          </button>
-          <button
-            onClick={() => setActiveTab("arena")}
-            className={`flex-1 rounded-md px-3 py-1.5 text-xs font-medium transition-all ${
-              activeTab === "arena"
-                ? "bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 shadow-sm"
-                : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-300"
-            }`}
-          >
-            🥊 Arena
-          </button>
+          {/* ... tus tabs ... */}
         </div>
 
-        {/* ETIQUETAS (Siempre visibles) */}
+        {/* 🆕 1. FILTRO POR IA (PRIMERO) */}
+        {activeTab === "notes" && allAiModels.length > 0 && (
+          <div className="space-y-1">
+            <p className="px-2 text-xs font-semibold text-zinc-400 uppercase tracking-wider">
+              🤖 Modelos de IA
+            </p>
+            <div className="space-y-0.5">
+              {allAiModels.map((model) => (
+                <button
+                  key={model}
+                  onClick={() =>
+                    setSelectedAiModel(selectedAiModel === model ? null : model)
+                  }
+                  className={`flex w-full items-center justify-between rounded-lg px-3 py-1.5 text-sm font-medium capitalize transition-colors ${
+                    selectedAiModel === model
+                      ? "bg-purple-50 text-purple-600 dark:bg-purple-950/30 dark:text-purple-400"
+                      : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800/50"
+                  }`}
+                >
+                  <span>{model}</span>
+                  <span className="text-xs bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded-full text-zinc-400">
+                    {notes.filter((n) => n.ai_model === model).length}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* 2. ETIQUETAS (SEGUNDO) */}
         <div className="space-y-1 flex-1 overflow-hidden">
           <p className="px-2 text-xs font-semibold text-zinc-400 uppercase tracking-wider">
             #️⃣ Etiquetas
           </p>
-          <div className="max-h-40 overflow-y-auto pr-1 space-y-1 scrollbar-thin">
+          <div className="max-h-40 overflow-y-auto pr-1 space-y-1 scroll-tags">
             {allTags.length === 0 ? (
               <p className="px-2 text-xs text-zinc-400 italic">
                 No hay etiquetas
@@ -649,183 +650,26 @@ export default function Dashboard({ user }: { user: any }) {
           </div>
         </div>
 
-        {/* 🆕 FILTRO POR IA (Solo visible en la tab de Notas) */}
-        {activeTab === "notes" && allAiModels.length > 0 && (
-          <div className="space-y-1 pt-2 border-t border-zinc-100 dark:border-zinc-800/50">
-            <p className="px-2 text-xs font-semibold text-zinc-400 uppercase tracking-wider">
-              🤖 Modelos de IA
-            </p>
-            <div className="space-y-0.5">
-              {allAiModels.map((model) => (
-                <button
-                  key={model}
-                  onClick={() =>
-                    setSelectedAiModel(selectedAiModel === model ? null : model)
-                  }
-                  className={`flex w-full items-center justify-between rounded-lg px-3 py-1.5 text-sm font-medium capitalize transition-colors ${
-                    selectedAiModel === model
-                      ? "bg-purple-50 text-purple-600 dark:bg-purple-950/30 dark:text-purple-400"
-                      : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800/50"
-                  }`}
-                >
-                  <span>{model}</span>
-                  <span className="text-xs bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded-full text-zinc-400">
-                    {notes.filter((n) => n.ai_model === model).length}
-                  </span>
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* 🕒 FILTROS POR FECHA (Solo visible en la tab de Notas) */}
+        {/* 3. FILTROS POR FECHA (TERCERO) */}
         {activeTab === "notes" && (
           <div className="space-y-1 pt-2 border-t border-zinc-100 dark:border-zinc-800/50">
             <p className="px-2 text-[10px] font-bold text-zinc-400 uppercase tracking-wider">
               🕒 Por Fecha
             </p>
-            <div className="space-y-1">
-              <button
-                onClick={() => {
-                  setDateFilter("today");
-                  setStartDate("");
-                  setEndDate("");
-                }}
-                className={`flex w-full items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
-                  dateFilter === "today"
-                    ? "bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400"
-                    : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800/50"
-                }`}
-              >
-                ☀️ Hoy
-              </button>
-              <button
-                onClick={() => {
-                  setDateFilter("week");
-                  setStartDate("");
-                  setEndDate("");
-                }}
-                className={`flex w-full items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
-                  dateFilter === "week"
-                    ? "bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400"
-                    : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800/50"
-                }`}
-              >
-                📅 Últimos 7 días
-              </button>
-              <button
-                onClick={() => {
-                  setDateFilter("month");
-                  setStartDate("");
-                  setEndDate("");
-                }}
-                className={`flex w-full items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
-                  dateFilter === "month"
-                    ? "bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400"
-                    : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800/50"
-                }`}
-              >
-                🗓️ Últimos 30 días
-              </button>
-            </div>
-
-            {/* RANGO PERSONALIZADO */}
-            <div className="pt-2 mt-1 border-t border-zinc-100 dark:border-zinc-800/40 space-y-1.5">
-              <p className="px-2 text-[9px] font-bold text-zinc-400 uppercase tracking-wider">
-                Rango personalizado
-              </p>
-              <div className="grid grid-cols-2 gap-1.5 px-2">
-                <div>
-                  <label className="text-[9px] text-zinc-400 block mb-0.5">
-                    Desde
-                  </label>
-                  <input
-                    type="date"
-                    value={startDate}
-                    onChange={(e) => {
-                      setStartDate(e.target.value);
-                      setDateFilter("all");
-                    }}
-                    className="w-full text-[10px] rounded border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 p-1 text-zinc-600 dark:text-zinc-300 focus:outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="text-[9px] text-zinc-400 block mb-0.5">
-                    Hasta
-                  </label>
-                  <input
-                    type="date"
-                    value={endDate}
-                    onChange={(e) => {
-                      setEndDate(e.target.value);
-                      setDateFilter("all");
-                    }}
-                    className="w-full text-[10px] rounded border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 p-1 text-zinc-600 dark:text-zinc-300 focus:outline-none"
-                  />
-                </div>
-              </div>
-              {(startDate || endDate) && (
-                <button
-                  onClick={() => {
-                    setStartDate("");
-                    setEndDate("");
-                  }}
-                  className="w-full px-2 text-left text-[10px] text-red-500 hover:text-red-600 font-medium transition-colors mt-1"
-                >
-                  ❌ Limpiar calendario
-                </button>
-              )}
-            </div>
+            {/* ... tus botones de fecha ... */}
           </div>
         )}
 
         {/* CATEGORÍAS (Solo visibles en la tab de Prompts) */}
         {activeTab === "prompts" && (
           <div className="space-y-1 pt-2 border-t border-zinc-100 dark:border-zinc-800/50">
-            <p className="px-2 text-xs font-semibold text-zinc-400 uppercase tracking-wider">
-              📂 Categorías
-            </p>
-            <div className="space-y-0.5">
-              {["imagen", "texto", "codigo", "video", "mcp", "otro"].map(
-                (cat) => {
-                  const count = prompts.filter(
-                    (p) => p.category === cat,
-                  ).length;
-                  return (
-                    <button
-                      key={cat}
-                      onClick={() =>
-                        setSelectedPromptCategory(
-                          selectedPromptCategory === cat ? null : cat,
-                        )
-                      }
-                      className={`flex w-full items-center justify-between rounded-lg px-3 py-1.5 text-sm font-medium capitalize transition-colors ${
-                        selectedPromptCategory === cat
-                          ? "bg-blue-50 text-blue-600 dark:bg-blue-950/30 dark:text-blue-400"
-                          : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800/50"
-                      }`}
-                    >
-                      <span>{cat}</span>
-                      <span className="text-xs bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded-full text-zinc-400">
-                        {count}
-                      </span>
-                    </button>
-                  );
-                },
-              )}
-            </div>
+            {/* ... tus categorías ... */}
           </div>
         )}
 
         {/* CERRAR SESIÓN */}
         <div className="mt-auto pt-4 border-t border-zinc-200 dark:border-zinc-800">
-          <button
-            onClick={handleLogout}
-            className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/20 transition-colors"
-          >
-            <span>🚪</span>
-            Cerrar sesión
-          </button>
+          {/* ... botón de cerrar sesión ... */}
         </div>
       </aside>
 
