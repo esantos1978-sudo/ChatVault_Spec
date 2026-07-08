@@ -9,7 +9,8 @@ interface Note {
   title: string;
   content: string;
   summary?: string;
-  tag?: string;
+  tag?: string; // Lo mantenemos por compatibilidad, pero usaremos tags
+  tags?: string[]; // NUEVO: array de etiquetas
   ai_model?: string;
   source_type?: string;
   source_url?: string;
@@ -74,7 +75,11 @@ function NotesManager({ user }: { user: any }) {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [summary, setSummary] = useState("");
-  const [tag, setTag] = useState("");
+
+  // 🏷️ NUEVO: Estado para múltiples etiquetas
+  const [tags, setTags] = useState<string[]>([]);
+  const [tagsInput, setTagsInput] = useState(""); // Texto que escribe el usuario
+
   const [aiModel, setAiModel] = useState("DeepSeek-R1");
   const [sourceUrl, setSourceUrl] = useState("");
   const [saving, setSaving] = useState(false);
@@ -107,16 +112,16 @@ function NotesManager({ user }: { user: any }) {
     }
   }
 
-  const allTags = Array.from(
-    new Set(notes.map((n) => n.tag).filter((t): t is string => !!t)),
-  );
+  // 🏷️ NUEVO: Extraer etiquetas únicas de TODAS las notas (de los arrays)
+  const allTags = Array.from(new Set(notes.flatMap((n) => n.tags || [])));
 
   const openModal = () => {
     console.log("📂 Abriendo modal");
     setTitle("");
     setContent("");
     setSummary("");
-    setTag("");
+    setTags([]);
+    setTagsInput("");
     setSourceUrl("");
     setSourceType("text");
     setError(null);
@@ -136,7 +141,8 @@ function NotesManager({ user }: { user: any }) {
     setTitle(note.title);
     setContent(note.content);
     setSummary(note.summary || "");
-    setTag(note.tag || "");
+    setTags(note.tags || []);
+    setTagsInput((note.tags || []).join(", "));
     setAiModel(note.ai_model || "DeepSeek-R1");
     setSourceType((note.source_type as "text" | "url" | "file") || "text");
     setSourceUrl(note.source_url || "");
@@ -175,6 +181,7 @@ function NotesManager({ user }: { user: any }) {
     console.log("📝 sourceType:", sourceType);
     console.log("📝 title:", title);
     console.log("📝 sourceUrl:", sourceUrl);
+    console.log("🏷️ tags:", tags);
 
     setError(null);
     setSuccess(null);
@@ -237,11 +244,12 @@ function NotesManager({ user }: { user: any }) {
         }
       }
 
+      // 🏷️ NUEVO: Guardamos el array de tags
       const noteData = {
         title: finalTitle || "Conversación sin título",
         content: finalContent || "Contenido vacío",
         summary: summary || null,
-        tag: tag.trim().toLowerCase() || null,
+        tags: tags.length > 0 ? tags : null, // Guardamos el array
         ai_model: aiModel,
         source_type: sourceType,
         source_url: sourceType === "url" ? sourceUrl : null,
@@ -273,7 +281,8 @@ function NotesManager({ user }: { user: any }) {
 
   // ==================== FILTROS ====================
   const filteredNotes = notes
-    .filter((n) => (selectedTag ? n.tag === selectedTag : true))
+    // 🏷️ NUEVO: Filtrar por etiqueta usando el array
+    .filter((n) => (selectedTag ? (n.tags || []).includes(selectedTag) : true))
     .filter((n) => {
       const noteDate = new Date(n.created_at);
       const now = new Date();
@@ -444,6 +453,7 @@ function NotesManager({ user }: { user: any }) {
 
         <hr className="border-zinc-200 dark:border-zinc-800" />
 
+        {/* 🏷️ ETIQUETAS CON SCROLL (ACTUALIZADO) */}
         <div className="space-y-1 flex-1 overflow-hidden">
           <p className="px-2 text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2">
             #️⃣ Etiquetas
@@ -467,7 +477,7 @@ function NotesManager({ user }: { user: any }) {
                 >
                   <span># {t}</span>
                   <span className="text-xs bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded-full text-zinc-400">
-                    {notes.filter((n) => n.tag === t).length}
+                    {notes.filter((n) => (n.tags || []).includes(t)).length}
                   </span>
                 </button>
               ))
@@ -517,7 +527,7 @@ function NotesManager({ user }: { user: any }) {
           </div>
         )}
 
-        {/* ================= REJILLA DE TARJETAS REDISEÑADAS ================= */}
+        {/* ================= REJILLA DE TARJETAS ================= */}
         <section className="flex-1 overflow-y-auto p-6 bg-gradient-to-br from-zinc-50/50 via-white/50 to-zinc-50/30 dark:from-zinc-950 dark:via-zinc-950/95 dark:to-zinc-950">
           {loading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -566,18 +576,26 @@ function NotesManager({ user }: { user: any }) {
                   <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-transparent group-hover:ring-blue-500/20 transition-all duration-300 pointer-events-none" />
 
                   <div className="relative z-10">
-                    {/* Cabecera: IA + Etiqueta + Botones */}
+                    {/* Cabecera: IA + Etiquetas + Botones */}
                     <div className="flex items-start justify-between gap-2 mb-3">
                       <div className="flex flex-wrap items-center gap-2">
                         <span className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-zinc-100 to-zinc-200/80 dark:from-zinc-800 dark:to-zinc-700/80 px-3 py-1 text-[10px] font-semibold text-zinc-700 dark:text-zinc-300 shadow-sm">
                           <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                           {note.ai_model || "Desconocido"}
                         </span>
-                        {note.tag && (
-                          <span className="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-blue-50 to-blue-100/80 dark:from-blue-950/50 dark:to-blue-900/30 px-2.5 py-1 text-[10px] font-bold text-blue-700 dark:text-blue-300 border border-blue-200/50 dark:border-blue-800/30">
-                            <span className="text-[8px]">#</span>
-                            {note.tag}
-                          </span>
+                        {/* 🏷️ MÚLTIPLES ETIQUETAS */}
+                        {note.tags && note.tags.length > 0 && (
+                          <div className="flex flex-wrap gap-1">
+                            {note.tags.map((t) => (
+                              <span
+                                key={t}
+                                className="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-blue-50 to-blue-100/80 dark:from-blue-950/50 dark:to-blue-900/30 px-2.5 py-1 text-[10px] font-bold text-blue-700 dark:text-blue-300 border border-blue-200/50 dark:border-blue-800/30"
+                              >
+                                <span className="text-[8px]">#</span>
+                                {t}
+                              </span>
+                            ))}
+                          </div>
                         )}
                       </div>
 
@@ -816,24 +834,41 @@ function NotesManager({ user }: { user: any }) {
                   </select>
                 </div>
 
+                {/* 🏷️ NUEVO INPUT DE ETIQUETAS MÚLTIPLES */}
                 <div>
                   <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1.5">
-                    🏷️ Etiqueta
+                    🏷️ Etiquetas (separadas por comas)
                   </label>
                   <div className="relative">
                     <input
                       type="text"
-                      value={tag}
-                      onChange={(e) => setTag(e.target.value)}
-                      placeholder="Escribe o selecciona una..."
-                      list="existing-tags"
+                      value={tagsInput}
+                      onChange={(e) => {
+                        const raw = e.target.value;
+                        setTagsInput(raw);
+                        // Convertir el texto en array de etiquetas limpias
+                        const array = raw
+                          .split(",")
+                          .map((t) => t.trim())
+                          .filter((t) => t.length > 0);
+                        setTags(array);
+                      }}
+                      placeholder="Ej: programacion, deepseek, fix"
                       className="w-full rounded-xl border-0 bg-zinc-100/80 dark:bg-zinc-800/80 px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-blue-500/50 dark:focus:ring-blue-400/50 transition-all duration-200"
                     />
-                    <datalist id="existing-tags">
-                      {allTags.map((t) => (
-                        <option key={t} value={t} />
-                      ))}
-                    </datalist>
+                    {/* Vista previa de etiquetas mientras escribes */}
+                    {tags.length > 0 && (
+                      <div className="mt-2 flex flex-wrap gap-1">
+                        {tags.map((t, idx) => (
+                          <span
+                            key={idx}
+                            className="inline-flex items-center gap-1 rounded-full bg-blue-50 dark:bg-blue-950/50 px-2 py-0.5 text-[10px] font-medium text-blue-700 dark:text-blue-300 border border-blue-200/50 dark:border-blue-800/30"
+                          >
+                            #{t}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
