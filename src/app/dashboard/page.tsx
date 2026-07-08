@@ -6,6 +6,8 @@ import { NoteCard } from "@/components/NoteCard";
 import { NoteModal } from "@/components/NoteModal";
 import { PromptCard } from "@/components/PromptCard";
 import { PromptModal } from "@/components/PromptModal";
+import { ArenaCard } from "@/components/ArenaCard";
+import { ArenaModal } from "@/components/ArenaModal";
 import toast from "react-hot-toast";
 
 interface Note {
@@ -32,7 +34,9 @@ interface Prompt {
 
 export default function Dashboard({ user }: { user: any }) {
   // ==================== ESTADOS GENERALES ====================
-  const [activeTab, setActiveTab] = useState<"notes" | "prompts">("notes");
+  const [activeTab, setActiveTab] = useState<"notes" | "prompts" | "arena">(
+    "notes",
+  );
 
   // ==================== ESTADOS PARA NOTAS ====================
   const [notes, setNotes] = useState<Note[]>([]);
@@ -82,6 +86,13 @@ export default function Dashboard({ user }: { user: any }) {
   const [promptSaving, setPromptSaving] = useState(false);
   const [editingPromptId, setEditingPromptId] = useState<string | null>(null);
 
+  // ==================== ESTADOS PARA LA ARENA ====================
+  const [arenaComparisons, setArenaComparisons] = useState<any[]>([]);
+  const [arenaLoading, setArenaLoading] = useState(true);
+  const [arenaModalOpen, setArenaModalOpen] = useState(false);
+  const [arenaSaving, setArenaSaving] = useState(false);
+  const [arenaSearchQuery, setArenaSearchQuery] = useState("");
+
   // ==================== ESTADOS COMUNES ====================
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -98,6 +109,7 @@ export default function Dashboard({ user }: { user: any }) {
   useEffect(() => {
     fetchNotes();
     fetchPrompts();
+    fetchArenaComparisons();
   }, []);
 
   // ==================== FUNCIONES PARA NOTAS ====================
@@ -188,6 +200,67 @@ export default function Dashboard({ user }: { user: any }) {
         (p.tags && p.tags.some((t) => t.toLowerCase().includes(query)))
       );
     });
+
+  // ==================== FUNCIONES PARA LA ARENA ====================
+  async function fetchArenaComparisons() {
+    try {
+      setArenaLoading(true);
+      const { data, error } = await supabase
+        .from("arena_comparisons")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+      setArenaComparisons(data || []);
+    } catch (err: any) {
+      console.error("Error cargando comparaciones:", err.message);
+    } finally {
+      setArenaLoading(false);
+    }
+  }
+
+  const filteredArenaComparisons = arenaComparisons.filter((c) => {
+    const query = arenaSearchQuery.toLowerCase().trim();
+    if (!query) return true;
+    return c.prompt.toLowerCase().includes(query);
+  });
+
+  const handleArenaSubmit = async (data: any) => {
+    try {
+      setArenaSaving(true);
+      const { error } = await supabase.from("arena_comparisons").insert([
+        {
+          prompt: data.prompt,
+          responses: data.responses,
+          user_id: user.id,
+        },
+      ]);
+
+      if (error) throw error;
+      toast.success("¡Comparación guardada! 🥊");
+      setArenaModalOpen(false);
+      fetchArenaComparisons();
+    } catch (err: any) {
+      toast.error("Error: " + err.message);
+    } finally {
+      setArenaSaving(false);
+    }
+  };
+
+  const handleDeleteArenaComparison = async (id: string) => {
+    if (!confirm("¿Eliminar esta comparación?")) return;
+    try {
+      const { error } = await supabase
+        .from("arena_comparisons")
+        .delete()
+        .eq("id", id);
+      if (error) throw error;
+      toast.success("Comparación eliminada");
+      fetchArenaComparisons();
+    } catch (err: any) {
+      toast.error("Error: " + err.message);
+    }
+  };
 
   // ==================== HANDLE SUBMIT NOTAS ====================
   const handleNoteSubmit = async () => {
@@ -465,13 +538,12 @@ export default function Dashboard({ user }: { user: any }) {
     <div className="flex h-screen w-screen bg-zinc-100 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-50 overflow-hidden">
       {/* ================= SIDEBAR ================= */}
       <aside className="w-64 border-r border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-800 dark:bg-zinc-900/50 flex flex-col gap-4 select-none h-full">
-        {/* LOGO */}
         <div className="flex items-center gap-2 px-2">
           <span className="text-xl">🔒</span>
           <h1 className="text-lg font-bold tracking-tight">ChatVault</h1>
         </div>
 
-        {/* TABS: Notas / Prompts */}
+        {/* TABS: Notas / Prompts / Arena */}
         <div className="flex rounded-lg bg-zinc-200/50 dark:bg-zinc-800/50 p-1">
           <button
             onClick={() => setActiveTab("notes")}
@@ -492,6 +564,16 @@ export default function Dashboard({ user }: { user: any }) {
             }`}
           >
             📚 Prompts
+          </button>
+          <button
+            onClick={() => setActiveTab("arena")}
+            className={`flex-1 rounded-md px-3 py-1.5 text-xs font-medium transition-all ${
+              activeTab === "arena"
+                ? "bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 shadow-sm"
+                : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-300"
+            }`}
+          >
+            🥊 Arena
           </button>
         </div>
 
@@ -555,7 +637,7 @@ export default function Dashboard({ user }: { user: any }) {
           </div>
         </div>
 
-        {/* 🆕 CATEGORÍAS (Solo visibles en la tab de Prompts) */}
+        {/* CATEGORÍAS (Solo visibles en la tab de Prompts) */}
         {activeTab === "prompts" && (
           <div className="space-y-1 pt-2 border-t border-zinc-100 dark:border-zinc-800/50">
             <p className="px-2 text-xs font-semibold text-zinc-400 uppercase tracking-wider">
@@ -615,24 +697,38 @@ export default function Dashboard({ user }: { user: any }) {
               placeholder={
                 activeTab === "notes"
                   ? "Buscar en notas..."
-                  : "Buscar en prompts (título, contenido, tags)..."
+                  : activeTab === "prompts"
+                    ? "Buscar en prompts (título, contenido, tags)..."
+                    : "Buscar en comparaciones..."
               }
-              value={activeTab === "notes" ? searchQuery : promptSearchQuery}
+              value={
+                activeTab === "notes"
+                  ? searchQuery
+                  : activeTab === "prompts"
+                    ? promptSearchQuery
+                    : arenaSearchQuery
+              }
               onChange={(e) => {
                 if (activeTab === "notes") setSearchQuery(e.target.value);
-                else setPromptSearchQuery(e.target.value);
+                else if (activeTab === "prompts")
+                  setPromptSearchQuery(e.target.value);
+                else setArenaSearchQuery(e.target.value);
               }}
               className="w-full rounded-lg border border-zinc-300 px-4 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-zinc-400 dark:focus:border-zinc-600"
             />
           </div>
 
           <button
-            onClick={() =>
-              activeTab === "notes" ? openNoteModal() : openPromptModal()
-            }
+            onClick={() => {
+              if (activeTab === "notes") openNoteModal();
+              else if (activeTab === "prompts") openPromptModal();
+              else setArenaModalOpen(true);
+            }}
             className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-zinc-50 hover:bg-zinc-800 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200 transition-colors ml-4"
           >
-            {activeTab === "notes" ? "➕ Nueva nota" : "📚 Nuevo prompt"}
+            {activeTab === "notes" && "➕ Nueva nota"}
+            {activeTab === "prompts" && "📚 Nuevo prompt"}
+            {activeTab === "arena" && "🥊 Nueva comparación"}
           </button>
         </header>
 
@@ -753,6 +849,50 @@ export default function Dashboard({ user }: { user: any }) {
               )}
             </>
           )}
+
+          {/* ==================== TAB ARENA ==================== */}
+          {activeTab === "arena" && (
+            <>
+              {arenaLoading ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {[1, 2, 3, 4, 5, 6].map((i) => (
+                    <div
+                      key={i}
+                      className="rounded-2xl border border-zinc-200/60 dark:border-zinc-800/60 bg-white dark:bg-zinc-900 p-5 min-h-[200px] animate-pulse"
+                    >
+                      <div className="h-5 w-3/4 rounded-lg bg-zinc-200 dark:bg-zinc-800 mb-3" />
+                      <div className="grid grid-cols-2 gap-2">
+                        <div className="h-16 rounded-xl bg-zinc-200 dark:bg-zinc-800" />
+                        <div className="h-16 rounded-xl bg-zinc-200 dark:bg-zinc-800" />
+                      </div>
+                      <div className="h-8 w-1/3 rounded-lg bg-zinc-200 dark:bg-zinc-800 mt-3" />
+                    </div>
+                  ))}
+                </div>
+              ) : filteredArenaComparisons.length === 0 ? (
+                <div className="flex h-64 flex-col items-center justify-center rounded-2xl border-2 border-dashed border-zinc-300 dark:border-zinc-700 bg-white/50 dark:bg-zinc-900/30">
+                  <span className="text-4xl mb-4">🥊</span>
+                  <p className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
+                    No hay comparaciones
+                  </p>
+                  <p className="text-xs text-zinc-400 dark:text-zinc-500 mt-1">
+                    Crea tu primera comparación en la Arena
+                  </p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                  {filteredArenaComparisons.map((comparison, index) => (
+                    <ArenaCard
+                      key={comparison.id}
+                      comparison={comparison}
+                      onDelete={handleDeleteArenaComparison}
+                      index={index}
+                    />
+                  ))}
+                </div>
+              )}
+            </>
+          )}
         </section>
       </main>
 
@@ -813,6 +953,13 @@ export default function Dashboard({ user }: { user: any }) {
         setShowSuggestions={setPromptShowSuggestions}
         setSelectedSuggestion={setPromptSelectedSuggestion}
         editingId={editingPromptId}
+      />
+
+      <ArenaModal
+        isOpen={arenaModalOpen}
+        onClose={() => setArenaModalOpen(false)}
+        onSubmit={handleArenaSubmit}
+        saving={arenaSaving}
       />
     </div>
   );

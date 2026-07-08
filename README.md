@@ -6,7 +6,7 @@
 ![Supabase](https://img.shields.io/badge/Supabase-2.0-green?style=flat-square&logo=supabase)
 ![Vercel](https://img.shields.io/badge/Vercel-Deployed-black?style=flat-square&logo=vercel)
 
-**Tus notas seguras en la nube.** ChatVault es una aplicación web moderna para organizar, almacenar y buscar conversaciones con modelos de lenguaje (LLMs) como ChatGPT, DeepSeek, Claude y Gemini. Ofrece autenticación segura, un CRUD completo de notas, importación automática desde URLs públicas, un sistema de etiquetas múltiples con autosugerencia y filtros inteligentes combinables.
+**Tu baúl de conocimiento para conversaciones con IA.** ChatVault es una aplicación web moderna para guardar, organizar y reutilizar chats, prompts y recursos de tus modelos de lenguaje favoritos (ChatGPT, DeepSeek, Claude, Gemini y más). Ofrece autenticación segura, un CRUD completo de notas y prompts, scraping inteligente de URLs, un sistema de etiquetas compartidas, filtros avanzados y una experiencia de usuario premium con modo oscuro y animaciones.
 
 ---
 
@@ -25,19 +25,28 @@
 
 ## ✨ Funcionalidades
 
+### 🏠 Landing Page Moderna
+
+- **Hero atractivo** con gradientes, badge animado y llamada a la acción.
+- **Sección de funcionalidades** con grid de 6 tarjetas interactivas (Notas inteligentes, Biblioteca de Prompts, Scraping de URLs, Etiquetas múltiples, Búsqueda avanzada, Seguridad).
+- **"Cómo funciona"** en 3 pasos: Regístrate → Guarda → Organiza.
+- **Placeholder de video** para futura demostración visual.
+- **Footer** con enlaces a Términos, Privacidad y Contacto.
+- **Modo oscuro** integrado que respeta la preferencia del sistema operativo.
+
 ### 🔐 Autenticación de usuarios
 
 - **Registro e inicio de sesión** con correo electrónico y contraseña mediante Supabase Auth.
-- **Protección de rutas:** el panel de notas solo es accesible para usuarios autenticados.
+- **Protección de rutas:** el dashboard solo es accesible para usuarios autenticados.
 - **Cierre de sesión** con un clic desde el sidebar.
-- **Row Level Security (RLS):** cada usuario solo ve, crea, edita y elimina sus propias notas.
+- **Row Level Security (RLS):** cada usuario solo ve, crea, edita y elimina sus propios datos.
 
-### 📝 CRUD completo de notas
+### 📝 CRUD completo de Notas
 
 - **Crear** notas con título, contenido, resumen, etiquetas múltiples y modelo de IA asociado.
 - **Leer** todas las notas en una rejilla de tarjetas con diseño responsive.
 - **Editar** cualquier nota directamente desde la tarjeta con un clic en el icono de lápiz.
-- **Eliminar** notas con confirmación previa y un icono de papelera.
+- **Eliminar** notas con confirmación previa y feedback visual mediante toast.
 
 ### 🌐 Scraping inteligente de URLs
 
@@ -45,20 +54,35 @@
 - Si no se puede extraer contenido, se guarda un fallback con el enlace original.
 - Corrección automática de URLs sin protocolo (se añade `https://` si falta).
 
-### 🏷️ Sistema de etiquetas múltiples
+### 📚 Biblioteca de Prompts
 
-- Asigna **múltiples etiquetas** a cada nota, separadas por comas.
+- **CRUD completo** de prompts reutilizables con título, contenido, categoría y etiquetas.
+- **Categorías por tipo de contenido:**
+  - 🖼️ Imagen
+  - 📝 Texto
+  - 💻 Código
+  - 🎬 Video
+  - 🔌 MCP
+  - 📂 Otro
+- **Contador de usos:** cada vez que copias un prompt, se incrementa automáticamente su contador `times_used`.
+- **Feedback visual al copiar:** animación de 2 segundos que indica que el prompt se ha copiado al portapapeles.
+- **Filtro por categorías** en el sidebar con conteo de prompts por categoría.
+
+### 🏷️ Sistema de etiquetas compartidas
+
+- Las etiquetas funcionan **globalmente** para notas y prompts.
 - **Autosugerencia inteligente:** mientras escribes, aparece un menú desplegable con sugerencias de etiquetas existentes, filtradas en tiempo real.
 - Navegación por teclado (flechas ↑/↓, Enter para seleccionar, Escape para cerrar).
-- **Eliminación de etiquetas:** en el sidebar, cada etiqueta tiene un botón "✕" para eliminarla de todas las notas de forma global.
-- Vista rápida del conteo de notas por etiqueta en el sidebar.
+- **Eliminación de etiquetas:** en el sidebar, cada etiqueta tiene un botón "✕" para eliminarla de todas las notas y prompts de forma global.
+- Vista rápida del conteo combinado de notas + prompts por etiqueta en el sidebar.
 
 ### 🔍 Sistema de filtros avanzado
 
-- **Búsqueda en tiempo real:** filtra por título, resumen o contenido mientras escribes.
-- **Filtro por etiquetas:** selecciona una etiqueta en el sidebar para ver solo notas de esa categoría.
+- **Búsqueda en tiempo real:** filtra por título, contenido, resumen o etiquetas.
+- **Filtro por etiquetas:** selecciona una etiqueta en el sidebar para ver solo notas/prompts de esa categoría.
 - **Filtros temporales:** botones rápidos para ver notas de hoy, últimos 7 días o últimos 30 días.
 - **Rango de fechas personalizado:** calendario con selector "Desde" y "Hasta" para filtrar por cualquier período.
+- **Filtro por categorías** en la sección de prompts (imagen, texto, código, video, MCP, otro).
 - **Combinación de filtros:** todos los filtros se pueden usar simultáneamente.
 
 ### 🔔 Notificaciones Toast
@@ -77,13 +101,22 @@
 - **Modal con zoom:** el modal de creación/edición aparece con un efecto `zoom-in` y fondo semitransparente con blur.
 - **Efecto de borde brillante:** al hacer hover sobre una tarjeta, aparece un anillo brillante alrededor con transición de 500ms.
 - **Sombras premium:** sombras personalizadas (`shadow-premium`, `shadow-premium-hover`) que dan profundidad y sofisticación.
+- **Skeleton loaders:** animaciones de carga placeholder mientras se obtienen los datos.
 
-### 🧩 Refactorización en componentes
+### 🧩 Componentes modulares
 
-- El código se ha dividido en componentes más pequeños y reutilizables:
-  - **`NoteCard`**: tarjeta individual de nota, completamente independiente y auto-contenida.
-  - **`NoteModal`**: modal de creación/edición con lógica de autosugerencia y gestión de etiquetas.
-  - **`AuthForm`**: formulario de autenticación (login/registro).
+- El código está organizado en componentes React reutilizables y auto-contenidos:
+  - **`NoteCard`**: tarjeta individual de nota con efectos hover y acciones.
+  - **`NoteModal`**: modal de creación/edición de notas con pestañas (texto, URL, archivo), autosugerencia de etiquetas y selector de modelo de IA.
+  - **`PromptCard`**: tarjeta de prompt con badge de categoría por colores, contador de usos y botón de copia con feedback visual.
+  - **`PromptModal`**: modal de creación/edición de prompts con selector de categorías y autosugerencia de etiquetas.
+  - **`AuthForm`**: formulario de autenticación (login/registro) con validación y manejo de errores.
+
+---
+
+## 📸 Capturas de pantalla
+
+> _Próximamente: capturas de la Landing Page, Dashboard con Notas y Biblioteca de Prompts._
 
 ---
 
@@ -135,36 +168,40 @@ Abre [http://localhost:3000](http://localhost:3000) en tu navegador.
 ```
 ChatVault_Spec/
 ├── src/
-│   ├── app/                        # Rutas y páginas (App Router de Next.js)
+│   ├── app/                            # Rutas y páginas (App Router de Next.js)
 │   │   ├── api/
-│   │   │   └── scrape/route.ts     # API route para scraping de URLs
-│   │   ├── layout.tsx              # Layout raíz con fuentes Geist + Toaster
-│   │   ├── page.tsx                # Página principal (~400 líneas)
-│   │   └── globals.css             # Estilos globales
-│   ├── components/                 # Componentes React reutilizables
-│   │   ├── AuthForm.tsx            # Formulario de autenticación (login/registro)
-│   │   ├── NoteCard.tsx            # Tarjeta individual de nota (independiente)
-│   │   └── NoteModal.tsx           # Modal de creación/edición de notas
-│   ├── lib/                        # Utilidades, helpers y lógica de negocio
-│   │   └── supabaseClient.ts       # Cliente de Supabase inicializado
-│   └── SupabaseClient.ts           # Cliente de Supabase (raíz, respaldo)
+│   │   │   └── scrape/route.ts         # API route para scraping de URLs
+│   │   ├── dashboard/
+│   │   │   └── page.tsx                # Dashboard con Notas y Prompts (~820 líneas)
+│   │   ├── layout.tsx                  # Layout raíz con fuentes Geist + Toaster
+│   │   ├── page.tsx                    # Landing page + lógica de autenticación (~320 líneas)
+│   │   └── globals.css                 # Estilos globales y animaciones personalizadas
+│   ├── components/                     # Componentes React reutilizables
+│   │   ├── AuthForm.tsx                # Formulario de autenticación (login/registro)
+│   │   ├── NoteCard.tsx                # Tarjeta individual de nota con efectos hover
+│   │   ├── NoteModal.tsx               # Modal de creación/edición de notas (3 pestañas)
+│   │   ├── PromptCard.tsx              # Tarjeta de prompt con badge de categoría y contador
+│   │   └── PromptModal.tsx             # Modal de creación/edición de prompts con categorías
+│   ├── lib/                            # Utilidades, helpers y lógica de negocio
+│   │   └── supabaseClient.ts           # Cliente de Supabase inicializado
+│   └── SupabaseClient.ts               # Cliente de Supabase (raíz, respaldo)
 ├── supabase/
-│   └── migrations/                 # Migraciones SQL de la base de datos
+│   └── migrations/                     # Migraciones SQL de la base de datos
 │       └── 00001_create_notes_table.sql
-├── scripts/                        # Scripts auxiliares
-│   ├── run-migration.mjs           # Ejecuta migraciones contra Supabase
-│   └── test-supabase.mjs           # Verifica la conexión con Supabase
-├── docs/                           # Documentación técnica
-│   ├── arquitectura.md             # ADRs y decisiones arquitectónicas
-│   ├── components.md               # Documentación de componentes
-│   └── database.md                 # Esquema y políticas de la base de datos
+├── scripts/                            # Scripts auxiliares
+│   ├── run-migration.mjs               # Ejecuta migraciones contra Supabase
+│   └── test-supabase.mjs               # Verifica la conexión con Supabase
+├── docs/                               # Documentación técnica
+│   ├── arquitectura.md                 # ADRs y decisiones arquitectónicas
+│   ├── components.md                   # Documentación de componentes
+│   └── database.md                     # Esquema y políticas de la base de datos
 ├── .specify/
-│   └── constitution.md             # Constitución del proyecto (Spec Kit)
-├── .env.local                      # ⚠️ Variables de entorno (NO SUBIR A GIT)
-├── .gitignore                      # Ignora .env.local, node_modules, .next, etc.
-├── next.config.ts                  # Configuración de Next.js
-├── tailwind.config.ts              # Configuración de Tailwind CSS
-└── tsconfig.json                   # Configuración de TypeScript (strict mode)
+│   └── constitution.md                 # Constitución del proyecto (Spec Kit)
+├── .env.local                          # ⚠️ Variables de entorno (NO SUBIR A GIT)
+├── .gitignore                          # Ignora .env.local, node_modules, .next, etc.
+├── next.config.ts                      # Configuración de Next.js
+├── tailwind.config.ts                  # Configuración de Tailwind CSS
+└── tsconfig.json                       # Configuración de TypeScript (strict mode)
 ```
 
 ### Descripción de directorios clave
@@ -172,6 +209,7 @@ ChatVault_Spec/
 | Directorio             | Propósito                                                                                    |
 | ---------------------- | -------------------------------------------------------------------------------------------- |
 | `src/app/`             | Sistema de rutas basado en el App Router de Next.js. Cada subdirectorio representa una ruta. |
+| `src/app/dashboard/`   | Dashboard principal con tabs de Notas y Prompts, sidebar con etiquetas y categorías.         |
 | `src/components/`      | Componentes React atómicos y reutilizables (autenticación, tarjetas, modales).               |
 | `src/lib/`             | Lógica compartida: cliente de Supabase, helpers, utilidades.                                 |
 | `supabase/migrations/` | Migraciones SQL versionadas para la base de datos PostgreSQL.                                |
@@ -195,7 +233,9 @@ ChatVault_Spec/
 
 ## 🗄️ Base de datos
 
-La tabla principal `notes` almacena:
+### Tabla `notes`
+
+Almacena las conversaciones y chats guardados por los usuarios.
 
 | Columna      | Tipo          | Descripción                            |
 | ------------ | ------------- | -------------------------------------- |
@@ -208,7 +248,22 @@ La tabla principal `notes` almacena:
 
 > **Nota:** Las columnas `summary`, `ai_model`, `source_type` y `source_url` se gestionan desde la aplicación y pueden añadirse al esquema según evolucione el proyecto.
 
-> **Seguridad:** Row Level Security (RLS) activado con políticas que garantizan que cada usuario solo accede a sus propios datos.
+### Tabla `prompts`
+
+Almacena los prompts reutilizables organizados por categorías.
+
+| Columna      | Tipo          | Descripción                                         |
+| ------------ | ------------- | --------------------------------------------------- |
+| `id`         | `BIGINT`      | Identificador único (auto-incremental)              |
+| `created_at` | `TIMESTAMPTZ` | Fecha de creación                                   |
+| `user_id`    | `UUID`        | Referencia al usuario autenticado                   |
+| `title`      | `TEXT`        | Título del prompt                                   |
+| `content`    | `TEXT`        | Contenido del prompt                                |
+| `category`   | `TEXT`        | Categoría (imagen, texto, codigo, video, mcp, otro) |
+| `tags`       | `TEXT[]`      | Array de etiquetas múltiples                        |
+| `times_used` | `INTEGER`     | Contador de usos (se incrementa al copiar)          |
+
+> **Seguridad:** Row Level Security (RLS) activado en ambas tablas con políticas que garantizan que cada usuario solo accede a sus propios datos.
 
 ---
 
