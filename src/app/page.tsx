@@ -2,53 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { supabase } from "../SupabaseClient";
-import AuthForm from "../components/AuthForm"; // Ajusta la ruta si es necesario
+import AuthForm from "../components/AuthForm";
 
-// ==================== COMPONENTE PRINCIPAL (HOME) ====================
-export default function Home() {
-  const [user, setUser] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    // Obtener sesión al cargar
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      console.log("👤 Sesión obtenida en Home:", session?.user?.id);
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
-
-    // Escuchar cambios de autenticación
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      console.log("👤 Cambio de autenticación en Home:", session?.user?.id);
-      setUser(session?.user ?? null);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
-
-  // Mostrar loading mientras se verifica la sesión
-  if (loading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-zinc-950">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-zinc-300 border-t-blue-600"></div>
-      </div>
-    );
-  }
-
-  // Si no hay usuario, mostrar el formulario de login
-  if (!user) {
-    console.log("🔐 No hay usuario, mostrando AuthForm");
-    return <AuthForm onAuth={() => {}} />;
-  }
-
-  // Si hay usuario, mostrar el panel de notas
-  console.log("✅ Usuario logueado:", user.id);
-  return <NotesManager user={user} />;
-}
-
-// ==================== COMPONENTE NOTESMANAGER ====================
 interface Note {
   id: string;
   title: string;
@@ -61,6 +16,48 @@ interface Note {
   created_at: string;
 }
 
+// ==================== COMPONENTE HOME (MANEJA LA SESIÓN) ====================
+export default function Home() {
+  const [user, setUser] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // 1. Obtener sesión actual
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      console.log("👤 Sesión obtenida en Home:", session?.user?.id);
+      setUser(session?.user ?? null);
+      setLoading(false);
+    });
+
+    // 2. Escuchar cambios de autenticación
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      console.log("👤 Cambio de autenticación en Home:", session?.user?.id);
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-zinc-950">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-zinc-300 border-t-blue-600"></div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    console.log("🔐 No hay usuario, mostrando AuthForm");
+    return <AuthForm onAuth={() => {}} />;
+  }
+
+  console.log("✅ Usuario logueado:", user.id);
+  return <NotesManager user={user} />;
+}
+
+// ==================== COMPONENTE NOTESMANAGER ====================
 function NotesManager({ user }: { user: any }) {
   // ==================== ESTADOS ====================
   const [notes, setNotes] = useState<Note[]>([]);
@@ -114,16 +111,6 @@ function NotesManager({ user }: { user: any }) {
       setLoading(false);
     }
   }
-  // Cerrar sesión
-  const handleLogout = async () => {
-    try {
-      await supabase.auth.signOut();
-      // Recargar la página para que el componente Home detecte el cambio
-      window.location.reload();
-    } catch (error) {
-      console.error("Error al cerrar sesión:", error);
-    }
-  };
 
   // Extraer etiquetas únicas
   const allTags = Array.from(
@@ -183,13 +170,23 @@ function NotesManager({ user }: { user: any }) {
     }
   };
 
-  // GUARDAR NOTA (handleSubmit)
+  // Cerrar sesión
+  const handleLogout = async () => {
+    try {
+      await supabase.auth.signOut();
+      window.location.reload();
+    } catch (error) {
+      console.error("Error al cerrar sesión:", error);
+    }
+  };
+
+  // ==================== HANDLE SUBMIT ====================
   const handleSubmit = async () => {
     console.log("🚀 handleSubmit ejecutado");
+    console.log("👤 user recibido en NotesManager:", user?.id);
     console.log("📝 sourceType:", sourceType);
     console.log("📝 title:", title);
     console.log("📝 sourceUrl:", sourceUrl);
-    console.log("👤 user recibido en NotesManager:", user?.id);
 
     setError(null);
     setSuccess(null);
@@ -203,6 +200,14 @@ function NotesManager({ user }: { user: any }) {
     if (sourceType === "url" && !sourceUrl.trim()) {
       setError("Por favor, introduce una URL válida.");
       console.log("❌ Error: URL vacía");
+      return;
+    }
+
+    // 🔥 VERIFICAR QUE HAY USUARIO
+    if (!user) {
+      setError("Error: No se pudo identificar al usuario.");
+      setSaving(false);
+      console.log("❌ Error: No hay usuario en NotesManager");
       return;
     }
 
@@ -245,14 +250,6 @@ function NotesManager({ user }: { user: any }) {
           finalContent = `[No se pudo leer automáticamente]: ${cleanUrl}`;
           console.log("⚠️ Fallo en scrape, usando datos de respaldo");
         }
-      }
-
-      // 🔥 USAR EL USER RECIBIDO COMO PROP
-      if (!user) {
-        setError("Error: No se pudo identificar al usuario.");
-        setSaving(false);
-        console.log("❌ Error: No hay usuario en NotesManager");
-        return;
       }
 
       // Datos a insertar con user.id
@@ -332,16 +329,14 @@ function NotesManager({ user }: { user: any }) {
   // ==================== RENDER ====================
   return (
     <div className="flex h-screen w-screen bg-zinc-100 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-50 overflow-hidden">
-      {/* SIDEBAR */}
+      {/* ================= SIDEBAR ================= */}
       <aside className="w-64 border-r border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-800 dark:bg-zinc-900/50 flex flex-col gap-6 select-none h-full">
-        {/* Logo */}
         <div className="flex items-center gap-2 px-2">
           <span className="text-xl">🔒</span>
           <h1 className="text-lg font-bold tracking-tight">ChatVault</h1>
         </div>
 
-        {/* Navegación */}
-        <nav className="space-y-1">
+        <nav className="space-y-1 flex-1 overflow-y-auto">
           <p className="px-2 text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2">
             Navegación
           </p>
@@ -363,22 +358,140 @@ function NotesManager({ user }: { user: any }) {
             <span>📁</span> Todos los chats
           </button>
 
-          {/* ... resto de la navegación (filtros de fecha, calendario, etc.) ... */}
+          <div className="pt-2 mt-2 border-t border-zinc-100 dark:border-zinc-800/50 space-y-1">
+            <p className="px-2 text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1">
+              🕒 Por Fecha
+            </p>
+            <button
+              type="button"
+              onClick={() => {
+                setDateFilter("today");
+                setStartDate("");
+                setEndDate("");
+              }}
+              className={`flex w-full items-center gap-3 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
+                dateFilter === "today"
+                  ? "bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400"
+                  : "text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800/50"
+              }`}
+            >
+              <span>☀️</span> Hoy
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setDateFilter("week");
+                setStartDate("");
+                setEndDate("");
+              }}
+              className={`flex w-full items-center gap-3 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
+                dateFilter === "week"
+                  ? "bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400"
+                  : "text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800/50"
+              }`}
+            >
+              <span>📅</span> Últimos 7 días
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setDateFilter("month");
+                setStartDate("");
+                setEndDate("");
+              }}
+              className={`flex w-full items-center gap-3 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
+                dateFilter === "month"
+                  ? "bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400"
+                  : "text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800/50"
+              }`}
+            >
+              <span>🗓️</span> Últimos 30 días
+            </button>
+
+            <div className="pt-2 mt-2 border-t border-zinc-100 dark:border-zinc-800/40 space-y-1.5">
+              <p className="px-2 text-[9px] font-bold text-zinc-400 uppercase tracking-wider">
+                Rango personalizado
+              </p>
+              <div className="grid grid-cols-2 gap-1.5 px-2">
+                <div>
+                  <label className="text-[9px] text-zinc-400 block mb-0.5">
+                    Desde
+                  </label>
+                  <input
+                    type="date"
+                    value={startDate}
+                    onChange={(e) => {
+                      setStartDate(e.target.value);
+                      setDateFilter("all");
+                    }}
+                    className="w-full text-[10px] rounded border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 p-1 text-zinc-600 dark:text-zinc-300 focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="text-[9px] text-zinc-400 block mb-0.5">
+                    Hasta
+                  </label>
+                  <input
+                    type="date"
+                    value={endDate}
+                    onChange={(e) => {
+                      setEndDate(e.target.value);
+                      setDateFilter("all");
+                    }}
+                    className="w-full text-[10px] rounded border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 p-1 text-zinc-600 dark:text-zinc-300 focus:outline-none"
+                  />
+                </div>
+              </div>
+              {(startDate || endDate) && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setStartDate("");
+                    setEndDate("");
+                  }}
+                  className="w-full px-2 text-left text-[10px] text-red-500 hover:text-red-600 font-medium transition-colors mt-1"
+                >
+                  ❌ Limpiar calendario
+                </button>
+              )}
+            </div>
+          </div>
         </nav>
 
         <hr className="border-zinc-200 dark:border-zinc-800" />
 
-        {/* Etiquetas */}
         <div className="space-y-1 flex-1 overflow-hidden">
           <p className="px-2 text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2">
             #️⃣ Etiquetas
           </p>
           <div className="max-h-48 overflow-y-auto pr-1 space-y-1 scrollbar-thin">
-            {/* ... lista de etiquetas ... */}
+            {allTags.length === 0 ? (
+              <p className="px-2 text-xs text-zinc-400 italic">
+                No hay etiquetas
+              </p>
+            ) : (
+              allTags.map((t) => (
+                <button
+                  key={t}
+                  type="button"
+                  onClick={() => setSelectedTag(t)}
+                  className={`flex w-full items-center justify-between rounded-lg px-3 py-1.5 text-sm font-medium capitalize transition-colors ${
+                    selectedTag === t
+                      ? "bg-blue-50 text-blue-600 dark:bg-blue-950/30 dark:text-blue-400"
+                      : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800/50"
+                  }`}
+                >
+                  <span># {t}</span>
+                  <span className="text-xs bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded-full text-zinc-400">
+                    {notes.filter((n) => n.tag === t).length}
+                  </span>
+                </button>
+              ))
+            )}
           </div>
         </div>
 
-        {/* 👇 BOTÓN DE CERRAR SESIÓN (SIEMPRE AL FINAL) */}
+        {/* BOTÓN DE CERRAR SESIÓN */}
         <div className="mt-auto pt-4 border-t border-zinc-200 dark:border-zinc-800">
           <button
             onClick={handleLogout}
@@ -390,7 +503,7 @@ function NotesManager({ user }: { user: any }) {
         </div>
       </aside>
 
-      {/* CONTENIDO CENTRAL */}
+      {/* ================= CONTENIDO CENTRAL ================= */}
       <main className="flex-1 flex flex-col overflow-hidden bg-white dark:bg-zinc-950">
         <header className="flex items-center justify-between border-b border-zinc-200 p-4 dark:border-zinc-800">
           <div className="w-96">
@@ -535,80 +648,118 @@ function NotesManager({ user }: { user: any }) {
         </section>
       </main>
 
-      {/* ================= MODAL ================= */}
+      {/* ================= MODAL PREMIUM ================= */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/40 backdrop-blur-sm p-4 overflow-y-auto">
-          <div className="w-full max-w-3xl rounded-xl border border-zinc-200 bg-white p-6 shadow-xl dark:border-zinc-800 dark:bg-zinc-900 my-8">
-            <div className="mb-4 flex items-center justify-between border-b border-zinc-100 pb-3 dark:border-zinc-800">
-              <h2 className="text-lg font-bold text-zinc-900 dark:text-zinc-50">
-                {title ? "Editar Historial" : "Guardar Historial de IA"}
-              </h2>
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto"
+          style={{ backgroundColor: "rgba(15, 23, 42, 0.6)" }}
+        >
+          <div
+            className="w-full max-w-4xl rounded-2xl bg-white/95 dark:bg-zinc-900/95 backdrop-blur-xl shadow-2xl border border-white/20 dark:border-zinc-800/50 p-8 my-8 animate-in fade-in zoom-in-95 duration-200"
+            style={{ boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)" }}
+          >
+            {/* HEADER */}
+            <div className="flex items-center justify-between mb-6 pb-4 border-b border-zinc-200/50 dark:border-zinc-800/50">
+              <div>
+                <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50 tracking-tight">
+                  {title ? "✏️ Editar Historial" : "📝 Guardar Historial de IA"}
+                </h2>
+                <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-0.5">
+                  {title
+                    ? "Modifica los datos de esta conversación"
+                    : "Archiva tus chats con IA de forma organizada"}
+                </p>
+              </div>
               <button
                 onClick={closeModal}
-                className="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 text-sm"
+                className="p-2 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors duration-200 group"
               >
-                ✕
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={2}
+                  stroke="currentColor"
+                  className="w-5 h-5 text-zinc-500 group-hover:text-zinc-900 dark:text-zinc-400 dark:group-hover:text-zinc-100 transition-colors"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
               </button>
             </div>
 
-            <div className="mb-6 flex border-b border-zinc-200 dark:border-zinc-700">
+            {/* PESTAÑAS */}
+            <div className="mb-6 flex gap-1 border-b border-zinc-200/50 dark:border-zinc-800/50">
               <button
                 type="button"
                 onClick={() => setSourceType("text")}
-                className={
+                className={`px-4 py-2.5 text-sm font-medium rounded-t-lg transition-all duration-200 ${
                   sourceType === "text"
-                    ? "py-2 px-4 text-sm font-medium border-b-2 border-blue-600 text-blue-600 dark:border-blue-400 dark:text-blue-400"
-                    : "py-2 px-4 text-sm font-medium border-b-2 border-transparent text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300"
-                }
+                    ? "bg-blue-50 text-blue-700 dark:bg-blue-950/30 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400"
+                    : "text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50"
+                }`}
               >
-                ✍️ Texto Copiado
+                <span className="inline-flex items-center gap-2">
+                  ✍️ Texto Copiado
+                </span>
               </button>
               <button
                 type="button"
                 onClick={() => setSourceType("url")}
-                className={
+                className={`px-4 py-2.5 text-sm font-medium rounded-t-lg transition-all duration-200 ${
                   sourceType === "url"
-                    ? "py-2 px-4 text-sm font-medium border-b-2 border-blue-600 text-blue-600 dark:border-blue-400 dark:text-blue-400"
-                    : "py-2 px-4 text-sm font-medium border-b-2 border-transparent text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300"
-                }
+                    ? "bg-blue-50 text-blue-700 dark:bg-blue-950/30 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400"
+                    : "text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50"
+                }`}
               >
-                🔗 Enlace del Chat
+                <span className="inline-flex items-center gap-2">
+                  🔗 Enlace del Chat
+                </span>
               </button>
               <button
                 type="button"
                 onClick={() => setSourceType("file")}
-                className={
+                className={`px-4 py-2.5 text-sm font-medium rounded-t-lg transition-all duration-200 ${
                   sourceType === "file"
-                    ? "py-2 px-4 text-sm font-medium border-b-2 border-blue-600 text-blue-600 dark:border-blue-400 dark:text-blue-400"
-                    : "py-2 px-4 text-sm font-medium border-b-2 border-transparent text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300"
-                }
+                    ? "bg-blue-50 text-blue-700 dark:bg-blue-950/30 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400"
+                    : "text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50"
+                }`}
               >
-                📄 Subir Archivo
+                <span className="inline-flex items-center gap-2">
+                  📄 Subir Archivo
+                </span>
               </button>
             </div>
 
-            <div className="space-y-4">
+            {/* CONTENIDO DEL MODAL */}
+            <div className="space-y-5">
+              {/* FILA 1: IA + Etiqueta */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="mb-1 block text-xs font-medium text-zinc-700 dark:text-zinc-300">
-                    ¿Qué IA usaste?
+                  <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1.5">
+                    🤖 Modelo de IA
                   </label>
                   <select
                     value={aiModel}
                     onChange={(e) => setAiModel(e.target.value)}
-                    className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 focus:outline-none"
+                    className="w-full rounded-xl border-0 bg-zinc-100/80 dark:bg-zinc-800/80 px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-blue-500/50 dark:focus:ring-blue-400/50 transition-all duration-200"
                   >
-                    <option value="DeepSeek-R1">DeepSeek-R1</option>
-                    <option value="ChatGPT-4o">ChatGPT-4o</option>
-                    <option value="Claude-3.5-Sonnet">Claude 3.5 Sonnet</option>
-                    <option value="Gemini-1.5-Pro">Gemini 1.5 Pro</option>
-                    <option value="Llama-3">Llama 3 (Meta)</option>
+                    <option value="DeepSeek-R1">🧠 DeepSeek-R1</option>
+                    <option value="ChatGPT-4o">💬 ChatGPT-4o</option>
+                    <option value="Claude-3.5-Sonnet">
+                      🔮 Claude 3.5 Sonnet
+                    </option>
+                    <option value="Gemini-1.5-Pro">✨ Gemini 1.5 Pro</option>
+                    <option value="Llama-3">🦙 Llama 3 (Meta)</option>
                   </select>
                 </div>
 
                 <div>
-                  <label className="mb-1 block text-xs font-medium text-zinc-700 dark:text-zinc-300">
-                    Etiqueta (Tag)
+                  <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1.5">
+                    🏷️ Etiqueta
                   </label>
                   <div className="relative">
                     <input
@@ -617,7 +768,7 @@ function NotesManager({ user }: { user: any }) {
                       onChange={(e) => setTag(e.target.value)}
                       placeholder="Escribe o selecciona una..."
                       list="existing-tags"
-                      className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 focus:outline-none"
+                      className="w-full rounded-xl border-0 bg-zinc-100/80 dark:bg-zinc-800/80 px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-blue-500/50 dark:focus:ring-blue-400/50 transition-all duration-200"
                     />
                     <datalist id="existing-tags">
                       {allTags.map((t) => (
@@ -628,100 +779,105 @@ function NotesManager({ user }: { user: any }) {
                 </div>
               </div>
 
+              {/* CONTENIDO DINÁMICO */}
               {sourceType === "text" && (
-                <>
+                <div className="space-y-4">
                   <div>
-                    <label className="mb-1 block text-xs font-medium text-zinc-700 dark:text-zinc-300">
-                      Título de la nota
+                    <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1.5">
+                      📌 Título
                     </label>
                     <input
                       type="text"
                       value={title}
                       onChange={(e) => setTitle(e.target.value)}
-                      placeholder="Ej: Fix del bug de login en NextJS"
-                      className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 focus:outline-none"
+                      placeholder="Ej: Fix del bug de autenticación..."
+                      className="w-full rounded-xl border-0 bg-zinc-100/80 dark:bg-zinc-800/80 px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-blue-500/50 dark:focus:ring-blue-400/50 transition-all duration-200"
                     />
                   </div>
                   <div>
-                    <label className="mb-1 block text-xs font-medium text-zinc-700 dark:text-zinc-300">
-                      Contenido del Chat
+                    <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1.5">
+                      💬 Contenido del Chat
                     </label>
                     <textarea
                       rows={6}
                       value={content}
                       onChange={(e) => setContent(e.target.value)}
                       placeholder="Usuario: ¿Cómo arreglo este error?..."
-                      className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 focus:outline-none resize-none"
+                      className="w-full rounded-xl border-0 bg-zinc-100/80 dark:bg-zinc-800/80 px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-blue-500/50 dark:focus:ring-blue-400/50 transition-all duration-200 resize-none"
                     />
                   </div>
-                </>
+                </div>
               )}
 
               {sourceType === "url" && (
-                <>
-                  <div className="rounded-lg bg-blue-50 p-3 text-xs text-blue-700 dark:bg-blue-950/40 dark:text-blue-300">
-                    💡 <strong>Opcional:</strong> Si dejas el título vacío,
-                    nuestro servidor extraerá de forma limpia el nombre del chat
-                    externo en segundo plano.
+                <div className="space-y-4">
+                  <div className="rounded-xl bg-blue-50/80 dark:bg-blue-950/20 p-4 border border-blue-100 dark:border-blue-800/30">
+                    <p className="text-sm text-blue-700 dark:text-blue-300">
+                      💡 <strong>Opcional:</strong> Deja el título vacío y
+                      nuestro servidor extraerá automáticamente el nombre del
+                      chat.
+                    </p>
                   </div>
                   <div>
-                    <label className="mb-1 block text-xs font-medium text-zinc-700 dark:text-zinc-300">
-                      Título personalizado (Opcional)
+                    <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1.5">
+                      📌 Título personalizado
                     </label>
                     <input
                       type="text"
                       value={title}
                       onChange={(e) => setTitle(e.target.value)}
-                      placeholder="Ej: Mi chat de DeepSeek sobre layouts"
-                      className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 focus:outline-none"
+                      placeholder="Ej: Mi chat sobre arquitectura"
+                      className="w-full rounded-xl border-0 bg-zinc-100/80 dark:bg-zinc-800/80 px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-blue-500/50 dark:focus:ring-blue-400/50 transition-all duration-200"
                     />
                   </div>
                   <div>
-                    <label className="mb-1 block text-xs font-medium text-zinc-700 dark:text-zinc-300">
-                      URL pública del chat compartido
+                    <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1.5">
+                      🔗 URL del Chat
                     </label>
                     <input
                       type="url"
                       value={sourceUrl}
                       onChange={(e) => setSourceUrl(e.target.value)}
                       placeholder="https://chat.deepseek.com/a/chat/..."
-                      className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 focus:outline-none"
+                      className="w-full rounded-xl border-0 bg-zinc-100/80 dark:bg-zinc-800/80 px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-blue-500/50 dark:focus:ring-blue-400/50 transition-all duration-200"
                     />
                   </div>
-                </>
+                </div>
               )}
 
               {sourceType === "file" && (
-                <div className="flex flex-col items-center justify-center border-2 border-dashed border-zinc-300 rounded-xl p-8 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800/30">
-                  <span className="text-3xl mb-2">🛠️</span>
+                <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-zinc-300 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-800/30 p-12">
+                  <span className="text-4xl mb-3">🛠️</span>
                   <p className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
                     Módulo de lectura en desarrollo
                   </p>
                   <p className="text-xs text-zinc-400 mt-1">
-                    Soporte para PDFs y documentos en el próximo asalto.
+                    Soporte para PDFs, TXT y documentos en el próximo asalto.
                   </p>
                 </div>
               )}
 
-              <div className="pt-2">
-                <label className="mb-1 block text-xs font-medium text-zinc-700 dark:text-zinc-300">
-                  Resumen extendido del hilo
+              {/* RESUMEN EXTENDIDO */}
+              <div>
+                <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1.5">
+                  📋 Resumen del hilo
                 </label>
                 <textarea
                   rows={3}
                   value={summary}
                   onChange={(e) => setSummary(e.target.value)}
-                  placeholder="Resume aquí detalladamente los puntos clave o conclusiones del chat con la IA..."
-                  className="w-full resize-none rounded-lg border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 focus:outline-none"
+                  placeholder="Resume los puntos clave o conclusiones del chat con la IA..."
+                  className="w-full rounded-xl border-0 bg-zinc-100/80 dark:bg-zinc-800/80 px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-blue-500/50 dark:focus:ring-blue-400/50 transition-all duration-200 resize-none"
                 />
               </div>
             </div>
 
-            <div className="flex justify-end gap-3 mt-6 pt-3 border-t border-zinc-100 dark:border-zinc-800">
+            {/* FOOTER - BOTONES DE ACCIÓN */}
+            <div className="mt-8 pt-5 border-t border-zinc-200/50 dark:border-zinc-800/50 flex items-center justify-end gap-3">
               <button
                 type="button"
                 onClick={closeModal}
-                className="rounded-lg border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 dark:border-zinc-700 dark:text-zinc-300"
+                className="px-5 py-2.5 text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-xl transition-all duration-200"
               >
                 Cancelar
               </button>
@@ -730,17 +886,44 @@ function NotesManager({ user }: { user: any }) {
                 type="button"
                 onClick={handleSubmit}
                 disabled={saving || sourceType === "file"}
-                className={
+                className={`px-6 py-2.5 text-sm font-medium text-white rounded-xl transition-all duration-200 flex items-center gap-2 ${
                   sourceType === "file"
-                    ? "inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium text-white bg-zinc-400 dark:bg-zinc-700 cursor-not-allowed"
-                    : "inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 transition-colors"
-                }
+                    ? "bg-zinc-400 dark:bg-zinc-700 cursor-not-allowed"
+                    : "bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
+                }`}
               >
-                {saving
-                  ? "Guardando..."
-                  : sourceType === "file"
-                    ? "Próximamente... 🛠️"
-                    : "Guardar Conversación 🚀"}
+                {saving ? (
+                  <>
+                    <svg
+                      className="animate-spin h-4 w-4 text-white"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      ></path>
+                    </svg>
+                    Guardando...
+                  </>
+                ) : sourceType === "file" ? (
+                  "Próximamente 🛠️"
+                ) : (
+                  <>
+                    <span>🚀</span>
+                    Guardar Conversación
+                  </>
+                )}
               </button>
             </div>
           </div>

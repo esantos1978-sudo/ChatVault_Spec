@@ -1,6 +1,6 @@
 # 🔒 ChatVault
 
-**Tus notas seguras en la nube.** ChatVault es una aplicación web moderna para organizar, almacenar y buscar conversaciones con modelos de lenguaje (LLMs) como ChatGPT, DeepSeek, Claude y Gemini. Permite la curaduría manual de chats mediante texto copiado, importación automática desde URLs públicas, y etiquetado inteligente para una búsqueda rápida y eficiente.
+**Tus notas seguras en la nube.** ChatVault es una aplicación web moderna para organizar, almacenar y buscar conversaciones con modelos de lenguaje (LLMs) como ChatGPT, DeepSeek, Claude y Gemini. Ofrece autenticación segura, un CRUD completo de notas, importación automática desde URLs públicas y un sistema de filtros inteligente.
 
 ---
 
@@ -13,6 +13,44 @@
 | **Tailwind CSS** | Estilos utilitarios y diseño responsive       |
 | **Supabase**     | Backend como servicio (Auth + DB PostgreSQL)  |
 | **ESLint**       | Linting con configuración estándar de Next.js |
+
+---
+
+## ✨ Funcionalidades
+
+### 🔐 Autenticación de usuarios
+
+- **Registro e inicio de sesión** con correo electrónico y contraseña mediante Supabase Auth.
+- **Protección de rutas:** el panel de notas solo es accesible para usuarios autenticados.
+- **Cierre de sesión** con un clic desde el sidebar.
+- **Row Level Security (RLS):** cada usuario solo ve, crea, edita y elimina sus propias notas.
+
+### 📝 CRUD completo de notas
+
+- **Crear** notas con título, contenido, resumen, etiqueta y modelo de IA asociado.
+- **Leer** todas las notas en una rejilla de tarjetas con diseño responsive.
+- **Editar** cualquier nota directamente desde la tarjeta con un clic en el icono de lápiz.
+- **Eliminar** notas con confirmación previa y un icono de papelera.
+
+### 🌐 Scraping inteligente de URLs
+
+- Pega una URL pública de un chat compartido (DeepSeek, ChatGPT, Claude, etc.) y la aplicación **extrae automáticamente el título y el contenido**.
+- Si no se puede extraer contenido, se guarda un fallback con el enlace original.
+- Corrección automática de URLs sin protocolo (se añade `https://` si falta).
+
+### 🔍 Sistema de filtros avanzado
+
+- **Búsqueda por texto:** filtra por título, resumen o contenido en tiempo real.
+- **Filtro por etiquetas:** selecciona una etiqueta en el sidebar para ver solo notas de esa categoría.
+- **Filtros temporales:** botones rápidos para ver notas de hoy, últimos 7 días o últimos 30 días.
+- **Rango de fechas personalizado:** calendario con selector "Desde" y "Hasta" para filtrar por cualquier período.
+- **Combinación de filtros:** todos los filtros se pueden usar simultáneamente.
+
+### 🏷️ Organización por etiquetas
+
+- Asigna etiquetas personalizadas a cada nota.
+- Las etiquetas existentes aparecen como sugerencias en un `datalist` al escribir.
+- Vista rápida del conteo de notas por etiqueta en el sidebar.
 
 ---
 
@@ -68,7 +106,7 @@ ChatVault_Spec/
 │   │   ├── api/
 │   │   │   └── scrape/         # API route para scraping de URLs
 │   │   ├── layout.tsx          # Layout raíz con fuentes Geist
-│   │   ├── page.tsx            # Página principal (gestor de notas)
+│   │   ├── page.tsx            # Página principal (Home + NotesManager)
 │   │   └── globals.css         # Estilos globales
 │   ├── components/             # Componentes React reutilizables
 │   │   └── AuthForm.tsx        # Formulario de autenticación (login/registro)
@@ -108,12 +146,35 @@ ChatVault_Spec/
 
 ## 🧪 Scripts disponibles
 
-| Comando         | Descripción                         |
-| --------------- | ----------------------------------- |
-| `npm run dev`   | Inicia el servidor de desarrollo    |
-| `npm run build` | Compila el proyecto para producción |
-| `npm run start` | Inicia el servidor en producción    |
-| `npm run lint`  | Ejecuta ESLint en todo el proyecto  |
+| Comando                          | Descripción                         |
+| -------------------------------- | ----------------------------------- |
+| `npm run dev`                    | Inicia el servidor de desarrollo    |
+| `npm run build`                  | Compila el proyecto para producción |
+| `npm run start`                  | Inicia el servidor en producción    |
+| `npm run lint`                   | Ejecuta ESLint en todo el proyecto  |
+| `node scripts/test-supabase.mjs` | Verifica la conexión con Supabase   |
+| `node scripts/run-migration.mjs` | Ejecuta migraciones SQL en Supabase |
+
+---
+
+## 🗄️ Base de datos
+
+La tabla principal `notes` almacena:
+
+| Columna       | Tipo          | Descripción                                  |
+| ------------- | ------------- | -------------------------------------------- |
+| `id`          | `BIGINT`      | Identificador único (auto-incremental)       |
+| `created_at`  | `TIMESTAMPTZ` | Fecha de creación                            |
+| `user_id`     | `UUID`        | Referencia al usuario autenticado            |
+| `title`       | `TEXT`        | Título de la nota                            |
+| `content`     | `TEXT`        | Contenido de la conversación                 |
+| `summary`     | `TEXT`        | Resumen extendido del hilo                   |
+| `tag`         | `TEXT`        | Etiqueta de categorización                   |
+| `ai_model`    | `TEXT`        | Modelo de IA usado (DeepSeek, ChatGPT, etc.) |
+| `source_type` | `TEXT`        | Tipo de origen: `text`, `url` o `file`       |
+| `source_url`  | `TEXT`        | URL original si se importó desde un enlace   |
+
+> **Seguridad:** Row Level Security (RLS) activado con políticas que garantizan que cada usuario solo accede a sus propios datos.
 
 ---
 
