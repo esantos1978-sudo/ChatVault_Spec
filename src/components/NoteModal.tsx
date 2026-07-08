@@ -29,7 +29,6 @@ interface NoteModalProps {
   setSuggestions: (val: string[]) => void;
   setShowSuggestions: (val: boolean) => void;
   setSelectedSuggestion: (val: number | ((prev: number) => number)) => void;
-  editingTitle?: string;
   editingNoteId?: string | null;
 }
 
@@ -62,30 +61,29 @@ export function NoteModal({
   setSuggestions,
   setShowSuggestions,
   setSelectedSuggestion,
-  editingTitle,
   editingNoteId,
 }: NoteModalProps) {
   if (!isOpen) return null;
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto animate-fade-in"
       style={{ backgroundColor: "rgba(15, 23, 42, 0.6)" }}
     >
       <div
-        className="w-full max-w-4xl rounded-2xl bg-white/95 dark:bg-zinc-900/95 backdrop-blur-xl shadow-2xl border border-white/20 dark:border-zinc-800/50 p-8 my-8 animate-in fade-in zoom-in-95 duration-200"
+        className="w-full max-w-4xl rounded-2xl bg-white/95 dark:bg-zinc-900/95 backdrop-blur-xl shadow-2xl border border-white/20 dark:border-zinc-800/50 p-8 my-8 animate-zoom-in"
         style={{ boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)" }}
       >
         {/* HEADER */}
         <div className="flex items-center justify-between mb-6 pb-4 border-b border-zinc-200/50 dark:border-zinc-800/50">
           <div>
             <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50 tracking-tight">
-              {editingTitle
+              {editingNoteId
                 ? "✏️ Editar Historial"
                 : "📝 Guardar Historial de IA"}
             </h2>
             <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-0.5">
-              {editingTitle
+              {editingNoteId
                 ? "Modifica los datos de esta conversación"
                 : "Archiva tus chats con IA de forma organizada"}
             </p>

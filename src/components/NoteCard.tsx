@@ -13,14 +13,20 @@ interface NoteCardProps {
   };
   onEdit: (note: any) => void;
   onDelete: (id: string) => void;
+  index?: number;
 }
 
-export function NoteCard({ note, onEdit, onDelete }: NoteCardProps) {
+export function NoteCard({ note, onEdit, onDelete, index = 0 }: NoteCardProps) {
   return (
-    <div className="group relative flex flex-col rounded-2xl border border-zinc-200/60 dark:border-zinc-800/60 bg-gradient-to-br from-white to-zinc-50/50 dark:from-zinc-900 dark:to-zinc-900/80 p-5 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ease-out justify-between min-h-[240px] overflow-hidden">
-      {/* Efectos visuales */}
-      <div className="absolute -top-24 -left-24 w-48 h-48 bg-gradient-to-br from-blue-500/5 to-transparent rounded-full blur-2xl pointer-events-none group-hover:opacity-100 opacity-0 transition-opacity duration-500" />
-      <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-transparent group-hover:ring-blue-500/20 transition-all duration-300 pointer-events-none" />
+    <div
+      className="group relative flex flex-col rounded-2xl border border-zinc-200/60 dark:border-zinc-800/60 bg-gradient-to-br from-white to-zinc-50/50 dark:from-zinc-900 dark:to-zinc-900/80 p-5 shadow-premium hover:shadow-premium-hover hover:-translate-y-1.5 transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] justify-between min-h-[240px] overflow-hidden animate-fade-in-up"
+      style={{ animationDelay: `${index * 60}ms` }}
+    >
+      {/* Efecto de brillo sutil en la esquina superior izquierda */}
+      <div className="absolute -top-24 -left-24 w-48 h-48 bg-gradient-to-br from-blue-500/5 to-transparent rounded-full blur-2xl pointer-events-none group-hover:opacity-100 opacity-0 transition-opacity duration-700" />
+
+      {/* Efecto de borde brillante en hover */}
+      <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-transparent group-hover:ring-blue-500/20 transition-all duration-500 pointer-events-none" />
 
       <div className="relative z-10">
         {/* Cabecera: IA + Etiquetas + Botones */}
@@ -90,7 +96,7 @@ export function NoteCard({ note, onEdit, onDelete }: NoteCardProps) {
         </div>
 
         {/* Título */}
-        <h3 className="text-base font-bold text-zinc-900 dark:text-zinc-50 line-clamp-1 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-200">
+        <h3 className="text-base font-bold text-zinc-900 dark:text-zinc-50 line-clamp-1 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300">
           {note.title}
         </h3>
 
@@ -108,7 +114,7 @@ export function NoteCard({ note, onEdit, onDelete }: NoteCardProps) {
           onClick={() => onEdit(note)}
           className="cursor-pointer mt-3 group/content"
         >
-          <p className="text-xs text-zinc-500 dark:text-zinc-400 line-clamp-3 overflow-hidden leading-relaxed group-hover/content:text-zinc-700 dark:group-hover/content:text-zinc-300 transition-colors duration-200">
+          <p className="text-xs text-zinc-500 dark:text-zinc-400 line-clamp-3 overflow-hidden leading-relaxed group-hover/content:text-zinc-700 dark:group-hover/content:text-zinc-300 transition-colors duration-300">
             {note.content}
           </p>
         </div>

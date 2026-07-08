@@ -706,12 +706,13 @@ function NotesManager({ user }: { user: any }) {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-              {filteredNotes.map((note) => (
+              {filteredNotes.map((note, index) => (
                 <NoteCard
                   key={note.id}
                   note={note}
                   onEdit={startEdit}
                   onDelete={handleDeleteNote}
+                  index={index}
                 />
               ))}
             </div>
