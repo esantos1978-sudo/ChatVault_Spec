@@ -232,6 +232,7 @@ export default function Dashboard({ user }: { user: any }) {
         {
           prompt: data.prompt,
           responses: data.responses,
+          winner: data.winner,
           user_id: user.id,
         },
       ]);

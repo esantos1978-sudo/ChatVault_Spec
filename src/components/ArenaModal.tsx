@@ -29,6 +29,7 @@ export function ArenaModal({
   const [response1, setResponse1] = useState("");
   const [model2, setModel2] = useState("claude-3.5");
   const [response2, setResponse2] = useState("");
+  const [winner, setWinner] = useState<"model1" | "model2" | null>(null);
 
   if (!isOpen) return null;
 
@@ -46,6 +47,7 @@ export function ArenaModal({
         model2,
         response2: response2.trim(),
       },
+      winner: winner, // 👈 AÑADE ESTA LÍNEA
     });
 
     // Resetear formulario
@@ -54,6 +56,7 @@ export function ArenaModal({
     setResponse2("");
     setModel1("chatgpt-4o");
     setModel2("claude-3.5");
+    setWinner(null);
     onClose();
   };
 
@@ -173,6 +176,45 @@ export function ArenaModal({
               />
             </div>
           </div>
+        </div>
+        {/* 🆕 VOTACIÓN: ¿Qué respuesta es mejor? */}
+        <div className="mt-2">
+          <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1.5">
+            🏆 ¿Qué respuesta es mejor?
+          </label>
+          <div className="flex gap-3">
+            <button
+              type="button"
+              onClick={() => setWinner("model1")}
+              className={`flex-1 py-2 rounded-lg border transition-all ${
+                winner === "model1"
+                  ? "border-blue-500 bg-blue-50 text-blue-700 dark:bg-blue-950/30 dark:text-blue-300"
+                  : "border-zinc-200 text-zinc-600 hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-400"
+              }`}
+            >
+              🥇{" "}
+              {model1
+                ? MODELS.find((m) => m.value === model1)?.label
+                : "Modelo 1"}
+            </button>
+            <button
+              type="button"
+              onClick={() => setWinner("model2")}
+              className={`flex-1 py-2 rounded-lg border transition-all ${
+                winner === "model2"
+                  ? "border-blue-500 bg-blue-50 text-blue-700 dark:bg-blue-950/30 dark:text-blue-300"
+                  : "border-zinc-200 text-zinc-600 hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-400"
+              }`}
+            >
+              🥇{" "}
+              {model2
+                ? MODELS.find((m) => m.value === model2)?.label
+                : "Modelo 2"}
+            </button>
+          </div>
+          <p className="mt-1 text-[10px] text-zinc-400 dark:text-zinc-500">
+            Selecciona qué respuesta te ha parecido mejor (opcional)
+          </p>
         </div>
 
         {/* FOOTER */}
