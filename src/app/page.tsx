@@ -111,7 +111,7 @@ function Dashboard({ user }: { user: any }) {
   const [promptModalOpen, setPromptModalOpen] = useState(false);
   const [promptTitle, setPromptTitle] = useState("");
   const [promptContent, setPromptContent] = useState("");
-  const [promptCategory, setPromptCategory] = useState("resumen");
+  const [promptCategory, setPromptCategory] = useState("texto");
   const [promptTags, setPromptTags] = useState<string[]>([]);
   const [promptTagsInput, setPromptTagsInput] = useState("");
   const [promptSuggestions, setPromptSuggestions] = useState<string[]>([]);
@@ -201,6 +201,7 @@ function Dashboard({ user }: { user: any }) {
       const { data, error } = await supabase
         .from("prompts")
         .select("*")
+        .order("times_used", { ascending: false })
         .order("created_at", { ascending: false });
 
       if (error) throw error;
@@ -356,7 +357,7 @@ function Dashboard({ user }: { user: any }) {
   function resetPromptForm() {
     setPromptTitle("");
     setPromptContent("");
-    setPromptCategory("resumen");
+    setPromptCategory("texto");
     setPromptTags([]);
     setPromptTagsInput("");
     setEditingPromptId(null);
@@ -394,7 +395,6 @@ function Dashboard({ user }: { user: any }) {
     try {
       await navigator.clipboard.writeText(prompt.content);
 
-      // Incrementar contador de usos
       const { error } = await supabase
         .from("prompts")
         .update({ times_used: prompt.times_used + 1 })
@@ -403,7 +403,7 @@ function Dashboard({ user }: { user: any }) {
       if (error) throw error;
 
       toast.success("¡Prompt copiado al portapapeles! 📋");
-      fetchPrompts(); // Recargar para actualizar el contador
+      fetchPrompts();
     } catch (err: any) {
       toast.error("Error al copiar: " + err.message);
     }
@@ -460,7 +460,6 @@ function Dashboard({ user }: { user: any }) {
       return;
 
     try {
-      // Eliminar de notas
       const notesWithTag = notes.filter((n) =>
         (n.tags || []).includes(tagToDelete),
       );
@@ -472,7 +471,6 @@ function Dashboard({ user }: { user: any }) {
           .eq("id", note.id);
       });
 
-      // Eliminar de prompts
       const promptsWithTag = prompts.filter((p) =>
         (p.tags || []).includes(tagToDelete),
       );
@@ -503,8 +501,9 @@ function Dashboard({ user }: { user: any }) {
   // ==================== RENDER ====================
   return (
     <div className="flex h-screen w-screen bg-zinc-100 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-50 overflow-hidden">
-      {/* SIDEBAR */}
+      {/* ================= SIDEBAR ================= */}
       <aside className="w-64 border-r border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-800 dark:bg-zinc-900/50 flex flex-col gap-4 select-none h-full">
+        {/* LOGO */}
         <div className="flex items-center gap-2 px-2">
           <span className="text-xl">🔒</span>
           <h1 className="text-lg font-bold tracking-tight">ChatVault</h1>
@@ -534,7 +533,7 @@ function Dashboard({ user }: { user: any }) {
           </button>
         </div>
 
-        {/* FILTROS COMUNES (Tags) */}
+        {/* ETIQUETAS (Siempre visibles) */}
         <div className="space-y-1 flex-1 overflow-hidden">
           <p className="px-2 text-xs font-semibold text-zinc-400 uppercase tracking-wider">
             #️⃣ Etiquetas
@@ -594,6 +593,45 @@ function Dashboard({ user }: { user: any }) {
           </div>
         </div>
 
+        {/* 🆕 CATEGORÍAS (Solo visibles en la tab de Prompts) */}
+        {activeTab === "prompts" && (
+          <div className="space-y-1 pt-2 border-t border-zinc-100 dark:border-zinc-800/50">
+            <p className="px-2 text-xs font-semibold text-zinc-400 uppercase tracking-wider">
+              📂 Categorías
+            </p>
+            <div className="space-y-0.5">
+              {["imagen", "texto", "codigo", "video", "mcp", "otro"].map(
+                (cat) => {
+                  const count = prompts.filter(
+                    (p) => p.category === cat,
+                  ).length;
+                  return (
+                    <button
+                      key={cat}
+                      onClick={() =>
+                        setSelectedPromptCategory(
+                          selectedPromptCategory === cat ? null : cat,
+                        )
+                      }
+                      className={`flex w-full items-center justify-between rounded-lg px-3 py-1.5 text-sm font-medium capitalize transition-colors ${
+                        selectedPromptCategory === cat
+                          ? "bg-blue-50 text-blue-600 dark:bg-blue-950/30 dark:text-blue-400"
+                          : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800/50"
+                      }`}
+                    >
+                      <span>{cat}</span>
+                      <span className="text-xs bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded-full text-zinc-400">
+                        {count}
+                      </span>
+                    </button>
+                  );
+                },
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* CERRAR SESIÓN */}
         <div className="mt-auto pt-4 border-t border-zinc-200 dark:border-zinc-800">
           <button
             onClick={handleLogout}
@@ -605,7 +643,7 @@ function Dashboard({ user }: { user: any }) {
         </div>
       </aside>
 
-      {/* CONTENIDO PRINCIPAL */}
+      {/* ================= CONTENIDO PRINCIPAL ================= */}
       <main className="flex-1 flex flex-col overflow-hidden bg-white dark:bg-zinc-950">
         {/* HEADER */}
         <header className="flex items-center justify-between border-b border-zinc-200 p-4 dark:border-zinc-800">
