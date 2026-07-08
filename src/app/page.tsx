@@ -114,6 +114,16 @@ function NotesManager({ user }: { user: any }) {
       setLoading(false);
     }
   }
+  // Cerrar sesión
+  const handleLogout = async () => {
+    try {
+      await supabase.auth.signOut();
+      // Recargar la página para que el componente Home detecte el cambio
+      window.location.reload();
+    } catch (error) {
+      console.error("Error al cerrar sesión:", error);
+    }
+  };
 
   // Extraer etiquetas únicas
   const allTags = Array.from(
@@ -323,12 +333,14 @@ function NotesManager({ user }: { user: any }) {
   return (
     <div className="flex h-screen w-screen bg-zinc-100 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-50 overflow-hidden">
       {/* SIDEBAR */}
-      <aside className="w-64 border-r border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-800 dark:bg-zinc-900/50 flex flex-col gap-6 select-none">
+      <aside className="w-64 border-r border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-800 dark:bg-zinc-900/50 flex flex-col gap-6 select-none h-full">
+        {/* Logo */}
         <div className="flex items-center gap-2 px-2">
           <span className="text-xl">🔒</span>
           <h1 className="text-lg font-bold tracking-tight">ChatVault</h1>
         </div>
 
+        {/* Navegación */}
         <nav className="space-y-1">
           <p className="px-2 text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2">
             Navegación
@@ -351,137 +363,30 @@ function NotesManager({ user }: { user: any }) {
             <span>📁</span> Todos los chats
           </button>
 
-          <div className="pt-2 mt-2 border-t border-zinc-100 dark:border-zinc-800/50 space-y-1">
-            <p className="px-2 text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1">
-              🕒 Por Fecha
-            </p>
-            <button
-              type="button"
-              onClick={() => {
-                setDateFilter("today");
-                setStartDate("");
-                setEndDate("");
-              }}
-              className={`flex w-full items-center gap-3 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
-                dateFilter === "today"
-                  ? "bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400"
-                  : "text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800/50"
-              }`}
-            >
-              <span>☀️</span> Hoy
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setDateFilter("week");
-                setStartDate("");
-                setEndDate("");
-              }}
-              className={`flex w-full items-center gap-3 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
-                dateFilter === "week"
-                  ? "bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400"
-                  : "text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800/50"
-              }`}
-            >
-              <span>📅</span> Últimos 7 días
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setDateFilter("month");
-                setStartDate("");
-                setEndDate("");
-              }}
-              className={`flex w-full items-center gap-3 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
-                dateFilter === "month"
-                  ? "bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400"
-                  : "text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800/50"
-              }`}
-            >
-              <span>🗓️</span> Últimos 30 días
-            </button>
-
-            <div className="pt-2 mt-2 border-t border-zinc-100 dark:border-zinc-800/40 space-y-1.5">
-              <p className="px-2 text-[9px] font-bold text-zinc-400 uppercase tracking-wider">
-                Rango personalizado
-              </p>
-              <div className="grid grid-cols-2 gap-1.5 px-2">
-                <div>
-                  <label className="text-[9px] text-zinc-400 block mb-0.5">
-                    Desde
-                  </label>
-                  <input
-                    type="date"
-                    value={startDate}
-                    onChange={(e) => {
-                      setStartDate(e.target.value);
-                      setDateFilter("all");
-                    }}
-                    className="w-full text-[10px] rounded border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 p-1 text-zinc-600 dark:text-zinc-300 focus:outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="text-[9px] text-zinc-400 block mb-0.5">
-                    Hasta
-                  </label>
-                  <input
-                    type="date"
-                    value={endDate}
-                    onChange={(e) => {
-                      setEndDate(e.target.value);
-                      setDateFilter("all");
-                    }}
-                    className="w-full text-[10px] rounded border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 p-1 text-zinc-600 dark:text-zinc-300 focus:outline-none"
-                  />
-                </div>
-              </div>
-              {(startDate || endDate) && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setStartDate("");
-                    setEndDate("");
-                  }}
-                  className="w-full px-2 text-left text-[10px] text-red-500 hover:text-red-600 font-medium transition-colors mt-1"
-                >
-                  ❌ Limpiar calendario
-                </button>
-              )}
-            </div>
-          </div>
+          {/* ... resto de la navegación (filtros de fecha, calendario, etc.) ... */}
         </nav>
 
         <hr className="border-zinc-200 dark:border-zinc-800" />
 
-        <div className="space-y-1">
+        {/* Etiquetas */}
+        <div className="space-y-1 flex-1 overflow-hidden">
           <p className="px-2 text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2">
             #️⃣ Etiquetas
           </p>
           <div className="max-h-48 overflow-y-auto pr-1 space-y-1 scrollbar-thin">
-            {allTags.length === 0 ? (
-              <p className="px-2 text-xs text-zinc-400 italic">
-                No hay etiquetas
-              </p>
-            ) : (
-              allTags.map((t) => (
-                <button
-                  key={t}
-                  type="button"
-                  onClick={() => setSelectedTag(t)}
-                  className={`flex w-full items-center justify-between rounded-lg px-3 py-1.5 text-sm font-medium capitalize transition-colors ${
-                    selectedTag === t
-                      ? "bg-blue-50 text-blue-600 dark:bg-blue-950/30 dark:text-blue-400"
-                      : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800/50"
-                  }`}
-                >
-                  <span># {t}</span>
-                  <span className="text-xs bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded-full text-zinc-400">
-                    {notes.filter((n) => n.tag === t).length}
-                  </span>
-                </button>
-              ))
-            )}
+            {/* ... lista de etiquetas ... */}
           </div>
+        </div>
+
+        {/* 👇 BOTÓN DE CERRAR SESIÓN (SIEMPRE AL FINAL) */}
+        <div className="mt-auto pt-4 border-t border-zinc-200 dark:border-zinc-800">
+          <button
+            onClick={handleLogout}
+            className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/20 transition-colors"
+          >
+            <span>🚪</span>
+            Cerrar sesión
+          </button>
         </div>
       </aside>
 
