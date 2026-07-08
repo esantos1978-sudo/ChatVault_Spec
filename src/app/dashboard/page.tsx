@@ -547,10 +547,12 @@ export default function Dashboard({ user }: { user: any }) {
   return (
     <div className="flex h-screen w-screen bg-zinc-100 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-50 overflow-hidden">
       {/* ================= SIDEBAR ================= */}
-      <aside className="w-64 border-r border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-800 dark:bg-zinc-900/50 flex flex-col gap-4 select-none h-full">
+      <aside className="w-64 border-r border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-800 dark:bg-zinc-900/60 flex flex-col gap-4 select-none h-full">
         <div className="flex items-center gap-2 px-2">
           <span className="text-xl">🔒</span>
-          <h1 className="text-lg font-bold tracking-tight">ChatVault</h1>
+          <h1 className="text-lg font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
+            ChatVault
+          </h1>
         </div>
 
         {/* TABS: Notas / Prompts / Arena */}
