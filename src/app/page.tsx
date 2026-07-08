@@ -5,7 +5,7 @@ import { supabase } from "../SupabaseClient";
 import AuthForm from "../components/AuthForm";
 import { NoteCard } from "../components/NoteCard";
 import { NoteModal } from "../components/NoteModal";
-import toast from "react-hot-toast"; // 👈 IMPORTA TOAST
+import toast from "react-hot-toast";
 
 interface Note {
   id: string;
@@ -119,9 +119,57 @@ function NotesManager({ user }: { user: any }) {
 
   const allTags = Array.from(new Set(notes.flatMap((n) => n.tags || [])));
 
+  // 🏷️ Eliminar una etiqueta de TODAS las notas
+  const handleDeleteTag = async (tagToDelete: string) => {
+    if (
+      !confirm(
+        `¿Estás seguro de que quieres eliminar la etiqueta "#${tagToDelete}" de TODAS las notas?`,
+      )
+    ) {
+      return;
+    }
+
+    try {
+      const notesWithTag = notes.filter((n) =>
+        (n.tags || []).includes(tagToDelete),
+      );
+
+      if (notesWithTag.length === 0) {
+        toast.success(`La etiqueta "#${tagToDelete}" no está en uso.`);
+
+        return;
+      }
+
+      const updatePromises = notesWithTag.map((note) => {
+        const updatedTags = (note.tags || []).filter((t) => t !== tagToDelete);
+        return supabase
+          .from("notes")
+          .update({ tags: updatedTags.length > 0 ? updatedTags : null })
+          .eq("id", note.id);
+      });
+
+      await Promise.all(updatePromises);
+      await fetchNotes();
+
+      if (selectedTag === tagToDelete) {
+        setSelectedTag(null);
+      }
+
+      toast.success(
+        `Etiqueta "#${tagToDelete}" eliminada de ${notesWithTag.length} nota(s)`,
+      );
+      console.log(
+        `✅ Etiqueta "${tagToDelete}" eliminada de ${notesWithTag.length} nota(s)`,
+      );
+    } catch (err: any) {
+      console.error("❌ Error al eliminar etiqueta:", err.message);
+      toast.error("Error al eliminar la etiqueta: " + err.message);
+    }
+  };
+
   const openModal = () => {
     console.log("📂 Abriendo modal");
-    setEditingNoteId(null); // 👈 RESETEA EL ID
+    setEditingNoteId(null);
     setTitle("");
     setContent("");
     setSummary("");
@@ -140,13 +188,14 @@ function NotesManager({ user }: { user: any }) {
   const closeModal = () => {
     console.log("📂 Cerrando modal");
     setIsModalOpen(false);
+    setEditingNoteId(null);
     setError(null);
     setSuccess(null);
   };
 
   const startEdit = (note: Note) => {
     console.log("✏️ Editando nota:", note.id);
-    setEditingNoteId(note.id); // 👈 GUARDA EL ID
+    setEditingNoteId(note.id);
     setTitle(note.title);
     setContent(note.content);
     setSummary(note.summary || "");
@@ -295,14 +344,12 @@ function NotesManager({ user }: { user: any }) {
       let result;
 
       if (editingNoteId) {
-        // 🔄 EDITANDO → UPDATE
         console.log("🔄 Actualizando nota con ID:", editingNoteId);
         result = await supabase
           .from("notes")
           .update(noteData)
           .eq("id", editingNoteId);
       } else {
-        // ➕ CREANDO → INSERT
         console.log("➕ Creando nueva nota");
         result = await supabase.from("notes").insert([
           {
@@ -393,13 +440,11 @@ function NotesManager({ user }: { user: any }) {
     <div className="flex h-screen w-screen bg-zinc-100 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-50 overflow-hidden">
       {/* SIDEBAR */}
       <aside className="w-64 border-r border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-800 dark:bg-zinc-900/50 flex flex-col gap-6 select-none h-full">
-        {/* LOGO */}
         <div className="flex items-center gap-2 px-2">
           <span className="text-xl">🔒</span>
           <h1 className="text-lg font-bold tracking-tight">ChatVault</h1>
         </div>
 
-        {/* NAVEGACIÓN */}
         <nav className="space-y-1 flex-1 overflow-y-auto">
           <p className="px-2 text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2">
             Navegación
@@ -422,7 +467,6 @@ function NotesManager({ user }: { user: any }) {
             <span>📁</span> Todos los chats
           </button>
 
-          {/* FILTROS DE FECHA */}
           <div className="pt-2 mt-2 border-t border-zinc-100 dark:border-zinc-800/50 space-y-1">
             <p className="px-2 text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1">
               🕒 Por Fecha
@@ -473,7 +517,6 @@ function NotesManager({ user }: { user: any }) {
               <span>🗓️</span> Últimos 30 días
             </button>
 
-            {/* RANGO PERSONALIZADO */}
             <div className="pt-2 mt-2 border-t border-zinc-100 dark:border-zinc-800/40 space-y-1.5">
               <p className="px-2 text-[9px] font-bold text-zinc-400 uppercase tracking-wider">
                 Rango personalizado
@@ -526,7 +569,7 @@ function NotesManager({ user }: { user: any }) {
 
         <hr className="border-zinc-200 dark:border-zinc-800" />
 
-        {/* ETIQUETAS */}
+        {/* ETIQUETAS CON BOTÓN DE ELIMINAR */}
         <div className="space-y-1 flex-1 overflow-hidden">
           <p className="px-2 text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2">
             #️⃣ Etiquetas
@@ -538,27 +581,53 @@ function NotesManager({ user }: { user: any }) {
               </p>
             ) : (
               allTags.map((t) => (
-                <button
+                <div
                   key={t}
-                  type="button"
-                  onClick={() => setSelectedTag(t)}
-                  className={`flex w-full items-center justify-between rounded-lg px-3 py-1.5 text-sm font-medium capitalize transition-colors ${
-                    selectedTag === t
-                      ? "bg-blue-50 text-blue-600 dark:bg-blue-950/30 dark:text-blue-400"
-                      : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800/50"
-                  }`}
+                  className="group flex w-full items-center justify-between rounded-lg px-3 py-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-800/50 transition-colors"
                 >
-                  <span># {t}</span>
-                  <span className="text-xs bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded-full text-zinc-400">
-                    {notes.filter((n) => (n.tags || []).includes(t)).length}
-                  </span>
-                </button>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedTag(t)}
+                    className={`flex-1 text-left text-sm font-medium capitalize transition-colors ${
+                      selectedTag === t
+                        ? "text-blue-600 dark:text-blue-400"
+                        : "text-zinc-600 dark:text-zinc-400"
+                    }`}
+                  >
+                    # {t}
+                  </button>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded-full text-zinc-400">
+                      {notes.filter((n) => (n.tags || []).includes(t)).length}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => handleDeleteTag(t)}
+                      className="opacity-0 group-hover:opacity-100 transition-opacity text-red-400 hover:text-red-600 dark:hover:text-red-400 p-1 rounded hover:bg-red-50 dark:hover:bg-red-950/20"
+                      title="Eliminar esta etiqueta de todas las notas"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={1.5}
+                        stroke="currentColor"
+                        className="w-3.5 h-3.5"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M6 18L18 6M6 6l12 12"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
               ))
             )}
           </div>
         </div>
 
-        {/* CERRAR SESIÓN */}
         <div className="mt-auto pt-4 border-t border-zinc-200 dark:border-zinc-800">
           <button
             onClick={handleLogout}
@@ -570,9 +639,8 @@ function NotesManager({ user }: { user: any }) {
         </div>
       </aside>
 
-      {/* ================= CONTENIDO CENTRAL ================= */}
+      {/* CONTENIDO CENTRAL */}
       <main className="flex-1 flex flex-col overflow-hidden bg-white dark:bg-zinc-950">
-        {/* HEADER */}
         <header className="flex items-center justify-between border-b border-zinc-200 p-4 dark:border-zinc-800">
           <div className="w-96">
             <input
@@ -591,7 +659,6 @@ function NotesManager({ user }: { user: any }) {
           </button>
         </header>
 
-        {/* MENSAJES */}
         {error && (
           <div className="mx-6 mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600 dark:border-red-900 dark:bg-red-950/30 dark:text-red-400">
             ❌ {error}
@@ -603,7 +670,6 @@ function NotesManager({ user }: { user: any }) {
           </div>
         )}
 
-        {/* REJILLA DE TARJETAS */}
         <section className="flex-1 overflow-y-auto p-6 bg-gradient-to-br from-zinc-50/50 via-white/50 to-zinc-50/30 dark:from-zinc-950 dark:via-zinc-950/95 dark:to-zinc-950">
           {loading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -653,12 +719,11 @@ function NotesManager({ user }: { user: any }) {
         </section>
       </main>
 
-      {/* ================= MODAL ================= */}
+      {/* MODAL */}
       <NoteModal
         isOpen={isModalOpen}
         onClose={closeModal}
         onSubmit={handleSubmit}
-        editingNoteId={editingNoteId}
         title={title}
         setTitle={setTitle}
         content={content}
@@ -684,7 +749,7 @@ function NotesManager({ user }: { user: any }) {
         setSuggestions={setSuggestions}
         setShowSuggestions={setShowSuggestions}
         setSelectedSuggestion={setSelectedSuggestion}
-        editingTitle={title || undefined}
+        editingNoteId={editingNoteId}
       />
     </div>
   );
