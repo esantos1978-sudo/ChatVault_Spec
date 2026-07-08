@@ -39,6 +39,8 @@ export default function NotesManager() {
   const [aiModel, setAiModel] = useState("DeepSeek-R1");
   const [sourceUrl, setSourceUrl] = useState("");
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
   // Cargar notas desde Supabase al arrancar
   useEffect(() => {
@@ -81,12 +83,16 @@ export default function NotesManager() {
 
   // Acción del botón principal para guardar la nota
   const handleSubmit = async () => {
+    setError(null);
+    setSuccess(null);
+
+    // Validaciones iniciales
     if (sourceType === "text" && !title.trim()) {
-      alert("Por favor, escribe un título para guardar tu nota de texto.");
+      setError("Por favor, escribe un título para guardar tu nota de texto.");
       return;
     }
     if (sourceType === "url" && !sourceUrl.trim()) {
-      alert("Por favor, introduce una URL válida.");
+      setError("Por favor, introduce una URL válida.");
       return;
     }
 
@@ -113,6 +119,18 @@ export default function NotesManager() {
         }
       }
 
+      // 🔥 OBTENER EL USUARIO AUTENTICADO DESDE SUPABASE
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser();
+
+      if (userError || !user) {
+        setError("Error: No se pudo identificar al usuario.");
+        setSaving(false);
+        return;
+      }
+
       // Guardamos la información limpia en Supabase
       const { error } = await supabase.from("notes").insert([
         {
@@ -123,16 +141,28 @@ export default function NotesManager() {
           ai_model: aiModel,
           source_type: sourceType,
           source_url: sourceType === "url" ? sourceUrl : null,
+          user_id: user.id, // ✅ AHORA user.id ESTÁ DEFINIDO
         },
       ]);
 
-      if (error) throw error;
+      setSaving(false);
 
-      closeModal();
+      if (error) {
+        setError("Error al guardar la nota: " + error.message);
+        return;
+      }
+
+      // Limpiar formulario
+      setTitle("");
+      setContent("");
+      setTag("");
+      setSourceUrl("");
+      setSuccess("¡Nota guardada correctamente!");
+      setTimeout(() => setSuccess(null), 3000);
+      setIsModalOpen(false);
       fetchNotes();
-    } catch (err: any) {
-      alert(`Error al guardar: ${err.message}`);
-    } finally {
+    } catch (error: any) {
+      setError("Error al guardar: " + error.message);
       setSaving(false);
     }
   };
