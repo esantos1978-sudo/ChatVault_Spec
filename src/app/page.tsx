@@ -1,41 +1,269 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { supabase } from "../SupabaseClient";
-import AuthForm from "../components/AuthForm";
-import { NoteCard } from "../components/NoteCard";
-import { NoteModal } from "../components/NoteModal";
-import { PromptCard } from "../components/PromptCard";
-import { PromptModal } from "../components/PromptModal";
-import toast from "react-hot-toast";
+import { supabase } from "@/lib/supabaseClient";
+import AuthForm from "@/components/AuthForm";
+import Dashboard from "./dashboard/page";
 
-// ==================== INTERFACES ====================
-interface Note {
-  id: string;
-  title: string;
-  content: string;
-  summary?: string;
-  tags?: string[];
-  ai_model?: string;
-  source_type?: string;
-  source_url?: string;
-  created_at: string;
+// ==================== COMPONENTE LANDING ====================
+function LandingPage({ onGetStarted }: { onGetStarted: () => void }) {
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-zinc-50 via-white to-zinc-100 dark:from-zinc-950 dark:via-zinc-900 dark:to-zinc-950">
+      {/* HEADER */}
+      <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-xl border-b border-zinc-200/50 dark:border-zinc-800/50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="text-2xl">🔒</span>
+            <span className="text-xl font-bold text-zinc-900 dark:text-zinc-50">
+              ChatVault
+            </span>
+          </div>
+          <button
+            onClick={onGetStarted}
+            className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 rounded-lg shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 transition-all duration-200"
+          >
+            Comenzar
+          </button>
+        </div>
+      </header>
+
+      {/* HERO */}
+      <section className="pt-32 pb-16 md:pt-40 md:pb-24 px-4">
+        <div className="max-w-7xl mx-auto text-center">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-300 text-xs font-medium mb-6 border border-blue-200/50 dark:border-blue-800/30">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+            </span>
+            Organiza tu conocimiento con IA
+          </div>
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
+            Guarda, organiza y reutiliza
+            <br />
+            <span className="bg-gradient-to-r from-blue-600 to-emerald-500 bg-clip-text text-transparent">
+              tus conversaciones con IA
+            </span>
+          </h1>
+          <p className="mt-6 max-w-2xl mx-auto text-lg text-zinc-600 dark:text-zinc-400">
+            ChatVault es tu baúl de conocimiento. Guarda chats, prompts y
+            recursos de tus modelos de IA favoritos. Todo organizado, etiquetado
+            y listo para reutilizar.
+          </p>
+          <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
+            <button
+              onClick={onGetStarted}
+              className="px-6 py-3 text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 rounded-xl shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 transition-all duration-200 flex items-center gap-2"
+            >
+              Regístrate gratis 🚀
+            </button>
+            <button className="px-6 py-3 text-sm font-medium text-zinc-700 dark:text-zinc-300 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-all duration-200 flex items-center gap-2">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="w-5 h-5"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M15.91 11.672a.375.375 0 0 1 0 .656l-5.603 3.113a.375.375 0 0 1-.557-.328V8.887c0-.286.307-.466.557-.327l5.603 3.112Z"
+                />
+              </svg>
+              Ver demo
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* FUNCIONALIDADES */}
+      <section className="py-16 px-4 bg-white/50 dark:bg-zinc-900/30">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-zinc-900 dark:text-zinc-50">
+              Todo lo que necesitas para gestionar tu conocimiento
+            </h2>
+            <p className="mt-2 text-zinc-600 dark:text-zinc-400">
+              Funcionalidades diseñadas para potenciar tu flujo de trabajo con
+              IA
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[
+              {
+                icon: "📝",
+                title: "Notas inteligentes",
+                description:
+                  "Guarda conversaciones completas con tus modelos de IA favoritos. Título, contenido, resumen y más.",
+              },
+              {
+                icon: "📚",
+                title: "Biblioteca de Prompts",
+                description:
+                  "Reutiliza tus mejores prompts con un solo clic. Organízalos por categorías y tags.",
+              },
+              {
+                icon: "🌐",
+                title: "Scraping de URLs",
+                description:
+                  "Pega una URL y ChatVault extrae automáticamente el título y el contenido de tu chat.",
+              },
+              {
+                icon: "🏷️",
+                title: "Etiquetas múltiples",
+                description:
+                  "Organiza tus notas y prompts con etiquetas. Búsqueda rápida y filtros inteligentes.",
+              },
+              {
+                icon: "🔍",
+                title: "Búsqueda avanzada",
+                description:
+                  "Encuentra cualquier nota o prompt por título, contenido, resumen o etiquetas.",
+              },
+              {
+                icon: "🔒",
+                title: "Seguridad y privacidad",
+                description:
+                  "Tus datos están protegidos con autenticación segura y RLS en Supabase.",
+              },
+            ].map((feature, index) => (
+              <div
+                key={index}
+                className="group p-6 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200/60 dark:border-zinc-800/60 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+              >
+                <div className="text-3xl mb-3">{feature.icon}</div>
+                <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                  {feature.title}
+                </h3>
+                <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
+                  {feature.description}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CÓMO FUNCIONA */}
+      <section className="py-16 px-4">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-zinc-900 dark:text-zinc-50">
+              Cómo funciona ChatVault
+            </h2>
+            <p className="mt-2 text-zinc-600 dark:text-zinc-400">
+              Tres pasos para empezar a organizar tu conocimiento
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              {
+                step: "1",
+                title: "Regístrate",
+                description:
+                  "Crea tu cuenta en segundos con email y contraseña.",
+              },
+              {
+                step: "2",
+                title: "Guarda",
+                description: "Añade notas, prompts o URLs de tus chats con IA.",
+              },
+              {
+                step: "3",
+                title: "Organiza",
+                description:
+                  "Usa etiquetas, categorías y filtros para tenerlo todo a mano.",
+              },
+            ].map((item, index) => (
+              <div key={index} className="text-center">
+                <div className="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-blue-500/10 to-emerald-500/10 flex items-center justify-center text-2xl font-bold text-blue-600 dark:text-blue-400 border border-blue-200/50 dark:border-blue-800/30 mb-4">
+                  {item.step}
+                </div>
+                <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">
+                  {item.title}
+                </h3>
+                <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
+                  {item.description}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* VIDEO PLACEHOLDER */}
+      <section className="py-16 px-4 bg-white/50 dark:bg-zinc-900/30">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-3xl font-bold text-zinc-900 dark:text-zinc-50 mb-4">
+            📹 Descubre ChatVault en acción
+          </h2>
+          <p className="text-zinc-600 dark:text-zinc-400 mb-8">
+            Pronto disponible: un video explicativo con todas las
+            funcionalidades.
+          </p>
+          <div className="relative aspect-video bg-gradient-to-br from-zinc-200 to-zinc-300 dark:from-zinc-800 dark:to-zinc-700 rounded-2xl flex items-center justify-center border border-zinc-200/60 dark:border-zinc-800/60">
+            <div className="text-center">
+              <div className="text-6xl mb-4">🎬</div>
+              <p className="text-zinc-600 dark:text-zinc-400 font-medium">
+                Video explicativo
+              </p>
+              <p className="text-sm text-zinc-500 dark:text-zinc-500">
+                Próximamente
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FOOTER */}
+      <footer className="border-t border-zinc-200/60 dark:border-zinc-800/60 py-8 px-4">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <span className="text-xl">🔒</span>
+            <span className="font-semibold text-zinc-900 dark:text-zinc-50">
+              ChatVault
+            </span>
+            <span className="text-sm text-zinc-500 dark:text-zinc-400">
+              © {new Date().getFullYear()}
+            </span>
+          </div>
+          <div className="flex items-center gap-6 text-sm text-zinc-600 dark:text-zinc-400">
+            <a
+              href="#"
+              className="hover:text-zinc-900 dark:hover:text-zinc-200 transition-colors"
+            >
+              Términos
+            </a>
+            <a
+              href="#"
+              className="hover:text-zinc-900 dark:hover:text-zinc-200 transition-colors"
+            >
+              Privacidad
+            </a>
+            <a
+              href="#"
+              className="hover:text-zinc-900 dark:hover:text-zinc-200 transition-colors"
+            >
+              Contacto
+            </a>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
 }
 
-interface Prompt {
-  id: string;
-  title: string;
-  content: string;
-  category: string;
-  tags?: string[];
-  times_used: number;
-  created_at: string;
-}
-
-// ==================== COMPONENTE HOME ====================
+// ==================== COMPONENTE PRINCIPAL ====================
 export default function Home() {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [showAuth, setShowAuth] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -60,798 +288,36 @@ export default function Home() {
     );
   }
 
-  if (!user) {
-    return <AuthForm onAuth={() => {}} />;
+  // Si el usuario está logueado, mostrar el dashboard
+  if (user) {
+    return <Dashboard user={user} />;
   }
 
-  return <Dashboard user={user} />;
-}
-
-// ==================== COMPONENTE DASHBOARD ====================
-function Dashboard({ user }: { user: any }) {
-  // ==================== ESTADOS GENERALES ====================
-  const [activeTab, setActiveTab] = useState<"notes" | "prompts">("notes");
-
-  // ==================== ESTADOS PARA NOTAS ====================
-  const [notes, setNotes] = useState<Note[]>([]);
-  const [notesLoading, setNotesLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedTag, setSelectedTag] = useState<string | null>(null);
-  const [dateFilter, setDateFilter] = useState<
-    "all" | "today" | "week" | "month"
-  >("all");
-  const [startDate, setStartDate] = useState<string>("");
-  const [endDate, setEndDate] = useState<string>("");
-
-  const [noteModalOpen, setNoteModalOpen] = useState(false);
-  const [noteSourceType, setNoteSourceType] = useState<"text" | "url" | "file">(
-    "text",
-  );
-  const [noteTitle, setNoteTitle] = useState("");
-  const [noteContent, setNoteContent] = useState("");
-  const [noteSummary, setNoteSummary] = useState("");
-  const [noteTags, setNoteTags] = useState<string[]>([]);
-  const [noteTagsInput, setNoteTagsInput] = useState("");
-  const [noteSuggestions, setNoteSuggestions] = useState<string[]>([]);
-  const [noteShowSuggestions, setNoteShowSuggestions] = useState(false);
-  const [noteSelectedSuggestion, setNoteSelectedSuggestion] = useState(-1);
-  const [noteAiModel, setNoteAiModel] = useState("DeepSeek-R1");
-  const [noteSourceUrl, setNoteSourceUrl] = useState("");
-  const [noteSaving, setNoteSaving] = useState(false);
-  const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
-
-  // ==================== ESTADOS PARA PROMPTS ====================
-  const [prompts, setPrompts] = useState<Prompt[]>([]);
-  const [promptsLoading, setPromptsLoading] = useState(true);
-  const [promptSearchQuery, setPromptSearchQuery] = useState("");
-  const [selectedPromptCategory, setSelectedPromptCategory] = useState<
-    string | null
-  >(null);
-
-  const [promptModalOpen, setPromptModalOpen] = useState(false);
-  const [promptTitle, setPromptTitle] = useState("");
-  const [promptContent, setPromptContent] = useState("");
-  const [promptCategory, setPromptCategory] = useState("texto");
-  const [promptTags, setPromptTags] = useState<string[]>([]);
-  const [promptTagsInput, setPromptTagsInput] = useState("");
-  const [promptSuggestions, setPromptSuggestions] = useState<string[]>([]);
-  const [promptShowSuggestions, setPromptShowSuggestions] = useState(false);
-  const [promptSelectedSuggestion, setPromptSelectedSuggestion] = useState(-1);
-  const [promptSaving, setPromptSaving] = useState(false);
-  const [editingPromptId, setEditingPromptId] = useState<string | null>(null);
-
-  // ==================== ESTADOS COMUNES ====================
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
-
-  // ==================== OBTENER TODOS LOS TAGS ====================
-  const allTags = Array.from(
-    new Set([
-      ...notes.flatMap((n) => n.tags || []),
-      ...prompts.flatMap((p) => p.tags || []),
-    ]),
-  );
-
-  // ==================== EFECTOS ====================
-  useEffect(() => {
-    fetchNotes();
-    fetchPrompts();
-  }, []);
-
-  // ==================== FUNCIONES PARA NOTAS ====================
-  async function fetchNotes() {
-    try {
-      setNotesLoading(true);
-      const { data, error } = await supabase
-        .from("notes")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-      if (error) throw error;
-      setNotes(data || []);
-    } catch (err: any) {
-      console.error("Error cargando notas:", err.message);
-    } finally {
-      setNotesLoading(false);
-    }
-  }
-
-  const filteredNotes = notes
-    .filter((n) => (selectedTag ? (n.tags || []).includes(selectedTag) : true))
-    .filter((n) => {
-      const noteDate = new Date(n.created_at);
-      const now = new Date();
-
-      if (startDate || endDate) {
-        const noteString = noteDate.toISOString().split("T")[0];
-        if (startDate && noteString < startDate) return false;
-        if (endDate && noteString > endDate) return false;
-        return true;
-      }
-
-      if (dateFilter === "all") return true;
-      if (dateFilter === "today")
-        return noteDate.toDateString() === now.toDateString();
-      if (dateFilter === "week") {
-        const oneWeekAgo = new Date();
-        oneWeekAgo.setDate(now.getDate() - 7);
-        return noteDate >= oneWeekAgo;
-      }
-      if (dateFilter === "month") {
-        const oneMonthAgo = new Date();
-        oneMonthAgo.setMonth(now.getMonth() - 1);
-        return noteDate >= oneMonthAgo;
-      }
-      return true;
-    })
-    .filter((n) => {
-      const query = searchQuery.toLowerCase().trim();
-      if (!query) return true;
-      return (
-        n.title.toLowerCase().includes(query) ||
-        (n.content && n.content.toLowerCase().includes(query)) ||
-        (n.summary && n.summary.toLowerCase().includes(query))
-      );
-    });
-
-  // ==================== FUNCIONES PARA PROMPTS ====================
-  async function fetchPrompts() {
-    try {
-      setPromptsLoading(true);
-      const { data, error } = await supabase
-        .from("prompts")
-        .select("*")
-        .order("times_used", { ascending: false })
-        .order("created_at", { ascending: false });
-
-      if (error) throw error;
-      setPrompts(data || []);
-    } catch (err: any) {
-      console.error("Error cargando prompts:", err.message);
-    } finally {
-      setPromptsLoading(false);
-    }
-  }
-
-  const filteredPrompts = prompts
-    .filter((p) =>
-      selectedPromptCategory ? p.category === selectedPromptCategory : true,
-    )
-    .filter((p) => {
-      const query = promptSearchQuery.toLowerCase().trim();
-      if (!query) return true;
-      return (
-        p.title.toLowerCase().includes(query) ||
-        p.content.toLowerCase().includes(query) ||
-        (p.tags && p.tags.some((t) => t.toLowerCase().includes(query)))
-      );
-    });
-
-  // ==================== HANDLE SUBMIT NOTAS ====================
-  const handleNoteSubmit = async () => {
-    if (!noteTitle.trim()) {
-      toast.error("Por favor, escribe un título.");
-      return;
-    }
-
-    try {
-      setNoteSaving(true);
-      const loadingToast = toast.loading(
-        editingNoteId ? "Actualizando nota..." : "Guardando nota...",
-      );
-
-      const noteData = {
-        title: noteTitle.trim(),
-        content: noteContent.trim(),
-        summary: noteSummary.trim() || null,
-        tags: noteTags.length > 0 ? noteTags : null,
-        ai_model: noteAiModel,
-        source_type: noteSourceType,
-        source_url: noteSourceType === "url" ? noteSourceUrl : null,
-        user_id: user.id,
-      };
-
-      let result;
-      if (editingNoteId) {
-        result = await supabase
-          .from("notes")
-          .update(noteData)
-          .eq("id", editingNoteId);
-      } else {
-        result = await supabase.from("notes").insert([noteData]);
-      }
-
-      if (result.error) throw result.error;
-
-      toast.success(editingNoteId ? "¡Nota actualizada!" : "¡Nota guardada!", {
-        id: loadingToast,
-      });
-      setNoteModalOpen(false);
-      resetNoteForm();
-      fetchNotes();
-    } catch (err: any) {
-      toast.error("Error: " + err.message);
-    } finally {
-      setNoteSaving(false);
-    }
-  };
-
-  function resetNoteForm() {
-    setNoteTitle("");
-    setNoteContent("");
-    setNoteSummary("");
-    setNoteTags([]);
-    setNoteTagsInput("");
-    setNoteSourceUrl("");
-    setNoteSourceType("text");
-    setNoteAiModel("DeepSeek-R1");
-    setEditingNoteId(null);
-  }
-
-  function openNoteModal(note?: Note) {
-    if (note) {
-      setEditingNoteId(note.id);
-      setNoteTitle(note.title);
-      setNoteContent(note.content);
-      setNoteSummary(note.summary || "");
-      setNoteTags(note.tags || []);
-      setNoteTagsInput((note.tags || []).join(", "));
-      setNoteAiModel(note.ai_model || "DeepSeek-R1");
-      setNoteSourceType(
-        (note.source_type as "text" | "url" | "file") || "text",
-      );
-      setNoteSourceUrl(note.source_url || "");
-    } else {
-      resetNoteForm();
-    }
-    setNoteModalOpen(true);
-  }
-
-  // ==================== HANDLE SUBMIT PROMPTS ====================
-  const handlePromptSubmit = async () => {
-    if (!promptTitle.trim() || !promptContent.trim()) {
-      toast.error("Por favor, completa el título y el contenido.");
-      return;
-    }
-
-    try {
-      setPromptSaving(true);
-      const loadingToast = toast.loading(
-        editingPromptId ? "Actualizando prompt..." : "Guardando prompt...",
-      );
-
-      const promptData = {
-        title: promptTitle.trim(),
-        content: promptContent.trim(),
-        category: promptCategory,
-        tags: promptTags.length > 0 ? promptTags : null,
-        user_id: user.id,
-      };
-
-      let result;
-      if (editingPromptId) {
-        result = await supabase
-          .from("prompts")
-          .update(promptData)
-          .eq("id", editingPromptId);
-      } else {
-        result = await supabase.from("prompts").insert([promptData]);
-      }
-
-      if (result.error) throw result.error;
-
-      toast.success(
-        editingPromptId ? "¡Prompt actualizado!" : "¡Prompt guardado!",
-        { id: loadingToast },
-      );
-      setPromptModalOpen(false);
-      resetPromptForm();
-      fetchPrompts();
-    } catch (err: any) {
-      toast.error("Error: " + err.message);
-    } finally {
-      setPromptSaving(false);
-    }
-  };
-
-  function resetPromptForm() {
-    setPromptTitle("");
-    setPromptContent("");
-    setPromptCategory("texto");
-    setPromptTags([]);
-    setPromptTagsInput("");
-    setEditingPromptId(null);
-  }
-
-  function openPromptModal(prompt?: Prompt) {
-    if (prompt) {
-      setEditingPromptId(prompt.id);
-      setPromptTitle(prompt.title);
-      setPromptContent(prompt.content);
-      setPromptCategory(prompt.category);
-      setPromptTags(prompt.tags || []);
-      setPromptTagsInput((prompt.tags || []).join(", "));
-    } else {
-      resetPromptForm();
-    }
-    setPromptModalOpen(true);
-  }
-
-  // ==================== FUNCIONES CRUD PROMPTS ====================
-  const handleDeletePrompt = async (id: string) => {
-    if (!confirm("¿Estás seguro de que quieres eliminar este prompt?")) return;
-
-    try {
-      const { error } = await supabase.from("prompts").delete().eq("id", id);
-      if (error) throw error;
-      toast.success("Prompt eliminado");
-      fetchPrompts();
-    } catch (err: any) {
-      toast.error("Error al eliminar: " + err.message);
-    }
-  };
-
-  const handleCopyPrompt = async (prompt: Prompt) => {
-    try {
-      await navigator.clipboard.writeText(prompt.content);
-
-      const { error } = await supabase
-        .from("prompts")
-        .update({ times_used: prompt.times_used + 1 })
-        .eq("id", prompt.id);
-
-      if (error) throw error;
-
-      toast.success("¡Prompt copiado al portapapeles! 📋");
-      fetchPrompts();
-    } catch (err: any) {
-      toast.error("Error al copiar: " + err.message);
-    }
-  };
-
-  // ==================== FUNCIONES DE NAVEGACIÓN Y FILTROS ====================
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    window.location.reload();
-  };
-
-  const handleDeleteNote = async (id: string) => {
-    if (!confirm("¿Estás seguro de que quieres eliminar esta nota?")) return;
-    try {
-      const { error } = await supabase.from("notes").delete().eq("id", id);
-      if (error) throw error;
-      toast.success("Nota eliminada");
-      fetchNotes();
-    } catch (err: any) {
-      toast.error("Error al eliminar: " + err.message);
-    }
-  };
-
-  const addNoteSuggestion = (index: number) => {
-    const suggestion = noteSuggestions[index];
-    if (!suggestion) return;
-    const lastTagIndex = noteTags.length - 1;
-    const newTags = noteTags.filter((_, i) => i !== lastTagIndex);
-    const updatedTags = [...newTags, suggestion];
-    setNoteTags(updatedTags);
-    setNoteTagsInput(updatedTags.join(", "));
-    setNoteShowSuggestions(false);
-    setNoteSelectedSuggestion(-1);
-  };
-
-  const addPromptSuggestion = (index: number) => {
-    const suggestion = promptSuggestions[index];
-    if (!suggestion) return;
-    const lastTagIndex = promptTags.length - 1;
-    const newTags = promptTags.filter((_, i) => i !== lastTagIndex);
-    const updatedTags = [...newTags, suggestion];
-    setPromptTags(updatedTags);
-    setPromptTagsInput(updatedTags.join(", "));
-    setPromptShowSuggestions(false);
-    setPromptSelectedSuggestion(-1);
-  };
-
-  const handleDeleteTag = async (tagToDelete: string) => {
-    if (
-      !confirm(
-        `¿Eliminar la etiqueta "#${tagToDelete}" de TODAS las notas y prompts?`,
-      )
-    )
-      return;
-
-    try {
-      const notesWithTag = notes.filter((n) =>
-        (n.tags || []).includes(tagToDelete),
-      );
-      const notePromises = notesWithTag.map((note) => {
-        const updatedTags = (note.tags || []).filter((t) => t !== tagToDelete);
-        return supabase
-          .from("notes")
-          .update({ tags: updatedTags.length > 0 ? updatedTags : null })
-          .eq("id", note.id);
-      });
-
-      const promptsWithTag = prompts.filter((p) =>
-        (p.tags || []).includes(tagToDelete),
-      );
-      const promptPromises = promptsWithTag.map((prompt) => {
-        const updatedTags = (prompt.tags || []).filter(
-          (t) => t !== tagToDelete,
-        );
-        return supabase
-          .from("prompts")
-          .update({ tags: updatedTags.length > 0 ? updatedTags : null })
-          .eq("id", prompt.id);
-      });
-
-      await Promise.all([...notePromises, ...promptPromises]);
-      await fetchNotes();
-      await fetchPrompts();
-
-      if (selectedTag === tagToDelete) setSelectedTag(null);
-      if (selectedPromptCategory === tagToDelete)
-        setSelectedPromptCategory(null);
-
-      toast.success(`Etiqueta "#${tagToDelete}" eliminada`);
-    } catch (err: any) {
-      toast.error("Error: " + err.message);
-    }
-  };
-
-  // ==================== RENDER ====================
-  return (
-    <div className="flex h-screen w-screen bg-zinc-100 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-50 overflow-hidden">
-      {/* ================= SIDEBAR ================= */}
-      <aside className="w-64 border-r border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-800 dark:bg-zinc-900/50 flex flex-col gap-4 select-none h-full">
-        {/* LOGO */}
-        <div className="flex items-center gap-2 px-2">
-          <span className="text-xl">🔒</span>
-          <h1 className="text-lg font-bold tracking-tight">ChatVault</h1>
-        </div>
-
-        {/* TABS: Notas / Prompts */}
-        <div className="flex rounded-lg bg-zinc-200/50 dark:bg-zinc-800/50 p-1">
-          <button
-            onClick={() => setActiveTab("notes")}
-            className={`flex-1 rounded-md px-3 py-1.5 text-xs font-medium transition-all ${
-              activeTab === "notes"
-                ? "bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 shadow-sm"
-                : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-300"
-            }`}
-          >
-            📝 Notas
-          </button>
-          <button
-            onClick={() => setActiveTab("prompts")}
-            className={`flex-1 rounded-md px-3 py-1.5 text-xs font-medium transition-all ${
-              activeTab === "prompts"
-                ? "bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 shadow-sm"
-                : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-300"
-            }`}
-          >
-            📚 Prompts
-          </button>
-        </div>
-
-        {/* ETIQUETAS (Siempre visibles) */}
-        <div className="space-y-1 flex-1 overflow-hidden">
-          <p className="px-2 text-xs font-semibold text-zinc-400 uppercase tracking-wider">
-            #️⃣ Etiquetas
-          </p>
-          <div className="max-h-40 overflow-y-auto pr-1 space-y-1 scrollbar-thin">
-            {allTags.length === 0 ? (
-              <p className="px-2 text-xs text-zinc-400 italic">
-                No hay etiquetas
-              </p>
-            ) : (
-              allTags.map((t) => (
-                <div
-                  key={t}
-                  className="group flex w-full items-center justify-between rounded-lg px-3 py-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-800/50 transition-colors"
-                >
-                  <button
-                    onClick={() =>
-                      setSelectedTag(activeTab === "notes" ? t : null)
-                    }
-                    className={`flex-1 text-left text-sm font-medium capitalize transition-colors ${
-                      selectedTag === t && activeTab === "notes"
-                        ? "text-blue-600 dark:text-blue-400"
-                        : "text-zinc-600 dark:text-zinc-400"
-                    }`}
-                  >
-                    # {t}
-                  </button>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded-full text-zinc-400">
-                      {notes.filter((n) => (n.tags || []).includes(t)).length +
-                        prompts.filter((p) => (p.tags || []).includes(t))
-                          .length}
-                    </span>
-                    <button
-                      onClick={() => handleDeleteTag(t)}
-                      className="opacity-0 group-hover:opacity-100 transition-opacity text-red-400 hover:text-red-600 dark:hover:text-red-400 p-1 rounded hover:bg-red-50 dark:hover:bg-red-950/20"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth={1.5}
-                        stroke="currentColor"
-                        className="w-3.5 h-3.5"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M6 18L18 6M6 6l12 12"
-                        />
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-        </div>
-
-        {/* 🆕 CATEGORÍAS (Solo visibles en la tab de Prompts) */}
-        {activeTab === "prompts" && (
-          <div className="space-y-1 pt-2 border-t border-zinc-100 dark:border-zinc-800/50">
-            <p className="px-2 text-xs font-semibold text-zinc-400 uppercase tracking-wider">
-              📂 Categorías
+  // Si el usuario no está logueado y está en la landing
+  if (showAuth) {
+    return (
+      <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 flex items-center justify-center p-4">
+        <div className="w-full max-w-md">
+          <div className="mb-6 text-center">
+            <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">
+              🔒 ChatVault
+            </h1>
+            <p className="text-sm text-zinc-600 dark:text-zinc-400">
+              Inicia sesión para acceder a tu baúl de conocimiento
             </p>
-            <div className="space-y-0.5">
-              {["imagen", "texto", "codigo", "video", "mcp", "otro"].map(
-                (cat) => {
-                  const count = prompts.filter(
-                    (p) => p.category === cat,
-                  ).length;
-                  return (
-                    <button
-                      key={cat}
-                      onClick={() =>
-                        setSelectedPromptCategory(
-                          selectedPromptCategory === cat ? null : cat,
-                        )
-                      }
-                      className={`flex w-full items-center justify-between rounded-lg px-3 py-1.5 text-sm font-medium capitalize transition-colors ${
-                        selectedPromptCategory === cat
-                          ? "bg-blue-50 text-blue-600 dark:bg-blue-950/30 dark:text-blue-400"
-                          : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800/50"
-                      }`}
-                    >
-                      <span>{cat}</span>
-                      <span className="text-xs bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded-full text-zinc-400">
-                        {count}
-                      </span>
-                    </button>
-                  );
-                },
-              )}
-            </div>
           </div>
-        )}
-
-        {/* CERRAR SESIÓN */}
-        <div className="mt-auto pt-4 border-t border-zinc-200 dark:border-zinc-800">
+          <AuthForm onAuth={() => setShowAuth(false)} />
           <button
-            onClick={handleLogout}
-            className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/20 transition-colors"
+            onClick={() => setShowAuth(false)}
+            className="mt-4 w-full text-center text-sm text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 transition-colors"
           >
-            <span>🚪</span>
-            Cerrar sesión
+            ← Volver a la landing
           </button>
         </div>
-      </aside>
+      </div>
+    );
+  }
 
-      {/* ================= CONTENIDO PRINCIPAL ================= */}
-      <main className="flex-1 flex flex-col overflow-hidden bg-white dark:bg-zinc-950">
-        {/* HEADER */}
-        <header className="flex items-center justify-between border-b border-zinc-200 p-4 dark:border-zinc-800">
-          <div className="flex-1 max-w-md">
-            <input
-              type="text"
-              placeholder={
-                activeTab === "notes"
-                  ? "Buscar en notas..."
-                  : "Buscar en prompts (título, contenido, tags)..."
-              }
-              value={activeTab === "notes" ? searchQuery : promptSearchQuery}
-              onChange={(e) => {
-                if (activeTab === "notes") setSearchQuery(e.target.value);
-                else setPromptSearchQuery(e.target.value);
-              }}
-              className="w-full rounded-lg border border-zinc-300 px-4 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-zinc-400 dark:focus:border-zinc-600"
-            />
-          </div>
-
-          <button
-            onClick={() =>
-              activeTab === "notes" ? openNoteModal() : openPromptModal()
-            }
-            className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-zinc-50 hover:bg-zinc-800 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200 transition-colors ml-4"
-          >
-            {activeTab === "notes" ? "➕ Nueva nota" : "📚 Nuevo prompt"}
-          </button>
-        </header>
-
-        {error && (
-          <div className="mx-6 mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600 dark:border-red-900 dark:bg-red-950/30 dark:text-red-400">
-            ❌ {error}
-          </div>
-        )}
-        {success && (
-          <div className="mx-6 mt-4 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-600 dark:border-green-900 dark:bg-green-950/30 dark:text-green-400">
-            ✅ {success}
-          </div>
-        )}
-
-        {/* CONTENIDO SEGÚN TAB */}
-        <section className="flex-1 overflow-y-auto p-6 bg-gradient-to-br from-zinc-50/50 via-white/50 to-zinc-50/30 dark:from-zinc-950 dark:via-zinc-950/95 dark:to-zinc-950">
-          {/* ==================== TAB NOTAS ==================== */}
-          {activeTab === "notes" && (
-            <>
-              {notesLoading ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {[1, 2, 3, 4, 5, 6].map((i) => (
-                    <div
-                      key={i}
-                      className="rounded-2xl border border-zinc-200/60 dark:border-zinc-800/60 bg-white dark:bg-zinc-900 p-5 min-h-[240px] animate-pulse"
-                    >
-                      <div className="flex items-start justify-between mb-3">
-                        <div className="flex gap-2">
-                          <div className="h-6 w-16 rounded-full bg-zinc-200 dark:bg-zinc-800" />
-                          <div className="h-6 w-12 rounded-full bg-zinc-200 dark:bg-zinc-800" />
-                        </div>
-                        <div className="flex gap-1">
-                          <div className="h-8 w-8 rounded-lg bg-zinc-200 dark:bg-zinc-800" />
-                          <div className="h-8 w-8 rounded-lg bg-zinc-200 dark:bg-zinc-800" />
-                        </div>
-                      </div>
-                      <div className="h-5 w-3/4 rounded-lg bg-zinc-200 dark:bg-zinc-800 mb-3" />
-                      <div className="h-16 w-full rounded-xl bg-zinc-200 dark:bg-zinc-800 mb-3" />
-                      <div className="h-10 w-full rounded-xl bg-zinc-200 dark:bg-zinc-800" />
-                    </div>
-                  ))}
-                </div>
-              ) : filteredNotes.length === 0 ? (
-                <div className="flex h-64 flex-col items-center justify-center rounded-2xl border-2 border-dashed border-zinc-300 dark:border-zinc-700 bg-white/50 dark:bg-zinc-900/30">
-                  <span className="text-4xl mb-4">📭</span>
-                  <p className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
-                    No hay notas
-                  </p>
-                  <p className="text-xs text-zinc-400 dark:text-zinc-500 mt-1">
-                    Crea tu primera nota o ajusta los filtros
-                  </p>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                  {filteredNotes.map((note, index) => (
-                    <NoteCard
-                      key={note.id}
-                      note={note}
-                      onEdit={openNoteModal}
-                      onDelete={handleDeleteNote}
-                      index={index}
-                    />
-                  ))}
-                </div>
-              )}
-            </>
-          )}
-
-          {/* ==================== TAB PROMPTS ==================== */}
-          {activeTab === "prompts" && (
-            <>
-              {promptsLoading ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {[1, 2, 3, 4, 5, 6].map((i) => (
-                    <div
-                      key={i}
-                      className="rounded-2xl border border-zinc-200/60 dark:border-zinc-800/60 bg-white dark:bg-zinc-900 p-5 min-h-[200px] animate-pulse"
-                    >
-                      <div className="flex items-start justify-between mb-3">
-                        <div className="flex gap-2">
-                          <div className="h-6 w-16 rounded-full bg-zinc-200 dark:bg-zinc-800" />
-                          <div className="h-6 w-12 rounded-full bg-zinc-200 dark:bg-zinc-800" />
-                        </div>
-                        <div className="flex gap-1">
-                          <div className="h-8 w-8 rounded-lg bg-zinc-200 dark:bg-zinc-800" />
-                          <div className="h-8 w-8 rounded-lg bg-zinc-200 dark:bg-zinc-800" />
-                        </div>
-                      </div>
-                      <div className="h-5 w-3/4 rounded-lg bg-zinc-200 dark:bg-zinc-800 mb-3" />
-                      <div className="h-16 w-full rounded-xl bg-zinc-200 dark:bg-zinc-800 mb-3" />
-                      <div className="h-8 w-1/3 rounded-lg bg-zinc-200 dark:bg-zinc-800" />
-                    </div>
-                  ))}
-                </div>
-              ) : filteredPrompts.length === 0 ? (
-                <div className="flex h-64 flex-col items-center justify-center rounded-2xl border-2 border-dashed border-zinc-300 dark:border-zinc-700 bg-white/50 dark:bg-zinc-900/30">
-                  <span className="text-4xl mb-4">📚</span>
-                  <p className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
-                    No hay prompts
-                  </p>
-                  <p className="text-xs text-zinc-400 dark:text-zinc-500 mt-1">
-                    Guarda tu primer prompt reutilizable
-                  </p>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                  {filteredPrompts.map((prompt, index) => (
-                    <PromptCard
-                      key={prompt.id}
-                      prompt={prompt}
-                      onEdit={openPromptModal}
-                      onDelete={handleDeletePrompt}
-                      onCopy={handleCopyPrompt}
-                      index={index}
-                    />
-                  ))}
-                </div>
-              )}
-            </>
-          )}
-        </section>
-      </main>
-
-      {/* ==================== MODALES ==================== */}
-      <NoteModal
-        isOpen={noteModalOpen}
-        onClose={() => setNoteModalOpen(false)}
-        onSubmit={handleNoteSubmit}
-        title={noteTitle}
-        setTitle={setNoteTitle}
-        content={noteContent}
-        setContent={setNoteContent}
-        summary={noteSummary}
-        setSummary={setNoteSummary}
-        tags={noteTags}
-        tagsInput={noteTagsInput}
-        setTagsInput={setNoteTagsInput}
-        setTags={setNoteTags}
-        aiModel={noteAiModel}
-        setAiModel={setNoteAiModel}
-        sourceType={noteSourceType}
-        setSourceType={setNoteSourceType}
-        sourceUrl={noteSourceUrl}
-        setSourceUrl={setNoteSourceUrl}
-        saving={noteSaving}
-        allTags={allTags}
-        suggestions={noteSuggestions}
-        showSuggestions={noteShowSuggestions}
-        selectedSuggestion={noteSelectedSuggestion}
-        addSuggestion={addNoteSuggestion}
-        setSuggestions={setNoteSuggestions}
-        setShowSuggestions={setNoteShowSuggestions}
-        setSelectedSuggestion={setNoteSelectedSuggestion}
-        editingNoteId={editingNoteId}
-      />
-
-      <PromptModal
-        isOpen={promptModalOpen}
-        onClose={() => setPromptModalOpen(false)}
-        onSubmit={handlePromptSubmit}
-        title={promptTitle}
-        setTitle={setPromptTitle}
-        content={promptContent}
-        setContent={setPromptContent}
-        category={promptCategory}
-        setCategory={setPromptCategory}
-        tags={promptTags}
-        tagsInput={promptTagsInput}
-        setTagsInput={setPromptTagsInput}
-        setTags={setPromptTags}
-        saving={promptSaving}
-        allTags={allTags}
-        suggestions={promptSuggestions}
-        showSuggestions={promptShowSuggestions}
-        selectedSuggestion={promptSelectedSuggestion}
-        addSuggestion={addPromptSuggestion}
-        setSuggestions={setPromptSuggestions}
-        setShowSuggestions={setPromptShowSuggestions}
-        setSelectedSuggestion={setPromptSelectedSuggestion}
-        editingId={editingPromptId}
-      />
-    </div>
-  );
+  // Si no hay usuario y no está en el login, mostrar la landing
+  return <LandingPage onGetStarted={() => setShowAuth(true)} />;
 }

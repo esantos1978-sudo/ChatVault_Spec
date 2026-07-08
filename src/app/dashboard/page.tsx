@@ -1,9 +1,7 @@
 "use client";
 
-"use client";
-
 import { useState, useEffect } from "react";
-import { supabase } from "@/lib/supabaseClient"; // 👈 ASÍ, CON @/lib/
+import { supabase } from "@/lib/supabaseClient";
 import { NoteCard } from "@/components/NoteCard";
 import { NoteModal } from "@/components/NoteModal";
 import { PromptCard } from "@/components/PromptCard";
