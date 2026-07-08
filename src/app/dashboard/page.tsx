@@ -676,6 +676,107 @@ export default function Dashboard({ user }: { user: any }) {
           </div>
         )}
 
+        {/* 🕒 FILTROS POR FECHA (Solo visible en la tab de Notas) */}
+        {activeTab === "notes" && (
+          <div className="space-y-1 pt-2 border-t border-zinc-100 dark:border-zinc-800/50">
+            <p className="px-2 text-[10px] font-bold text-zinc-400 uppercase tracking-wider">
+              🕒 Por Fecha
+            </p>
+            <div className="space-y-1">
+              <button
+                onClick={() => {
+                  setDateFilter("today");
+                  setStartDate("");
+                  setEndDate("");
+                }}
+                className={`flex w-full items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
+                  dateFilter === "today"
+                    ? "bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400"
+                    : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800/50"
+                }`}
+              >
+                ☀️ Hoy
+              </button>
+              <button
+                onClick={() => {
+                  setDateFilter("week");
+                  setStartDate("");
+                  setEndDate("");
+                }}
+                className={`flex w-full items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
+                  dateFilter === "week"
+                    ? "bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400"
+                    : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800/50"
+                }`}
+              >
+                📅 Últimos 7 días
+              </button>
+              <button
+                onClick={() => {
+                  setDateFilter("month");
+                  setStartDate("");
+                  setEndDate("");
+                }}
+                className={`flex w-full items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
+                  dateFilter === "month"
+                    ? "bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400"
+                    : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800/50"
+                }`}
+              >
+                🗓️ Últimos 30 días
+              </button>
+            </div>
+
+            {/* RANGO PERSONALIZADO */}
+            <div className="pt-2 mt-1 border-t border-zinc-100 dark:border-zinc-800/40 space-y-1.5">
+              <p className="px-2 text-[9px] font-bold text-zinc-400 uppercase tracking-wider">
+                Rango personalizado
+              </p>
+              <div className="grid grid-cols-2 gap-1.5 px-2">
+                <div>
+                  <label className="text-[9px] text-zinc-400 block mb-0.5">
+                    Desde
+                  </label>
+                  <input
+                    type="date"
+                    value={startDate}
+                    onChange={(e) => {
+                      setStartDate(e.target.value);
+                      setDateFilter("all");
+                    }}
+                    className="w-full text-[10px] rounded border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 p-1 text-zinc-600 dark:text-zinc-300 focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="text-[9px] text-zinc-400 block mb-0.5">
+                    Hasta
+                  </label>
+                  <input
+                    type="date"
+                    value={endDate}
+                    onChange={(e) => {
+                      setEndDate(e.target.value);
+                      setDateFilter("all");
+                    }}
+                    className="w-full text-[10px] rounded border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 p-1 text-zinc-600 dark:text-zinc-300 focus:outline-none"
+                  />
+                </div>
+              </div>
+              {(startDate || endDate) && (
+                <button
+                  onClick={() => {
+                    setStartDate("");
+                    setEndDate("");
+                  }}
+                  className="w-full px-2 text-left text-[10px] text-red-500 hover:text-red-600 font-medium transition-colors mt-1"
+                >
+                  ❌ Limpiar calendario
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* CATEGORÍAS (Solo visibles en la tab de Prompts) */}
         {activeTab === "prompts" && (
           <div className="space-y-1 pt-2 border-t border-zinc-100 dark:border-zinc-800/50">
