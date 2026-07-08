@@ -16,20 +16,18 @@ interface Note {
   created_at: string;
 }
 
-// ==================== COMPONENTE HOME (MANEJA LA SESIÓN) ====================
+// ==================== COMPONENTE HOME ====================
 export default function Home() {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // 1. Obtener sesión actual
     supabase.auth.getSession().then(({ data: { session } }) => {
       console.log("👤 Sesión obtenida en Home:", session?.user?.id);
       setUser(session?.user ?? null);
       setLoading(false);
     });
 
-    // 2. Escuchar cambios de autenticación
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -65,14 +63,12 @@ function NotesManager({ user }: { user: any }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
 
-  // Filtros Temporales
   const [dateFilter, setDateFilter] = useState<
     "all" | "today" | "week" | "month"
   >("all");
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
 
-  // Formulario del Modal
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [sourceType, setSourceType] = useState<"text" | "url" | "file">("text");
   const [title, setTitle] = useState("");
@@ -92,7 +88,6 @@ function NotesManager({ user }: { user: any }) {
 
   // ==================== FUNCIONES ====================
 
-  // Cargar notas
   async function fetchNotes() {
     console.log("📥 fetchNotes iniciado");
     try {
@@ -112,12 +107,10 @@ function NotesManager({ user }: { user: any }) {
     }
   }
 
-  // Extraer etiquetas únicas
   const allTags = Array.from(
     new Set(notes.map((n) => n.tag).filter((t): t is string => !!t)),
   );
 
-  // Abrir modal
   const openModal = () => {
     console.log("📂 Abriendo modal");
     setTitle("");
@@ -131,7 +124,6 @@ function NotesManager({ user }: { user: any }) {
     setIsModalOpen(true);
   };
 
-  // Cerrar modal
   const closeModal = () => {
     console.log("📂 Cerrando modal");
     setIsModalOpen(false);
@@ -139,7 +131,6 @@ function NotesManager({ user }: { user: any }) {
     setSuccess(null);
   };
 
-  // Editar nota
   const startEdit = (note: Note) => {
     console.log("✏️ Editando nota:", note.id);
     setTitle(note.title);
@@ -154,7 +145,6 @@ function NotesManager({ user }: { user: any }) {
     setIsModalOpen(true);
   };
 
-  // Borrar nota
   const handleDeleteNote = async (id: string) => {
     console.log("🗑️ Borrando nota:", id);
     if (!confirm("¿Estás seguro de que quieres eliminar esta nota?")) return;
@@ -170,7 +160,6 @@ function NotesManager({ user }: { user: any }) {
     }
   };
 
-  // Cerrar sesión
   const handleLogout = async () => {
     try {
       await supabase.auth.signOut();
@@ -180,7 +169,6 @@ function NotesManager({ user }: { user: any }) {
     }
   };
 
-  // ==================== HANDLE SUBMIT ====================
   const handleSubmit = async () => {
     console.log("🚀 handleSubmit ejecutado");
     console.log("👤 user recibido en NotesManager:", user?.id);
@@ -191,7 +179,6 @@ function NotesManager({ user }: { user: any }) {
     setError(null);
     setSuccess(null);
 
-    // Validaciones
     if (sourceType === "text" && !title.trim()) {
       setError("Por favor, escribe un título para guardar tu nota de texto.");
       console.log("❌ Error: Título vacío en modo texto");
@@ -203,7 +190,6 @@ function NotesManager({ user }: { user: any }) {
       return;
     }
 
-    // 🔥 VERIFICAR QUE HAY USUARIO
     if (!user) {
       setError("Error: No se pudo identificar al usuario.");
       setSaving(false);
@@ -218,7 +204,6 @@ function NotesManager({ user }: { user: any }) {
       let finalTitle = title;
       let finalContent = content;
 
-      // Si es modo URL, disparamos a nuestra API del backend
       if (sourceType === "url") {
         let cleanUrl = sourceUrl.trim();
         if (
@@ -252,7 +237,6 @@ function NotesManager({ user }: { user: any }) {
         }
       }
 
-      // Datos a insertar con user.id
       const noteData = {
         title: finalTitle || "Conversación sin título",
         content: finalContent || "Contenido vacío",
@@ -491,7 +475,6 @@ function NotesManager({ user }: { user: any }) {
           </div>
         </div>
 
-        {/* BOTÓN DE CERRAR SESIÓN */}
         <div className="mt-auto pt-4 border-t border-zinc-200 dark:border-zinc-800">
           <button
             onClick={handleLogout}
@@ -523,7 +506,6 @@ function NotesManager({ user }: { user: any }) {
           </button>
         </header>
 
-        {/* Mensajes de error/success */}
         {error && (
           <div className="mx-6 mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600 dark:border-red-900 dark:bg-red-950/30 dark:text-red-400">
             ❌ {error}
@@ -535,37 +517,74 @@ function NotesManager({ user }: { user: any }) {
           </div>
         )}
 
-        {/* REJILLA DE TARJETAS */}
-        <section className="flex-1 overflow-y-auto p-6 bg-zinc-50/50 dark:bg-zinc-950">
+        {/* ================= REJILLA DE TARJETAS REDISEÑADAS ================= */}
+        <section className="flex-1 overflow-y-auto p-6 bg-gradient-to-br from-zinc-50/50 via-white/50 to-zinc-50/30 dark:from-zinc-950 dark:via-zinc-950/95 dark:to-zinc-950">
           {loading ? (
-            <div className="flex h-32 items-center justify-center text-sm text-zinc-500">
-              Cargando tu baúl...
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <div
+                  key={i}
+                  className="rounded-2xl border border-zinc-200/60 dark:border-zinc-800/60 bg-white dark:bg-zinc-900 p-5 min-h-[240px] animate-pulse"
+                >
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex gap-2">
+                      <div className="h-6 w-16 rounded-full bg-zinc-200 dark:bg-zinc-800" />
+                      <div className="h-6 w-12 rounded-full bg-zinc-200 dark:bg-zinc-800" />
+                    </div>
+                    <div className="flex gap-1">
+                      <div className="h-8 w-8 rounded-lg bg-zinc-200 dark:bg-zinc-800" />
+                      <div className="h-8 w-8 rounded-lg bg-zinc-200 dark:bg-zinc-800" />
+                    </div>
+                  </div>
+                  <div className="h-5 w-3/4 rounded-lg bg-zinc-200 dark:bg-zinc-800 mb-3" />
+                  <div className="h-16 w-full rounded-xl bg-zinc-200 dark:bg-zinc-800 mb-3" />
+                  <div className="h-10 w-full rounded-xl bg-zinc-200 dark:bg-zinc-800" />
+                </div>
+              ))}
             </div>
           ) : filteredNotes.length === 0 ? (
-            <div className="flex h-32 items-center justify-center text-sm text-zinc-400 italic">
-              No se encontraron registros
+            <div className="flex h-64 flex-col items-center justify-center rounded-2xl border-2 border-dashed border-zinc-300 dark:border-zinc-700 bg-white/50 dark:bg-zinc-900/30">
+              <span className="text-4xl mb-4">📭</span>
+              <p className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
+                No se encontraron registros
+              </p>
+              <p className="text-xs text-zinc-400 dark:text-zinc-500 mt-1">
+                Prueba a ajustar los filtros o crea una nueva nota
+              </p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {filteredNotes.map((note) => (
                 <div
                   key={note.id}
-                  className="group flex flex-col rounded-xl border border-zinc-200 bg-white p-5 shadow-sm hover:shadow-md transition-all dark:border-zinc-800 dark:bg-zinc-900 justify-between min-h-[220px]"
+                  className="group relative flex flex-col rounded-2xl border border-zinc-200/60 dark:border-zinc-800/60 bg-gradient-to-br from-white to-zinc-50/50 dark:from-zinc-900 dark:to-zinc-900/80 p-5 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ease-out justify-between min-h-[240px] overflow-hidden"
                 >
-                  <div>
-                    <div className="flex items-center justify-between gap-2 mb-2">
-                      <span className="inline-flex items-center rounded-full bg-zinc-100 px-2.5 py-0.5 text-xs font-medium text-zinc-800 dark:bg-zinc-800 dark:text-zinc-200">
-                        🤖 {note.ai_model || "Desconocido"}
-                      </span>
-                      <div className="flex items-center gap-1">
+                  {/* Efecto de brillo sutil en la esquina superior izquierda */}
+                  <div className="absolute -top-24 -left-24 w-48 h-48 bg-gradient-to-br from-blue-500/5 to-transparent rounded-full blur-2xl pointer-events-none group-hover:opacity-100 opacity-0 transition-opacity duration-500" />
+
+                  {/* Efecto de borde brillante en hover */}
+                  <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-transparent group-hover:ring-blue-500/20 transition-all duration-300 pointer-events-none" />
+
+                  <div className="relative z-10">
+                    {/* Cabecera: IA + Etiqueta + Botones */}
+                    <div className="flex items-start justify-between gap-2 mb-3">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-zinc-100 to-zinc-200/80 dark:from-zinc-800 dark:to-zinc-700/80 px-3 py-1 text-[10px] font-semibold text-zinc-700 dark:text-zinc-300 shadow-sm">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                          {note.ai_model || "Desconocido"}
+                        </span>
                         {note.tag && (
-                          <span className="text-xs font-semibold text-blue-600 dark:text-blue-400 capitalize">
-                            #{note.tag}
+                          <span className="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-blue-50 to-blue-100/80 dark:from-blue-950/50 dark:to-blue-900/30 px-2.5 py-1 text-[10px] font-bold text-blue-700 dark:text-blue-300 border border-blue-200/50 dark:border-blue-800/30">
+                            <span className="text-[8px]">#</span>
+                            {note.tag}
                           </span>
                         )}
+                      </div>
+
+                      <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-all duration-200 translate-x-2 group-hover:translate-x-0">
                         <button
                           onClick={() => startEdit(note)}
-                          className="opacity-0 group-hover:opacity-100 transition-opacity rounded p-1 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-600 dark:hover:bg-zinc-800"
+                          className="rounded-lg p-1.5 text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-700 dark:hover:text-zinc-200 transition-all duration-200"
                           title="Editar nota"
                         >
                           <svg
@@ -574,7 +593,7 @@ function NotesManager({ user }: { user: any }) {
                             viewBox="0 0 24 24"
                             strokeWidth={1.5}
                             stroke="currentColor"
-                            className="w-4 h-4"
+                            className="w-3.5 h-3.5"
                           >
                             <path
                               strokeLinecap="round"
@@ -585,7 +604,7 @@ function NotesManager({ user }: { user: any }) {
                         </button>
                         <button
                           onClick={() => handleDeleteNote(note.id)}
-                          className="opacity-0 group-hover:opacity-100 transition-opacity rounded p-1 text-zinc-400 hover:bg-zinc-100 hover:text-red-600 dark:hover:bg-zinc-800"
+                          className="rounded-lg p-1.5 text-zinc-400 hover:bg-red-50 dark:hover:bg-red-950/20 hover:text-red-600 dark:hover:text-red-400 transition-all duration-200"
                           title="Eliminar nota"
                         >
                           <svg
@@ -594,7 +613,7 @@ function NotesManager({ user }: { user: any }) {
                             viewBox="0 0 24 24"
                             strokeWidth={1.5}
                             stroke="currentColor"
-                            className="w-4 h-4"
+                            className="w-3.5 h-3.5"
                           >
                             <path
                               strokeLinecap="round"
@@ -606,38 +625,79 @@ function NotesManager({ user }: { user: any }) {
                       </div>
                     </div>
 
-                    <h3 className="text-base font-bold text-zinc-900 dark:text-zinc-50 line-clamp-1">
+                    {/* Título */}
+                    <h3 className="text-base font-bold text-zinc-900 dark:text-zinc-50 line-clamp-1 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-200">
                       {note.title}
                     </h3>
 
+                    {/* Resumen */}
                     {note.summary && (
-                      <p className="mt-2 text-xs text-zinc-600 dark:text-zinc-400 font-medium bg-zinc-50 dark:bg-zinc-950 p-2 rounded border border-zinc-100 dark:border-zinc-800/60 line-clamp-2">
-                        {note.summary}
-                      </p>
+                      <div className="mt-2.5 p-2.5 rounded-xl bg-gradient-to-r from-amber-50/80 to-amber-100/40 dark:from-amber-950/30 dark:to-amber-900/20 border border-amber-200/50 dark:border-amber-800/30">
+                        <p className="text-xs text-amber-800/80 dark:text-amber-300/80 font-medium line-clamp-2 leading-relaxed">
+                          {note.summary}
+                        </p>
+                      </div>
                     )}
 
+                    {/* Contenido clickeable */}
                     <div
                       onClick={() => startEdit(note)}
-                      className="cursor-pointer mt-3"
+                      className="cursor-pointer mt-3 group/content"
                     >
-                      <p className="text-xs text-zinc-500 dark:text-zinc-400 line-clamp-4 overflow-hidden leading-relaxed hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors">
+                      <p className="text-xs text-zinc-500 dark:text-zinc-400 line-clamp-3 overflow-hidden leading-relaxed group-hover/content:text-zinc-700 dark:group-hover/content:text-zinc-300 transition-colors duration-200">
                         {note.content}
                       </p>
                     </div>
                   </div>
 
-                  <div className="mt-4 pt-3 border-t border-zinc-100 dark:border-zinc-800/60 flex items-center justify-between text-[10px] text-zinc-400">
-                    <span>
-                      {new Date(note.created_at).toLocaleDateString()}
-                    </span>
+                  {/* Pie de tarjeta */}
+                  <div className="relative z-10 mt-4 pt-3 border-t border-zinc-200/50 dark:border-zinc-800/50 flex items-center justify-between text-[10px] text-zinc-400">
+                    <div className="flex items-center gap-1.5">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={1.5}
+                        stroke="currentColor"
+                        className="w-3 h-3"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5"
+                        />
+                      </svg>
+                      <span>
+                        {new Date(note.created_at).toLocaleDateString("es-ES", {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        })}
+                      </span>
+                    </div>
+
                     {note.source_url && (
                       <a
                         href={note.source_url}
                         target="_blank"
                         rel="noreferrer"
-                        className="text-blue-500 hover:underline inline-flex items-center gap-0.5 font-medium"
+                        className="inline-flex items-center gap-1 text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 font-medium hover:underline transition-all duration-200"
                       >
-                        Ver enlace 🔗
+                        <span>Ver enlace</span>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          strokeWidth={1.5}
+                          stroke="currentColor"
+                          className="w-3 h-3"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
+                          />
+                        </svg>
                       </a>
                     )}
                   </div>
@@ -648,7 +708,6 @@ function NotesManager({ user }: { user: any }) {
         </section>
       </main>
 
-      {/* ================= MODAL PREMIUM ================= */}
       {/* ================= MODAL PREMIUM ================= */}
       {isModalOpen && (
         <div
@@ -737,7 +796,6 @@ function NotesManager({ user }: { user: any }) {
 
             {/* CONTENIDO DEL MODAL */}
             <div className="space-y-5">
-              {/* FILA 1: IA + Etiqueta */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1.5">
@@ -780,7 +838,6 @@ function NotesManager({ user }: { user: any }) {
                 </div>
               </div>
 
-              {/* CONTENIDO DINÁMICO */}
               {sourceType === "text" && (
                 <div className="space-y-4">
                   <div>
@@ -858,7 +915,6 @@ function NotesManager({ user }: { user: any }) {
                 </div>
               )}
 
-              {/* RESUMEN EXTENDIDO */}
               <div>
                 <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1.5">
                   📋 Resumen del hilo
@@ -873,7 +929,7 @@ function NotesManager({ user }: { user: any }) {
               </div>
             </div>
 
-            {/* FOOTER - BOTONES DE ACCIÓN */}
+            {/* FOOTER */}
             <div className="mt-8 pt-5 border-t border-zinc-200/50 dark:border-zinc-800/50 flex items-center justify-end gap-3">
               <button
                 type="button"
