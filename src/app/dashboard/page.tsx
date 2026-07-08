@@ -48,6 +48,7 @@ export default function Dashboard({ user }: { user: any }) {
   >("all");
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
+  const [selectedAiModel, setSelectedAiModel] = useState<string | null>(null);
 
   const [noteModalOpen, setNoteModalOpen] = useState(false);
   const [noteSourceType, setNoteSourceType] = useState<"text" | "url" | "file">(
@@ -65,7 +66,6 @@ export default function Dashboard({ user }: { user: any }) {
   const [noteSourceUrl, setNoteSourceUrl] = useState("");
   const [noteSaving, setNoteSaving] = useState(false);
   const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
-  const [selectedAiModel, setSelectedAiModel] = useState<string | null>(null);
 
   // ==================== ESTADOS PARA PROMPTS ====================
   const [prompts, setPrompts] = useState<Prompt[]>([]);
@@ -105,6 +105,7 @@ export default function Dashboard({ user }: { user: any }) {
       ...prompts.flatMap((p) => p.tags || []),
     ]),
   );
+
   // ==================== OBTENER MODELOS DE IA ÚNICOS ====================
   const allAiModels = Array.from(
     new Set(
@@ -139,8 +140,7 @@ export default function Dashboard({ user }: { user: any }) {
 
   const filteredNotes = notes
     .filter((n) => (selectedTag ? (n.tags || []).includes(selectedTag) : true))
-    .filter((n) => (selectedAiModel ? n.ai_model === selectedAiModel : true)) // 👈 NUEVO FILTRO
-
+    .filter((n) => (selectedAiModel ? n.ai_model === selectedAiModel : true))
     .filter((n) => {
       const noteDate = new Date(n.created_at);
       const now = new Date();
@@ -646,6 +646,7 @@ export default function Dashboard({ user }: { user: any }) {
             )}
           </div>
         </div>
+
         {/* 🆕 FILTRO POR IA (Solo visible en la tab de Notas) */}
         {activeTab === "notes" && allAiModels.length > 0 && (
           <div className="space-y-1 pt-2 border-t border-zinc-100 dark:border-zinc-800/50">
@@ -784,88 +785,55 @@ export default function Dashboard({ user }: { user: any }) {
         {/* CONTENIDO SEGÚN TAB */}
         <section className="flex-1 overflow-y-auto p-6 bg-gradient-to-br from-zinc-50/50 via-white/50 to-zinc-50/30 dark:from-zinc-950 dark:via-zinc-950/95 dark:to-zinc-950">
           {/* ==================== TAB NOTAS ==================== */}
-          {/* FILTROS PARA NOTAS */}
           {activeTab === "notes" && (
-            <div className="space-y-3">
-              {/* Etiquetas */}
-              <div className="space-y-1">
-                <p className="px-2 text-xs font-semibold text-zinc-400 uppercase tracking-wider">
-                  #️⃣ Etiquetas
-                </p>
-                <div className="max-h-40 overflow-y-auto pr-1 space-y-1 scrollbar-thin">
-                  {allTags.length === 0 ? (
-                    <p className="px-2 text-xs text-zinc-400 italic">
-                      No hay etiquetas
-                    </p>
-                  ) : (
-                    allTags.map((t) => (
-                      <div
-                        key={t}
-                        className="group flex w-full items-center justify-between rounded-lg px-3 py-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-800/50 transition-colors"
-                      >
-                        <button
-                          onClick={() =>
-                            setSelectedTag(selectedTag === t ? null : t)
-                          }
-                          className={`flex-1 text-left text-sm font-medium capitalize transition-colors ${
-                            selectedTag === t
-                              ? "text-blue-600 dark:text-blue-400"
-                              : "text-zinc-600 dark:text-zinc-400"
-                          }`}
-                        >
-                          # {t}
-                        </button>
-                        <span className="text-xs bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded-full text-zinc-400">
-                          {
-                            notes.filter((n) => (n.tags || []).includes(t))
-                              .length
-                          }
-                        </span>
+            <>
+              {notesLoading ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {[1, 2, 3, 4, 5, 6].map((i) => (
+                    <div
+                      key={i}
+                      className="rounded-2xl border border-zinc-200/60 dark:border-zinc-800/60 bg-white dark:bg-zinc-900 p-5 min-h-[240px] animate-pulse"
+                    >
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="flex gap-2">
+                          <div className="h-6 w-16 rounded-full bg-zinc-200 dark:bg-zinc-800" />
+                          <div className="h-6 w-12 rounded-full bg-zinc-200 dark:bg-zinc-800" />
+                        </div>
+                        <div className="flex gap-1">
+                          <div className="h-8 w-8 rounded-lg bg-zinc-200 dark:bg-zinc-800" />
+                          <div className="h-8 w-8 rounded-lg bg-zinc-200 dark:bg-zinc-800" />
+                        </div>
                       </div>
-                    ))
-                  )}
+                      <div className="h-5 w-3/4 rounded-lg bg-zinc-200 dark:bg-zinc-800 mb-3" />
+                      <div className="h-16 w-full rounded-xl bg-zinc-200 dark:bg-zinc-800 mb-3" />
+                      <div className="h-10 w-full rounded-xl bg-zinc-200 dark:bg-zinc-800" />
+                    </div>
+                  ))}
                 </div>
-              </div>
-
-              {/* 🆕 Modelos de IA */}
-              {allAiModels.length > 0 && (
-                <div className="space-y-1 pt-2 border-t border-zinc-100 dark:border-zinc-800/50">
-                  <p className="px-2 text-xs font-semibold text-zinc-400 uppercase tracking-wider">
-                    🤖 Modelos de IA
+              ) : filteredNotes.length === 0 ? (
+                <div className="flex h-64 flex-col items-center justify-center rounded-2xl border-2 border-dashed border-zinc-300 dark:border-zinc-700 bg-white/50 dark:bg-zinc-900/30">
+                  <span className="text-4xl mb-4">📭</span>
+                  <p className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
+                    No hay notas
                   </p>
-                  <div className="space-y-0.5">
-                    {allAiModels.map((model) => (
-                      <button
-                        key={model}
-                        onClick={() =>
-                          setSelectedAiModel(
-                            selectedAiModel === model ? null : model,
-                          )
-                        }
-                        className={`flex w-full items-center justify-between rounded-lg px-3 py-1.5 text-sm font-medium capitalize transition-colors ${
-                          selectedAiModel === model
-                            ? "bg-purple-50 text-purple-600 dark:bg-purple-950/30 dark:text-purple-400"
-                            : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800/50"
-                        }`}
-                      >
-                        <span>{model}</span>
-                        <span className="text-xs bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded-full text-zinc-400">
-                          {notes.filter((n) => n.ai_model === model).length}
-                        </span>
-                      </button>
-                    ))}
-                  </div>
+                  <p className="text-xs text-zinc-400 dark:text-zinc-500 mt-1">
+                    Crea tu primera nota o ajusta los filtros
+                  </p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                  {filteredNotes.map((note, index) => (
+                    <NoteCard
+                      key={note.id}
+                      note={note}
+                      onEdit={openNoteModal}
+                      onDelete={handleDeleteNote}
+                      index={index}
+                    />
+                  ))}
                 </div>
               )}
-
-              {/* Filtros de fecha (que ya tenías) */}
-              <div className="space-y-1 pt-2 border-t border-zinc-100 dark:border-zinc-800/50">
-                <p className="px-2 text-[10px] font-bold text-zinc-400 uppercase tracking-wider">
-                  🕒 Por Fecha
-                </p>
-                {/* ... tus botones de fecha existentes ... */}
-              </div>
-            </div>
+            </>
           )}
 
           {/* ==================== TAB PROMPTS ==================== */}
