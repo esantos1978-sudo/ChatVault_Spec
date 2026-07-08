@@ -5,6 +5,7 @@ import { supabase } from "../SupabaseClient";
 import AuthForm from "../components/AuthForm";
 import { NoteCard } from "../components/NoteCard";
 import { NoteModal } from "../components/NoteModal";
+import toast from "react-hot-toast"; // 👈 IMPORTA TOAST
 
 interface Note {
   id: string;
@@ -109,6 +110,7 @@ function NotesManager({ user }: { user: any }) {
       console.log("✅ notes actualizado:", data?.length || 0, "notas");
     } catch (err: any) {
       console.error("❌ Error en fetchNotes:", err.message);
+      toast.error("Error al cargar las notas: " + err.message);
     } finally {
       setLoading(false);
     }
@@ -178,20 +180,26 @@ function NotesManager({ user }: { user: any }) {
     try {
       const { error } = await supabase.from("notes").delete().eq("id", id);
       if (error) throw error;
+
+      toast.success("Nota eliminada correctamente 🗑️");
       console.log("✅ Nota borrada correctamente");
       fetchNotes();
     } catch (err: any) {
       console.error("❌ Error al borrar:", err.message);
-      alert("Error al eliminar: " + err.message);
+      toast.error("Error al eliminar: " + err.message);
     }
   };
 
   const handleLogout = async () => {
     try {
       await supabase.auth.signOut();
-      window.location.reload();
+      toast.success("👋 Sesión cerrada correctamente");
+      setTimeout(() => {
+        window.location.reload();
+      }, 500);
     } catch (error) {
       console.error("Error al cerrar sesión:", error);
+      toast.error("Error al cerrar sesión");
     }
   };
 
@@ -227,6 +235,9 @@ function NotesManager({ user }: { user: any }) {
     try {
       setSaving(true);
       console.log("⏳ setSaving(true)");
+
+      // 👇 TOAST DE CARGA (mientras se guarda)
+      const loadingToast = toast.loading("Guardando conversación...");
 
       let finalTitle = title;
       let finalContent = content;
@@ -281,6 +292,11 @@ function NotesManager({ user }: { user: any }) {
       console.log("📥 Respuesta Supabase:", error || "✅ Éxito");
 
       if (error) throw error;
+
+      // 👇 TOAST DE ÉXITO
+      toast.success("¡Nota guardada correctamente! 🎉", {
+        id: loadingToast,
+      });
 
       setSuccess("¡Nota guardada correctamente!");
       console.log("✅ Nota guardada correctamente");
