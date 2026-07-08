@@ -6,7 +6,7 @@
 ![Supabase](https://img.shields.io/badge/Supabase-2.0-green?style=flat-square&logo=supabase)
 ![Vercel](https://img.shields.io/badge/Vercel-Deployed-black?style=flat-square&logo=vercel)
 
-**Tu baúl de conocimiento para conversaciones con IA.** ChatVault es una aplicación web moderna para guardar, organizar y reutilizar chats, prompts y recursos de tus modelos de lenguaje favoritos (ChatGPT, DeepSeek, Claude, Gemini y más). Ofrece autenticación segura, un CRUD completo de notas y prompts, scraping inteligente de URLs, un sistema de etiquetas compartidas, filtros avanzados y una experiencia de usuario premium con modo oscuro y animaciones.
+**Tu baúl de conocimiento para conversaciones con IA.** ChatVault es una aplicación web moderna para guardar, organizar y reutilizar chats, prompts y recursos de tus modelos de lenguaje favoritos (ChatGPT, DeepSeek, Claude, Gemini y más). Ofrece autenticación segura, un CRUD completo de notas y prompts, scraping inteligente de URLs, un sistema de etiquetas compartidas, filtros avanzados, una **Arena de LLMs** para comparar respuestas y una experiencia de usuario premium con modo oscuro y animaciones.
 
 ---
 
@@ -68,6 +68,15 @@
 - **Feedback visual al copiar:** animación de 2 segundos que indica que el prompt se ha copiado al portapapeles.
 - **Filtro por categorías** en el sidebar con conteo de prompts por categoría.
 
+### 🥊 Arena de LLMs
+
+- **Comparación manual de respuestas:** pega el mismo prompt y las respuestas de dos modelos de IA diferentes para compararlas lado a lado.
+- **Sistema de votación:** selecciona qué respuesta te ha parecido mejor (Modelo 1 o Modelo 2).
+- **Resaltado del ganador:** la respuesta ganadora se muestra con un badge 🏆 y un fondo verde destacado.
+- **Modelos disponibles:** ChatGPT-4o, Claude 3.5 Sonnet, Gemini 1.5 Pro, DeepSeek-V3, Llama 3 y Otro.
+- **Búsqueda en comparaciones:** filtra por el texto del prompt en la barra de búsqueda.
+- **Eliminación** de comparaciones con confirmación previa.
+
 ### 🏷️ Sistema de etiquetas compartidas
 
 - Las etiquetas funcionan **globalmente** para notas y prompts.
@@ -75,15 +84,18 @@
 - Navegación por teclado (flechas ↑/↓, Enter para seleccionar, Escape para cerrar).
 - **Eliminación de etiquetas:** en el sidebar, cada etiqueta tiene un botón "✕" para eliminarla de todas las notas y prompts de forma global.
 - Vista rápida del conteo combinado de notas + prompts por etiqueta en el sidebar.
+- **Scroll premium de etiquetas** con efecto de desvanecimiento en los bordes (`mask-image`).
 
 ### 🔍 Sistema de filtros avanzado
 
 - **Búsqueda en tiempo real:** filtra por título, contenido, resumen o etiquetas.
+- **Filtro por modelo de IA:** en la sección de notas, el sidebar muestra todos los modelos de IA únicos con su respectivo conteo. Al seleccionar uno, se filtran solo las notas de ese modelo.
 - **Filtro por etiquetas:** selecciona una etiqueta en el sidebar para ver solo notas/prompts de esa categoría.
 - **Filtros temporales:** botones rápidos para ver notas de hoy, últimos 7 días o últimos 30 días.
 - **Rango de fechas personalizado:** calendario con selector "Desde" y "Hasta" para filtrar por cualquier período.
 - **Filtro por categorías** en la sección de prompts (imagen, texto, código, video, MCP, otro).
 - **Combinación de filtros:** todos los filtros se pueden usar simultáneamente.
+- **Sidebar reordenado:** Modelos de IA → Etiquetas → Fechas, para una navegación más intuitiva.
 
 ### 🔔 Notificaciones Toast
 
@@ -94,14 +106,15 @@
 ### 🎨 Diseño responsive con animaciones premium
 
 - Interfaz adaptable a cualquier dispositivo (móvil, tablet, escritorio).
-- **Modo oscuro** integrado que respeta la preferencia del sistema operativo.
+- **Modo oscuro** integrado que respeta la preferencia del sistema operativo, con colores y contrastes refinados.
 - **Animaciones de entrada:** las tarjetas aparecen con un efecto `fade-in-up` escalonado (`animation-delay` progresivo) que crea una sensación de cascada visual.
 - **Efectos hover:** las tarjetas se elevan (`hover:-translate-y-1.5`) con sombras premium y un brillo sutil en la esquina superior izquierda.
 - **Transiciones suaves:** todas las interacciones usan `cubic-bezier(0.34,1.56,0.64,1)` para un rebote elástico natural.
 - **Modal con zoom:** el modal de creación/edición aparece con un efecto `zoom-in` y fondo semitransparente con blur.
 - **Efecto de borde brillante:** al hacer hover sobre una tarjeta, aparece un anillo brillante alrededor con transición de 500ms.
-- **Sombras premium:** sombras personalizadas (`shadow-premium`, `shadow-premium-hover`) que dan profundidad y sofisticación.
+- **Sombras premium:** sombras personalizadas (`shadow-premium`, `shadow-premium-hover`) con variantes para modo oscuro que dan profundidad y sofisticación.
 - **Skeleton loaders:** animaciones de carga placeholder mientras se obtienen los datos.
+- **Scroll premium de etiquetas** con efecto de desvanecimiento en bordes y scrollbar estilizado.
 
 ### 🧩 Componentes modulares
 
@@ -110,13 +123,15 @@
   - **`NoteModal`**: modal de creación/edición de notas con pestañas (texto, URL, archivo), autosugerencia de etiquetas y selector de modelo de IA.
   - **`PromptCard`**: tarjeta de prompt con badge de categoría por colores, contador de usos y botón de copia con feedback visual.
   - **`PromptModal`**: modal de creación/edición de prompts con selector de categorías y autosugerencia de etiquetas.
+  - **`ArenaCard`**: tarjeta de comparación con dos columnas, badge del ganador y resaltado visual.
+  - **`ArenaModal`**: modal de la Arena con formulario de comparación, selectores de modelo y sistema de votación.
   - **`AuthForm`**: formulario de autenticación (login/registro) con validación y manejo de errores.
 
 ---
 
 ## 📸 Capturas de pantalla
 
-> _Próximamente: capturas de la Landing Page, Dashboard con Notas y Biblioteca de Prompts._
+> _Próximamente: capturas de la Landing Page, Dashboard con Notas, Biblioteca de Prompts y Arena de LLMs._
 
 ---
 
@@ -172,11 +187,13 @@ ChatVault_Spec/
 │   │   ├── api/
 │   │   │   └── scrape/route.ts         # API route para scraping de URLs
 │   │   ├── dashboard/
-│   │   │   └── page.tsx                # Dashboard con Notas y Prompts (~820 líneas)
+│   │   │   └── page.tsx                # Dashboard con Notas, Prompts y Arena (~1110 líneas)
 │   │   ├── layout.tsx                  # Layout raíz con fuentes Geist + Toaster
 │   │   ├── page.tsx                    # Landing page + lógica de autenticación (~320 líneas)
-│   │   └── globals.css                 # Estilos globales y animaciones personalizadas
+│   │   └── globals.css                 # Estilos globales, animaciones y scroll premium
 │   ├── components/                     # Componentes React reutilizables
+│   │   ├── ArenaCard.tsx               # Tarjeta de comparación de la Arena de LLMs
+│   │   ├── ArenaModal.tsx              # Modal de la Arena con votación
 │   │   ├── AuthForm.tsx                # Formulario de autenticación (login/registro)
 │   │   ├── NoteCard.tsx                # Tarjeta individual de nota con efectos hover
 │   │   ├── NoteModal.tsx               # Modal de creación/edición de notas (3 pestañas)
@@ -209,8 +226,8 @@ ChatVault_Spec/
 | Directorio             | Propósito                                                                                    |
 | ---------------------- | -------------------------------------------------------------------------------------------- |
 | `src/app/`             | Sistema de rutas basado en el App Router de Next.js. Cada subdirectorio representa una ruta. |
-| `src/app/dashboard/`   | Dashboard principal con tabs de Notas y Prompts, sidebar con etiquetas y categorías.         |
-| `src/components/`      | Componentes React atómicos y reutilizables (autenticación, tarjetas, modales).               |
+| `src/app/dashboard/`   | Dashboard principal con tabs de Notas, Prompts y Arena, sidebar con filtros.                 |
+| `src/components/`      | Componentes React atómicos y reutilizables (autenticación, tarjetas, modales, arena).        |
 | `src/lib/`             | Lógica compartida: cliente de Supabase, helpers, utilidades.                                 |
 | `supabase/migrations/` | Migraciones SQL versionadas para la base de datos PostgreSQL.                                |
 | `scripts/`             | Scripts Node.js para tareas auxiliares (migraciones, tests de conexión).                     |
@@ -237,16 +254,18 @@ ChatVault_Spec/
 
 Almacena las conversaciones y chats guardados por los usuarios.
 
-| Columna      | Tipo          | Descripción                            |
-| ------------ | ------------- | -------------------------------------- |
-| `id`         | `BIGINT`      | Identificador único (auto-incremental) |
-| `created_at` | `TIMESTAMPTZ` | Fecha de creación                      |
-| `user_id`    | `UUID`        | Referencia al usuario autenticado      |
-| `title`      | `TEXT`        | Título de la nota                      |
-| `content`    | `TEXT`        | Contenido de la conversación           |
-| `tags`       | `TEXT[]`      | Array de etiquetas múltiples           |
-
-> **Nota:** Las columnas `summary`, `ai_model`, `source_type` y `source_url` se gestionan desde la aplicación y pueden añadirse al esquema según evolucione el proyecto.
+| Columna       | Tipo          | Descripción                            |
+| ------------- | ------------- | -------------------------------------- |
+| `id`          | `BIGINT`      | Identificador único (auto-incremental) |
+| `created_at`  | `TIMESTAMPTZ` | Fecha de creación                      |
+| `user_id`     | `UUID`        | Referencia al usuario autenticado      |
+| `title`       | `TEXT`        | Título de la nota                      |
+| `content`     | `TEXT`        | Contenido de la conversación           |
+| `summary`     | `TEXT`        | Resumen del hilo de la conversación    |
+| `tags`        | `TEXT[]`      | Array de etiquetas múltiples           |
+| `ai_model`    | `TEXT`        | Modelo de IA asociado a la nota        |
+| `source_type` | `TEXT`        | Tipo de fuente (text, url, file)       |
+| `source_url`  | `TEXT`        | URL original del chat (si aplica)      |
 
 ### Tabla `prompts`
 
@@ -263,7 +282,20 @@ Almacena los prompts reutilizables organizados por categorías.
 | `tags`       | `TEXT[]`      | Array de etiquetas múltiples                        |
 | `times_used` | `INTEGER`     | Contador de usos (se incrementa al copiar)          |
 
-> **Seguridad:** Row Level Security (RLS) activado en ambas tablas con políticas que garantizan que cada usuario solo accede a sus propios datos.
+### Tabla `arena_comparisons`
+
+Almacena las comparaciones de la Arena de LLMs.
+
+| Columna      | Tipo          | Descripción                                               |
+| ------------ | ------------- | --------------------------------------------------------- |
+| `id`         | `BIGINT`      | Identificador único (auto-incremental)                    |
+| `created_at` | `TIMESTAMPTZ` | Fecha de creación                                         |
+| `user_id`    | `UUID`        | Referencia al usuario autenticado                         |
+| `prompt`     | `TEXT`        | Prompt utilizado en la comparación                        |
+| `responses`  | `JSONB`       | Objeto con model1, response1, model2, response2           |
+| `winner`     | `TEXT`        | Ganador de la comparación ("model1" o "model2", nullable) |
+
+> **Seguridad:** Row Level Security (RLS) activado en todas las tablas con políticas que garantizan que cada usuario solo accede a sus propios datos.
 
 ---
 
