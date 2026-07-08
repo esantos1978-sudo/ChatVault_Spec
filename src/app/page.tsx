@@ -88,6 +88,7 @@ function NotesManager({ user }: { user: any }) {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
 
   // ==================== EFECTOS ====================
   useEffect(() => {
@@ -120,6 +121,7 @@ function NotesManager({ user }: { user: any }) {
 
   const openModal = () => {
     console.log("📂 Abriendo modal");
+    setEditingNoteId(null); // 👈 RESETEA EL ID
     setTitle("");
     setContent("");
     setSummary("");
@@ -144,6 +146,7 @@ function NotesManager({ user }: { user: any }) {
 
   const startEdit = (note: Note) => {
     console.log("✏️ Editando nota:", note.id);
+    setEditingNoteId(note.id); // 👈 GUARDA EL ID
     setTitle(note.title);
     setContent(note.content);
     setSummary(note.summary || "");
@@ -210,23 +213,26 @@ function NotesManager({ user }: { user: any }) {
     console.log("📝 title:", title);
     console.log("📝 sourceUrl:", sourceUrl);
     console.log("🏷️ tags:", tags);
+    console.log("🆔 editingNoteId:", editingNoteId);
 
     setError(null);
     setSuccess(null);
 
     if (sourceType === "text" && !title.trim()) {
-      setError("Por favor, escribe un título para guardar tu nota de texto.");
+      toast.error(
+        "Por favor, escribe un título para guardar tu nota de texto.",
+      );
       console.log("❌ Error: Título vacío en modo texto");
       return;
     }
     if (sourceType === "url" && !sourceUrl.trim()) {
-      setError("Por favor, introduce una URL válida.");
+      toast.error("Por favor, introduce una URL válida.");
       console.log("❌ Error: URL vacía");
       return;
     }
 
     if (!user) {
-      setError("Error: No se pudo identificar al usuario.");
+      toast.error("Error: No se pudo identificar al usuario.");
       setSaving(false);
       console.log("❌ Error: No hay usuario en NotesManager");
       return;
@@ -236,8 +242,9 @@ function NotesManager({ user }: { user: any }) {
       setSaving(true);
       console.log("⏳ setSaving(true)");
 
-      // 👇 TOAST DE CARGA (mientras se guarda)
-      const loadingToast = toast.loading("Guardando conversación...");
+      const loadingToast = toast.loading(
+        editingNoteId ? "Actualizando nota..." : "Guardando conversación...",
+      );
 
       let finalTitle = title;
       let finalContent = content;
@@ -283,23 +290,50 @@ function NotesManager({ user }: { user: any }) {
         ai_model: aiModel,
         source_type: sourceType,
         source_url: sourceType === "url" ? sourceUrl : null,
-        user_id: user.id,
       };
-      console.log("📤 Datos a insertar:", noteData);
-      console.log("✅ user_id:", user.id);
 
-      const { error } = await supabase.from("notes").insert([noteData]);
+      let result;
+
+      if (editingNoteId) {
+        // 🔄 EDITANDO → UPDATE
+        console.log("🔄 Actualizando nota con ID:", editingNoteId);
+        result = await supabase
+          .from("notes")
+          .update(noteData)
+          .eq("id", editingNoteId);
+      } else {
+        // ➕ CREANDO → INSERT
+        console.log("➕ Creando nueva nota");
+        result = await supabase.from("notes").insert([
+          {
+            ...noteData,
+            user_id: user.id,
+          },
+        ]);
+      }
+
+      const { error } = result;
       console.log("📥 Respuesta Supabase:", error || "✅ Éxito");
 
       if (error) throw error;
 
-      // 👇 TOAST DE ÉXITO
-      toast.success("¡Nota guardada correctamente! 🎉", {
-        id: loadingToast,
-      });
+      toast.success(
+        editingNoteId
+          ? "¡Nota actualizada correctamente! ✏️"
+          : "¡Nota guardada correctamente! 🎉",
+        { id: loadingToast },
+      );
 
-      setSuccess("¡Nota guardada correctamente!");
-      console.log("✅ Nota guardada correctamente");
+      setSuccess(
+        editingNoteId
+          ? "¡Nota actualizada correctamente!"
+          : "¡Nota guardada correctamente!",
+      );
+      console.log(
+        editingNoteId
+          ? "✅ Nota actualizada correctamente"
+          : "✅ Nota guardada correctamente",
+      );
 
       setTimeout(() => setSuccess(null), 3000);
       closeModal();
@@ -307,6 +341,7 @@ function NotesManager({ user }: { user: any }) {
       console.log("🔄 fetchNotes() ejecutado después de guardar");
     } catch (err: any) {
       console.error("❌ Error en handleSubmit:", err);
+      toast.error("Error al guardar: " + err.message);
       setError("Error al guardar: " + err.message);
     } finally {
       setSaving(false);
@@ -623,6 +658,7 @@ function NotesManager({ user }: { user: any }) {
         isOpen={isModalOpen}
         onClose={closeModal}
         onSubmit={handleSubmit}
+        editingNoteId={editingNoteId}
         title={title}
         setTitle={setTitle}
         content={content}

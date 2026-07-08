@@ -30,6 +30,7 @@ interface NoteModalProps {
   setShowSuggestions: (val: boolean) => void;
   setSelectedSuggestion: (val: number | ((prev: number) => number)) => void;
   editingTitle?: string;
+  editingNoteId?: string | null;
 }
 
 export function NoteModal({
@@ -62,6 +63,7 @@ export function NoteModal({
   setShowSuggestions,
   setSelectedSuggestion,
   editingTitle,
+  editingNoteId,
 }: NoteModalProps) {
   if (!isOpen) return null;
 
