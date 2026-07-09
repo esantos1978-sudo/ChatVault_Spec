@@ -65,6 +65,9 @@ export function NoteModal({
   setShowSuggestions,
   setSelectedSuggestion,
   editingNoteId,
+  prompts,
+  selectedPromptId,
+  setSelectedPromptId,
 }: NoteModalProps) {
   if (!isOpen) return null;
 
@@ -110,6 +113,24 @@ export function NoteModal({
               />
             </svg>
           </button>
+        </div>
+        {/* 🔗 SELECTOR DE PROMPT ASOCIADO */}
+        <div>
+          <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1.5">
+            🔗 Prompt asociado (opcional)
+          </label>
+          <select
+            value={selectedPromptId || ""}
+            onChange={(e) => setSelectedPromptId(e.target.value || null)}
+            className="w-full rounded-xl border-0 bg-zinc-100/80 dark:bg-zinc-800/80 px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-blue-500/50 dark:focus:ring-blue-400/50 transition-all duration-200"
+          >
+            <option value="">Ninguno</option>
+            {prompts.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.title}
+              </option>
+            ))}
+          </select>
         </div>
 
         {/* PESTAÑAS */}
