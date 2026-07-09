@@ -1,7 +1,5 @@
 "use client";
 
-import * as pdfjsLib from "pdfjs-dist";
-
 interface NoteModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -32,17 +30,18 @@ interface NoteModalProps {
   setShowSuggestions: (val: boolean) => void;
   setSelectedSuggestion: (val: number | ((prev: number) => number)) => void;
   editingNoteId?: string | null;
+  // Props para selector de prompts
   prompts: { id: string; title: string }[];
   selectedPromptId: string | null;
   setSelectedPromptId: (id: string | null) => void;
-  // 👇 NUEVAS PROPS PARA ARCHIVOS
+  // Props para carga de archivos
   fileContent: string;
   setFileContent: (val: string) => void;
   fileName: string;
   setFileName: (val: string) => void;
 }
 
-export function NoteModal({
+export default function NoteModal({
   isOpen,
   onClose,
   onSubmit,
@@ -75,7 +74,6 @@ export function NoteModal({
   prompts,
   selectedPromptId,
   setSelectedPromptId,
-  // 👇 RECIBE LAS NUEVAS PROPS
   fileContent,
   setFileContent,
   fileName,
@@ -84,7 +82,7 @@ export function NoteModal({
   if (!isOpen) return null;
 
   // ============================================================
-  // 🚀 FUNCIÓN PARA SUBIR ARCHIVOS (PASO 7)
+  // 🚀 FUNCIÓN PARA SUBIR ARCHIVOS (CON CARGA DINÁMICA DE PDFJS)
   // ============================================================
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -99,9 +97,12 @@ export function NoteModal({
       return;
     }
 
-    // Si es PDF, usar pdfjs-dist
+    // Si es PDF, cargar pdfjs-dist SOLO EN EL CLIENTE
     if (file.type === "application/pdf") {
       try {
+        // ✅ CARGA DINÁMICA: solo se ejecuta en el navegador
+        const pdfjsLib = await import("pdfjs-dist");
+
         const arrayBuffer = await file.arrayBuffer();
         const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
         let fullText = "";
@@ -509,9 +510,9 @@ export function NoteModal({
           <button
             type="button"
             onClick={onSubmit}
-            disabled={saving || sourceType === "file"}
+            disabled={saving || (sourceType === "file" && !fileContent)}
             className={`px-6 py-2.5 text-sm font-medium text-white rounded-xl transition-all duration-200 flex items-center gap-2 ${
-              sourceType === "file"
+              saving || (sourceType === "file" && !fileContent)
                 ? "bg-zinc-400 dark:bg-zinc-700 cursor-not-allowed"
                 : "bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
             }`}
@@ -541,7 +542,7 @@ export function NoteModal({
                 Guardando...
               </>
             ) : sourceType === "file" ? (
-              fileName ? (
+              fileContent ? (
                 "Guardar Archivo 📄"
               ) : (
                 "Sube un archivo primero"

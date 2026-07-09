@@ -1,15 +1,22 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
 import { supabase } from "@/lib/supabaseClient";
+import toast from "react-hot-toast";
+
+// ✅ Componentes normales
 import { NoteCard } from "@/components/NoteCard";
-import { NoteModal } from "@/components/NoteModal";
 import { PromptCard } from "@/components/PromptCard";
 import { PromptModal } from "@/components/PromptModal";
 import { ArenaCard } from "@/components/ArenaCard";
 import { ArenaModal } from "@/components/ArenaModal";
 import { ArenaDetailModal } from "@/components/ArenaDetailModal";
-import toast from "react-hot-toast";
+
+// ✅ Ahora NoteModal tiene export default, así que es más simple
+const NoteModal = dynamic(() => import("@/components/NoteModal"), {
+  ssr: false,
+});
 
 interface Note {
   id: string;
