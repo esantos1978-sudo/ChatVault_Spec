@@ -8,6 +8,7 @@ import { PromptCard } from "@/components/PromptCard";
 import { PromptModal } from "@/components/PromptModal";
 import { ArenaCard } from "@/components/ArenaCard";
 import { ArenaModal } from "@/components/ArenaModal";
+import { ArenaDetailModal } from "@/components/ArenaDetailModal";
 import toast from "react-hot-toast";
 
 interface Note {
@@ -96,6 +97,8 @@ export default function Dashboard({ user }: { user: any }) {
   const [arenaModalOpen, setArenaModalOpen] = useState(false);
   const [arenaSaving, setArenaSaving] = useState(false);
   const [arenaSearchQuery, setArenaSearchQuery] = useState("");
+  const [arenaDetailModalOpen, setArenaDetailModalOpen] = useState(false);
+  const [selectedComparison, setSelectedComparison] = useState<any>(null);
 
   // ==================== ESTADOS COMUNES ====================
   const [error, setError] = useState<string | null>(null);
@@ -278,6 +281,10 @@ export default function Dashboard({ user }: { user: any }) {
     } catch (err: any) {
       toast.error("Error: " + err.message);
     }
+  };
+  const openArenaDetail = (comparison: any) => {
+    setSelectedComparison(comparison);
+    setArenaDetailModalOpen(true);
   };
 
   // ==================== TOGGLE FAVORITOS ====================
@@ -1062,7 +1069,7 @@ export default function Dashboard({ user }: { user: any }) {
                   </p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
                   {filteredNotes.map((note, index) => (
                     <NoteCard
                       key={note.id}
@@ -1084,7 +1091,7 @@ export default function Dashboard({ user }: { user: any }) {
           {activeTab === "prompts" && (
             <>
               {promptsLoading ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
                   {[1, 2, 3, 4, 5, 6].map((i) => (
                     <div
                       key={i}
@@ -1140,7 +1147,7 @@ export default function Dashboard({ user }: { user: any }) {
           {activeTab === "arena" && (
             <>
               {arenaLoading ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
                   {[1, 2, 3, 4, 5, 6].map((i) => (
                     <div
                       key={i}
@@ -1172,6 +1179,7 @@ export default function Dashboard({ user }: { user: any }) {
                       key={comparison.id}
                       comparison={comparison}
                       onDelete={handleDeleteArenaComparison}
+                      onExpand={openArenaDetail}
                       index={index}
                     />
                   ))}
