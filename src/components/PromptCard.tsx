@@ -1,4 +1,5 @@
 "use client";
+
 import { useState } from "react";
 
 interface PromptCardProps {
@@ -10,10 +11,12 @@ interface PromptCardProps {
     tags?: string[];
     times_used: number;
     created_at: string;
+    is_favorite?: boolean;
   };
   onEdit: (prompt: any) => void;
   onDelete: (id: string) => void;
   onCopy: (prompt: any) => void;
+  onToggleFavorite: (id: string, isFavorite: boolean) => void;
   index?: number;
 }
 

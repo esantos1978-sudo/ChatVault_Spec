@@ -10,26 +10,32 @@ interface NoteCardProps {
     ai_model?: string;
     source_url?: string;
     created_at: string;
+    is_favorite?: boolean;
   };
   onEdit: (note: any) => void;
   onDelete: (id: string) => void;
+  onToggleFavorite: (id: string, isFavorite: boolean) => void;
   index?: number;
 }
 
-export function NoteCard({ note, onEdit, onDelete, index = 0 }: NoteCardProps) {
+export function NoteCard({
+  note,
+  onEdit,
+  onDelete,
+  onToggleFavorite,
+  index = 0,
+}: NoteCardProps) {
   return (
     <div
       className="group relative flex flex-col rounded-2xl border border-zinc-200/60 dark:border-zinc-800/60 bg-gradient-to-br from-white to-zinc-50/50 dark:from-zinc-900 dark:to-zinc-900/80 p-5 shadow-premium hover:shadow-premium-hover hover:-translate-y-1.5 transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] justify-between min-h-[240px] overflow-hidden animate-fade-in-up"
       style={{ animationDelay: `${index * 60}ms` }}
     >
-      {/* Efecto de brillo sutil en la esquina superior izquierda */}
+      {/* Efecto de brillo */}
       <div className="absolute -top-24 -left-24 w-48 h-48 bg-gradient-to-br from-blue-500/5 to-transparent rounded-full blur-2xl pointer-events-none group-hover:opacity-100 opacity-0 transition-opacity duration-700" />
-
-      {/* Efecto de borde brillante en hover */}
       <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-transparent group-hover:ring-blue-500/20 transition-all duration-500 pointer-events-none" />
 
       <div className="relative z-10">
-        {/* Cabecera: IA + Etiquetas + Botones */}
+        {/* Cabecera */}
         <div className="flex items-start justify-between gap-2 mb-3">
           <div className="flex flex-wrap items-center gap-2">
             <span className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-zinc-100 to-zinc-200/80 dark:from-zinc-800 dark:to-zinc-700/80 px-3 py-1 text-[10px] font-semibold text-zinc-700 dark:text-zinc-300 shadow-sm">
@@ -52,6 +58,31 @@ export function NoteCard({ note, onEdit, onDelete, index = 0 }: NoteCardProps) {
           </div>
 
           <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-all duration-200 translate-x-2 group-hover:translate-x-0">
+            {/* ⭐ BOTÓN DE FAVORITOS */}
+            <button
+              onClick={() => onToggleFavorite(note.id, !note.is_favorite)}
+              className="rounded-lg p-1.5 text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all duration-200"
+              title={
+                note.is_favorite ? "Quitar de favoritos" : "Añadir a favoritos"
+              }
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill={note.is_favorite ? "currentColor" : "none"}
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className={`w-3.5 h-3.5 ${note.is_favorite ? "text-yellow-400" : ""}`}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5z"
+                />
+              </svg>
+            </button>
+
+            {/* Editar */}
             <button
               onClick={() => onEdit(note)}
               className="rounded-lg p-1.5 text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-700 dark:hover:text-zinc-200 transition-all duration-200"
@@ -72,6 +103,8 @@ export function NoteCard({ note, onEdit, onDelete, index = 0 }: NoteCardProps) {
                 />
               </svg>
             </button>
+
+            {/* Eliminar */}
             <button
               onClick={() => onDelete(note.id)}
               className="rounded-lg p-1.5 text-zinc-400 hover:bg-red-50 dark:hover:bg-red-950/20 hover:text-red-600 dark:hover:text-red-400 transition-all duration-200"
