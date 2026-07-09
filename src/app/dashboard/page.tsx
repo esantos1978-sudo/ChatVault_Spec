@@ -283,6 +283,7 @@ export default function Dashboard({ user }: { user: any }) {
     }
   };
   const openArenaDetail = (comparison: any) => {
+    console.log("🟢 openArenaDetail ejecutado");
     setSelectedComparison(comparison);
     setArenaDetailModalOpen(true);
   };
@@ -1254,6 +1255,12 @@ export default function Dashboard({ user }: { user: any }) {
         onClose={() => setArenaModalOpen(false)}
         onSubmit={handleArenaSubmit}
         saving={arenaSaving}
+      />
+      {/* ✅ MODAL DE COMPARACIÓN DETALLADA (NUEVO) */}
+      <ArenaDetailModal
+        isOpen={arenaDetailModalOpen}
+        onClose={() => setArenaDetailModalOpen(false)}
+        comparison={selectedComparison}
       />
     </div>
   );
