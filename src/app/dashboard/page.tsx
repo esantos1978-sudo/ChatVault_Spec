@@ -74,6 +74,8 @@ export default function Dashboard({ user }: { user: any }) {
   const [noteSourceUrl, setNoteSourceUrl] = useState("");
   const [noteSaving, setNoteSaving] = useState(false);
   const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
+  const [fileContent, setFileContent] = useState(""); // 👈 NUEVO
+  const [fileName, setFileName] = useState(""); // 👈 NUEVO
 
   // ==================== ESTADOS PARA PROMPTS ====================
   const [prompts, setPrompts] = useState<Prompt[]>([]);
@@ -396,6 +398,8 @@ export default function Dashboard({ user }: { user: any }) {
     setNoteAiModel("DeepSeek-R1");
     setEditingNoteId(null);
     setSelectedPromptId(null);
+    setFileContent("");
+    setFileName("");
   }
 
   function openNoteModal(note?: Note) {
@@ -1239,6 +1243,10 @@ export default function Dashboard({ user }: { user: any }) {
         prompts={promptOptions} // 👈 PASA LA LISTA DE PROMPTS
         selectedPromptId={selectedPromptId}
         setSelectedPromptId={setSelectedPromptId}
+        fileContent={fileContent} // 👈 AÑADE
+        setFileContent={setFileContent} // 👈 AÑADE
+        fileName={fileName} // 👈 AÑADE
+        setFileName={setFileName}
       />
 
       <PromptModal

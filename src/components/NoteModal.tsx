@@ -1,5 +1,7 @@
 "use client";
 
+import * as pdfjsLib from "pdfjs-dist";
+
 interface NoteModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -30,9 +32,14 @@ interface NoteModalProps {
   setShowSuggestions: (val: boolean) => void;
   setSelectedSuggestion: (val: number | ((prev: number) => number)) => void;
   editingNoteId?: string | null;
-  prompts: { id: string; title: string }[]; // 👈 NUEVO
-  selectedPromptId: string | null; // 👈 NUEVO
-  setSelectedPromptId: (id: string | null) => void; // 👈 NUEVO
+  prompts: { id: string; title: string }[];
+  selectedPromptId: string | null;
+  setSelectedPromptId: (id: string | null) => void;
+  // 👇 NUEVAS PROPS PARA ARCHIVOS
+  fileContent: string;
+  setFileContent: (val: string) => void;
+  fileName: string;
+  setFileName: (val: string) => void;
 }
 
 export function NoteModal({
@@ -68,18 +75,58 @@ export function NoteModal({
   prompts,
   selectedPromptId,
   setSelectedPromptId,
+  // 👇 RECIBE LAS NUEVAS PROPS
+  fileContent,
+  setFileContent,
+  fileName,
+  setFileName,
 }: NoteModalProps) {
   if (!isOpen) return null;
+
+  // ============================================================
+  // 🚀 FUNCIÓN PARA SUBIR ARCHIVOS (PASO 7)
+  // ============================================================
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setFileName(file.name);
+
+    // Si es TXT o MD, leer directamente
+    if (file.type === "text/plain" || file.name.endsWith(".md")) {
+      const text = await file.text();
+      setFileContent(text);
+      return;
+    }
+
+    // Si es PDF, usar pdfjs-dist
+    if (file.type === "application/pdf") {
+      try {
+        const arrayBuffer = await file.arrayBuffer();
+        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+        let fullText = "";
+        for (let i = 1; i <= pdf.numPages; i++) {
+          const page = await pdf.getPage(i);
+          const textContent = await page.getTextContent();
+          const pageText = textContent.items
+            .map((item: any) => item.str)
+            .join(" ");
+          fullText += pageText + "\n";
+        }
+        setFileContent(fullText);
+      } catch (error) {
+        console.error("Error al leer PDF:", error);
+        setFileContent("Error al leer el archivo PDF.");
+      }
+    }
+  };
 
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto animate-fade-in"
       style={{ backgroundColor: "rgba(15, 23, 42, 0.6)" }}
     >
-      <div
-        className="w-full max-w-4xl rounded-2xl bg-white/95 dark:bg-zinc-900/95 backdrop-blur-xl shadow-2xl border border-white/20 dark:border-zinc-800/50 p-8 my-8 animate-zoom-in"
-        style={{ boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)" }}
-      >
+      <div className="w-full max-w-4xl rounded-2xl bg-white/95 dark:bg-zinc-900/95 backdrop-blur-xl shadow-2xl border border-white/20 dark:border-zinc-800/50 p-8 my-8 animate-zoom-in">
         {/* HEADER */}
         <div className="flex items-center justify-between mb-6 pb-4 border-b border-zinc-200/50 dark:border-zinc-800/50">
           <div>
@@ -114,24 +161,6 @@ export function NoteModal({
             </svg>
           </button>
         </div>
-        {/* 🔗 SELECTOR DE PROMPT ASOCIADO */}
-        <div>
-          <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1.5">
-            🔗 Prompt asociado (opcional)
-          </label>
-          <select
-            value={selectedPromptId || ""}
-            onChange={(e) => setSelectedPromptId(e.target.value || null)}
-            className="w-full rounded-xl border-0 bg-zinc-100/80 dark:bg-zinc-800/80 px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-blue-500/50 dark:focus:ring-blue-400/50 transition-all duration-200"
-          >
-            <option value="">Ninguno</option>
-            {prompts.map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.title}
-              </option>
-            ))}
-          </select>
-        </div>
 
         {/* PESTAÑAS */}
         <div className="mb-6 flex gap-1 border-b border-zinc-200/50 dark:border-zinc-800/50">
@@ -144,9 +173,7 @@ export function NoteModal({
                 : "text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50"
             }`}
           >
-            <span className="inline-flex items-center gap-2">
-              ✍️ Texto Copiado
-            </span>
+            ✍️ Texto Copiado
           </button>
           <button
             type="button"
@@ -157,9 +184,7 @@ export function NoteModal({
                 : "text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50"
             }`}
           >
-            <span className="inline-flex items-center gap-2">
-              🔗 Enlace del Chat
-            </span>
+            🔗 Enlace del Chat
           </button>
           <button
             type="button"
@@ -170,9 +195,7 @@ export function NoteModal({
                 : "text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50"
             }`}
           >
-            <span className="inline-flex items-center gap-2">
-              📄 Subir Archivo
-            </span>
+            📄 Subir Archivo
           </button>
         </div>
 
@@ -314,6 +337,25 @@ export function NoteModal({
             </div>
           </div>
 
+          {/* 🔗 SELECTOR DE PROMPT ASOCIADO */}
+          <div>
+            <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1.5">
+              🔗 Prompt asociado (opcional)
+            </label>
+            <select
+              value={selectedPromptId || ""}
+              onChange={(e) => setSelectedPromptId(e.target.value || null)}
+              className="w-full rounded-xl border-0 bg-zinc-100/80 dark:bg-zinc-800/80 px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-blue-500/50 dark:focus:ring-blue-400/50 transition-all duration-200"
+            >
+              <option value="">Ninguno</option>
+              {prompts.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.title}
+                </option>
+              ))}
+            </select>
+          </div>
+
           {/* CAMPOS DINÁMICOS SEGÚN TIPO DE FUENTE */}
           {sourceType === "text" && (
             <div className="space-y-4">
@@ -380,14 +422,62 @@ export function NoteModal({
           )}
 
           {sourceType === "file" && (
-            <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-zinc-300 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-800/30 p-12">
-              <span className="text-4xl mb-3">🛠️</span>
-              <p className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
-                Módulo de lectura en desarrollo
-              </p>
-              <p className="text-xs text-zinc-400 mt-1">
-                Soporte para PDFs, TXT y documentos en el próximo asalto.
-              </p>
+            <div className="flex flex-col items-center justify-center border-2 border-dashed border-zinc-300 dark:border-zinc-700 rounded-xl p-8 bg-zinc-50 dark:bg-zinc-800/30 hover:border-blue-500 dark:hover:border-blue-400 transition-colors duration-200">
+              <input
+                type="file"
+                accept=".pdf,.txt,.md"
+                onChange={handleFileUpload}
+                className="hidden"
+                id="file-upload"
+              />
+              <label
+                htmlFor="file-upload"
+                className="cursor-pointer flex flex-col items-center gap-2 w-full"
+              >
+                <span className="text-4xl">📄</span>
+                <p className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
+                  Haz clic para subir un archivo
+                </p>
+                <p className="text-xs text-zinc-400">
+                  Formatos soportados: PDF, TXT, MD
+                </p>
+              </label>
+
+              {fileName && (
+                <div className="mt-4 w-full">
+                  <div className="flex items-center justify-between gap-2 text-sm bg-emerald-50 dark:bg-emerald-950/30 p-3 rounded-lg border border-emerald-200 dark:border-emerald-800/30">
+                    <div className="flex items-center gap-2 text-emerald-700 dark:text-emerald-300">
+                      <span>✅</span>
+                      <span className="font-medium truncate max-w-[200px]">
+                        {fileName}
+                      </span>
+                      <span className="text-[10px] text-emerald-500/70">
+                        ({fileContent.length} caracteres)
+                      </span>
+                    </div>
+                    <button
+                      onClick={() => {
+                        setFileContent("");
+                        setFileName("");
+                        const input = document.getElementById(
+                          "file-upload",
+                        ) as HTMLInputElement;
+                        if (input) input.value = "";
+                      }}
+                      className="text-red-400 hover:text-red-600 transition-colors"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                  {fileContent && (
+                    <div className="mt-2 text-xs text-zinc-500 dark:text-zinc-400 max-h-20 overflow-y-auto bg-zinc-100/50 dark:bg-zinc-800/50 p-2 rounded border border-zinc-200 dark:border-zinc-700">
+                      <p className="whitespace-pre-wrap line-clamp-3">
+                        {fileContent.substring(0, 300)}...
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           )}
 
@@ -451,7 +541,11 @@ export function NoteModal({
                 Guardando...
               </>
             ) : sourceType === "file" ? (
-              "Próximamente 🛠️"
+              fileName ? (
+                "Guardar Archivo 📄"
+              ) : (
+                "Sube un archivo primero"
+              )
             ) : (
               <>
                 <span>🚀</span>
