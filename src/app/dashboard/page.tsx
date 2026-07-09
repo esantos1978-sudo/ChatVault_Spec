@@ -20,6 +20,7 @@ interface Note {
   source_type?: string;
   source_url?: string;
   created_at: string;
+  is_favorite?: boolean;
 }
 
 interface Prompt {
@@ -30,6 +31,7 @@ interface Prompt {
   tags?: string[];
   times_used: number;
   created_at: string;
+  is_favorite?: boolean;
 }
 
 export default function Dashboard({ user }: { user: any }) {
@@ -37,6 +39,7 @@ export default function Dashboard({ user }: { user: any }) {
   const [activeTab, setActiveTab] = useState<"notes" | "prompts" | "arena">(
     "notes",
   );
+  const [showFavorites, setShowFavorites] = useState(false);
 
   // ==================== ESTADOS PARA NOTAS ====================
   const [notes, setNotes] = useState<Note[]>([]);
@@ -98,12 +101,14 @@ export default function Dashboard({ user }: { user: any }) {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
-  // ==================== OBTENER TODOS LOS TAGS ====================
-  const allTags = Array.from(
-    new Set([
-      ...notes.flatMap((n) => n.tags || []),
-      ...prompts.flatMap((p) => p.tags || []),
-    ]),
+  // ==================== OBTENER ETIQUETAS POR SECCIÓN ====================
+  // ✅ SOLO UNA VEZ DEFINIDAS
+  const noteTagsFromNotes = Array.from(
+    new Set(notes.flatMap((n) => n.tags || [])),
+  );
+
+  const promptTagsFromPrompts = Array.from(
+    new Set(prompts.flatMap((p) => p.tags || [])),
   );
 
   // ==================== OBTENER MODELOS DE IA ÚNICOS ====================
@@ -139,6 +144,7 @@ export default function Dashboard({ user }: { user: any }) {
   }
 
   const filteredNotes = notes
+    .filter((n) => (showFavorites ? n.is_favorite === true : true))
     .filter((n) => (selectedTag ? (n.tags || []).includes(selectedTag) : true))
     .filter((n) => (selectedAiModel ? n.ai_model === selectedAiModel : true))
     .filter((n) => {
@@ -197,6 +203,8 @@ export default function Dashboard({ user }: { user: any }) {
   }
 
   const filteredPrompts = prompts
+    .filter((p) => (showFavorites ? p.is_favorite === true : true))
+    .filter((p) => (selectedTag ? (p.tags || []).includes(selectedTag) : true))
     .filter((p) =>
       selectedPromptCategory ? p.category === selectedPromptCategory : true,
     )
@@ -269,6 +277,42 @@ export default function Dashboard({ user }: { user: any }) {
       fetchArenaComparisons();
     } catch (err: any) {
       toast.error("Error: " + err.message);
+    }
+  };
+
+  // ==================== TOGGLE FAVORITOS ====================
+  const toggleFavorite = async (
+    id: string,
+    table: "notes" | "prompts",
+    isFavorite: boolean,
+  ) => {
+    try {
+      const { error } = await supabase
+        .from(table)
+        .update({ is_favorite: isFavorite })
+        .eq("id", id);
+
+      if (error) throw error;
+
+      if (table === "notes") {
+        setNotes(
+          notes.map((n) =>
+            n.id === id ? { ...n, is_favorite: isFavorite } : n,
+          ),
+        );
+      } else {
+        setPrompts(
+          prompts.map((p) =>
+            p.id === id ? { ...p, is_favorite: isFavorite } : p,
+          ),
+        );
+      }
+
+      toast.success(
+        isFavorite ? "⭐ Añadido a favoritos" : "☆ Eliminado de favoritos",
+      );
+    } catch (err: any) {
+      toast.error("Error al actualizar favorito: " + err.message);
     }
   };
 
@@ -456,8 +500,15 @@ export default function Dashboard({ user }: { user: any }) {
 
   // ==================== FUNCIONES DE NAVEGACIÓN Y FILTROS ====================
   const handleLogout = async () => {
-    await supabase.auth.signOut();
-    window.location.reload();
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      toast.success("👋 Sesión cerrada correctamente");
+      window.location.href = "/";
+    } catch (error) {
+      console.error("Error al cerrar sesión:", error);
+      toast.error("Error al cerrar sesión. Inténtalo de nuevo.");
+    }
   };
 
   const handleDeleteNote = async (id: string) => {
@@ -469,6 +520,54 @@ export default function Dashboard({ user }: { user: any }) {
       fetchNotes();
     } catch (err: any) {
       toast.error("Error al eliminar: " + err.message);
+    }
+  };
+
+  const handleDeleteTag = async (tagToDelete: string) => {
+    if (
+      !confirm(
+        `¿Eliminar la etiqueta "#${tagToDelete}" de todas las ${activeTab}?`,
+      )
+    )
+      return;
+
+    try {
+      if (activeTab === "notes") {
+        const notesWithTag = notes.filter((n) =>
+          (n.tags || []).includes(tagToDelete),
+        );
+        const notePromises = notesWithTag.map((note) => {
+          const updatedTags = (note.tags || []).filter(
+            (t) => t !== tagToDelete,
+          );
+          return supabase
+            .from("notes")
+            .update({ tags: updatedTags.length > 0 ? updatedTags : null })
+            .eq("id", note.id);
+        });
+        await Promise.all(notePromises);
+        await fetchNotes();
+      } else if (activeTab === "prompts") {
+        const promptsWithTag = prompts.filter((p) =>
+          (p.tags || []).includes(tagToDelete),
+        );
+        const promptPromises = promptsWithTag.map((prompt) => {
+          const updatedTags = (prompt.tags || []).filter(
+            (t) => t !== tagToDelete,
+          );
+          return supabase
+            .from("prompts")
+            .update({ tags: updatedTags.length > 0 ? updatedTags : null })
+            .eq("id", prompt.id);
+        });
+        await Promise.all(promptPromises);
+        await fetchPrompts();
+      }
+
+      if (selectedTag === tagToDelete) setSelectedTag(null);
+      toast.success(`Etiqueta "#${tagToDelete}" eliminada de ${activeTab}`);
+    } catch (err: any) {
+      toast.error("Error: " + err.message);
     }
   };
 
@@ -494,53 +593,6 @@ export default function Dashboard({ user }: { user: any }) {
     setPromptTagsInput(updatedTags.join(", "));
     setPromptShowSuggestions(false);
     setPromptSelectedSuggestion(-1);
-  };
-
-  const handleDeleteTag = async (tagToDelete: string) => {
-    if (
-      !confirm(
-        `¿Eliminar la etiqueta "#${tagToDelete}" de TODAS las notas y prompts?`,
-      )
-    )
-      return;
-
-    try {
-      const notesWithTag = notes.filter((n) =>
-        (n.tags || []).includes(tagToDelete),
-      );
-      const notePromises = notesWithTag.map((note) => {
-        const updatedTags = (note.tags || []).filter((t) => t !== tagToDelete);
-        return supabase
-          .from("notes")
-          .update({ tags: updatedTags.length > 0 ? updatedTags : null })
-          .eq("id", note.id);
-      });
-
-      const promptsWithTag = prompts.filter((p) =>
-        (p.tags || []).includes(tagToDelete),
-      );
-      const promptPromises = promptsWithTag.map((prompt) => {
-        const updatedTags = (prompt.tags || []).filter(
-          (t) => t !== tagToDelete,
-        );
-        return supabase
-          .from("prompts")
-          .update({ tags: updatedTags.length > 0 ? updatedTags : null })
-          .eq("id", prompt.id);
-      });
-
-      await Promise.all([...notePromises, ...promptPromises]);
-      await fetchNotes();
-      await fetchPrompts();
-
-      if (selectedTag === tagToDelete) setSelectedTag(null);
-      if (selectedPromptCategory === tagToDelete)
-        setSelectedPromptCategory(null);
-
-      toast.success(`Etiqueta "#${tagToDelete}" eliminada`);
-    } catch (err: any) {
-      toast.error("Error: " + err.message);
-    }
   };
 
   // ==================== RENDER ====================
@@ -590,6 +642,18 @@ export default function Dashboard({ user }: { user: any }) {
           </button>
         </div>
 
+        {/* FILTRO DE FAVORITOS */}
+        <button
+          onClick={() => setShowFavorites(!showFavorites)}
+          className={`flex w-full items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
+            showFavorites
+              ? "bg-yellow-50 text-yellow-700 dark:bg-yellow-950/30 dark:text-yellow-400"
+              : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800/50"
+          }`}
+        >
+          ⭐ {showFavorites ? "Mostrando favoritos" : "Ver favoritos"}
+        </button>
+
         {/* 1. FILTRO POR IA (PRIMERO) */}
         {activeTab === "notes" && allAiModels.length > 0 && (
           <div className="space-y-1">
@@ -619,62 +683,135 @@ export default function Dashboard({ user }: { user: any }) {
           </div>
         )}
 
-        {/* 2. ETIQUETAS (SEGUNDO) */}
+        {/* 2. ETIQUETAS POR SECCIÓN (Independientes) */}
         <div className="space-y-1 flex-none">
           <p className="px-2 text-xs font-semibold text-zinc-400 uppercase tracking-wider">
-            #️⃣ Etiquetas
+            #️⃣ Etiquetas{" "}
+            {activeTab === "notes"
+              ? "(Notas)"
+              : activeTab === "prompts"
+                ? "(Prompts)"
+                : ""}
           </p>
           <div className="max-h-32 overflow-y-auto pr-1 space-y-1 scroll-tags">
-            {allTags.length === 0 ? (
-              <p className="px-2 text-xs text-zinc-400 italic">
-                No hay etiquetas
-              </p>
-            ) : (
-              allTags.map((t) => (
-                <div
-                  key={t}
-                  className="group flex w-full items-center justify-between rounded-lg px-3 py-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-800/50 transition-colors"
-                >
-                  <button
-                    onClick={() =>
-                      setSelectedTag(activeTab === "notes" ? t : null)
-                    }
-                    className={`flex-1 text-left text-sm font-medium capitalize transition-colors ${
-                      selectedTag === t && activeTab === "notes"
-                        ? "text-blue-600 dark:text-blue-400"
-                        : "text-zinc-600 dark:text-zinc-400"
-                    }`}
-                  >
-                    # {t}
-                  </button>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded-full text-zinc-400">
-                      {notes.filter((n) => (n.tags || []).includes(t)).length +
-                        prompts.filter((p) => (p.tags || []).includes(t))
-                          .length}
-                    </span>
-                    <button
-                      onClick={() => handleDeleteTag(t)}
-                      className="opacity-0 group-hover:opacity-100 transition-opacity text-red-400 hover:text-red-600 dark:hover:text-red-400 p-1 rounded hover:bg-red-50 dark:hover:bg-red-950/20"
+            {activeTab === "notes" && (
+              <>
+                {noteTagsFromNotes.length === 0 ? (
+                  <p className="px-2 text-xs text-zinc-400 italic">
+                    No hay etiquetas en notas
+                  </p>
+                ) : (
+                  noteTagsFromNotes.map((t) => (
+                    <div
+                      key={t}
+                      className="group flex w-full items-center justify-between rounded-lg px-3 py-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-800/50 transition-colors"
                     >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth={1.5}
-                        stroke="currentColor"
-                        className="w-3.5 h-3.5"
+                      <button
+                        onClick={() =>
+                          setSelectedTag(selectedTag === t ? null : t)
+                        }
+                        className={`flex-1 text-left text-sm font-medium capitalize transition-colors ${
+                          selectedTag === t
+                            ? "text-blue-600 dark:text-blue-400"
+                            : "text-zinc-600 dark:text-zinc-400"
+                        }`}
                       >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M6 18L18 6M6 6l12 12"
-                        />
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-              ))
+                        # {t}
+                      </button>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded-full text-zinc-400">
+                          {
+                            notes.filter((n) => (n.tags || []).includes(t))
+                              .length
+                          }
+                        </span>
+                        <button
+                          onClick={() => handleDeleteTag(t)}
+                          className="opacity-0 group-hover:opacity-100 transition-opacity text-red-400 hover:text-red-600 dark:hover:text-red-400 p-1 rounded hover:bg-red-50 dark:hover:bg-red-950/20"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={1.5}
+                            stroke="currentColor"
+                            className="w-3.5 h-3.5"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M6 18L18 6M6 6l12 12"
+                            />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </>
+            )}
+
+            {activeTab === "prompts" && (
+              <>
+                {promptTagsFromPrompts.length === 0 ? (
+                  <p className="px-2 text-xs text-zinc-400 italic">
+                    No hay etiquetas en prompts
+                  </p>
+                ) : (
+                  promptTagsFromPrompts.map((t) => (
+                    <div
+                      key={t}
+                      className="group flex w-full items-center justify-between rounded-lg px-3 py-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-800/50 transition-colors"
+                    >
+                      <button
+                        onClick={() =>
+                          setSelectedTag(selectedTag === t ? null : t)
+                        }
+                        className={`flex-1 text-left text-sm font-medium capitalize transition-colors ${
+                          selectedTag === t
+                            ? "text-blue-600 dark:text-blue-400"
+                            : "text-zinc-600 dark:text-zinc-400"
+                        }`}
+                      >
+                        # {t}
+                      </button>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded-full text-zinc-400">
+                          {
+                            prompts.filter((p) => (p.tags || []).includes(t))
+                              .length
+                          }
+                        </span>
+                        <button
+                          onClick={() => handleDeleteTag(t)}
+                          className="opacity-0 group-hover:opacity-100 transition-opacity text-red-400 hover:text-red-600 dark:hover:text-red-400 p-1 rounded hover:bg-red-50 dark:hover:bg-red-950/20"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={1.5}
+                            stroke="currentColor"
+                            className="w-3.5 h-3.5"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M6 18L18 6M6 6l12 12"
+                            />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </>
+            )}
+
+            {activeTab === "arena" && (
+              <p className="px-2 text-xs text-zinc-400 italic">
+                Las etiquetas de la Arena estarán disponibles pronto
+              </p>
             )}
           </div>
         </div>
@@ -932,6 +1069,9 @@ export default function Dashboard({ user }: { user: any }) {
                       note={note}
                       onEdit={openNoteModal}
                       onDelete={handleDeleteNote}
+                      onToggleFavorite={(id, isFavorite) =>
+                        toggleFavorite(id, "notes", isFavorite)
+                      }
                       index={index}
                     />
                   ))}
@@ -985,6 +1125,9 @@ export default function Dashboard({ user }: { user: any }) {
                       onEdit={openPromptModal}
                       onDelete={handleDeletePrompt}
                       onCopy={handleCopyPrompt}
+                      onToggleFavorite={(id, isFavorite) =>
+                        toggleFavorite(id, "prompts", isFavorite)
+                      }
                       index={index}
                     />
                   ))}
@@ -1061,7 +1204,7 @@ export default function Dashboard({ user }: { user: any }) {
         sourceUrl={noteSourceUrl}
         setSourceUrl={setNoteSourceUrl}
         saving={noteSaving}
-        allTags={allTags}
+        allTags={noteTagsFromNotes}
         suggestions={noteSuggestions}
         showSuggestions={noteShowSuggestions}
         selectedSuggestion={noteSelectedSuggestion}
@@ -1087,7 +1230,7 @@ export default function Dashboard({ user }: { user: any }) {
         setTagsInput={setPromptTagsInput}
         setTags={setPromptTags}
         saving={promptSaving}
-        allTags={allTags}
+        allTags={promptTagsFromPrompts}
         suggestions={promptSuggestions}
         showSuggestions={promptShowSuggestions}
         selectedSuggestion={promptSelectedSuggestion}
