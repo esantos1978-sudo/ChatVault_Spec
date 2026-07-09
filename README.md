@@ -6,7 +6,7 @@
 ![Supabase](https://img.shields.io/badge/Supabase-2.0-green?style=flat-square&logo=supabase)
 ![Vercel](https://img.shields.io/badge/Vercel-Deployed-black?style=flat-square&logo=vercel)
 
-**Tu baúl de conocimiento para conversaciones con IA.** ChatVault es una aplicación web moderna para guardar, organizar y reutilizar chats, prompts y recursos de tus modelos de lenguaje favoritos (ChatGPT, DeepSeek, Claude, Gemini y más). Ofrece autenticación segura, un CRUD completo de notas y prompts, scraping inteligente de URLs, un sistema de etiquetas compartidas, filtros avanzados, una **Arena de LLMs** para comparar respuestas y una experiencia de usuario premium con modo oscuro y animaciones.
+**Tu baúl de conocimiento para conversaciones con IA.** ChatVault es una aplicación web moderna para guardar, organizar y reutilizar chats, prompts y recursos de tus modelos de lenguaje favoritos (ChatGPT, DeepSeek, Claude, Gemini y más). Ofrece autenticación segura, un CRUD completo de notas y prompts, scraping inteligente de URLs, un sistema de etiquetas independientes por sección, filtros avanzados, una **Arena de LLMs** para comparar respuestas, **sistema de favoritos** para notas y prompts, y una experiencia de usuario premium con modo oscuro y animaciones.
 
 ---
 
@@ -77,13 +77,20 @@
 - **Búsqueda en comparaciones:** filtra por el texto del prompt en la barra de búsqueda.
 - **Eliminación** de comparaciones con confirmación previa.
 
-### 🏷️ Sistema de etiquetas compartidas
+### ⭐ Sistema de Favoritos
 
-- Las etiquetas funcionan **globalmente** para notas y prompts.
-- **Autosugerencia inteligente:** mientras escribes, aparece un menú desplegable con sugerencias de etiquetas existentes, filtradas en tiempo real.
+- **Marcar como favorito:** cada nota y prompt tiene un icono de estrella (⭐) que permite marcarlo como favorito con un solo clic.
+- **Filtro de favoritos en el sidebar:** un botón dedicado "Ver favoritos" que muestra exclusivamente los elementos marcados como favoritos, con indicador visual "Mostrando favoritos".
+- **Estado persistente:** el estado de favorito se guarda en la base de datos (`is_favorite`) y se sincroniza en tiempo real.
+- **Indicador visual:** las tarjetas favoritas muestran la estrella rellena (⭐) con un color dorado distintivo.
+
+### 🏷️ Sistema de etiquetas independientes por sección
+
+- Las etiquetas funcionan de forma **independiente** para notas y prompts, cada sección con su propio conjunto.
+- **Autosugerencia inteligente:** mientras escribes, aparece un menú desplegable con sugerencias de etiquetas existentes en esa sección, filtradas en tiempo real.
 - Navegación por teclado (flechas ↑/↓, Enter para seleccionar, Escape para cerrar).
-- **Eliminación de etiquetas:** en el sidebar, cada etiqueta tiene un botón "✕" para eliminarla de todas las notas y prompts de forma global.
-- Vista rápida del conteo combinado de notas + prompts por etiqueta en el sidebar.
+- **Eliminación de etiquetas:** en el sidebar, cada etiqueta tiene un botón "✕" para eliminarla de todas las notas o prompts de esa sección.
+- Vista rápida del conteo de notas o prompts por etiqueta en el sidebar.
 - **Scroll premium de etiquetas** con efecto de desvanecimiento en los bordes (`mask-image`).
 
 ### 🔍 Sistema de filtros avanzado
@@ -203,8 +210,15 @@ ChatVault_Spec/
 │   │   └── supabaseClient.ts           # Cliente de Supabase inicializado
 │   └── SupabaseClient.ts               # Cliente de Supabase (raíz, respaldo)
 ├── supabase/
-│   └── migrations/                     # Migraciones SQL de la base de datos
-│       └── 00001_create_notes_table.sql
+│   └── migrations/                     # Migraciones SQL versionadas (8 migraciones)
+│       ├── 001_initial_schema.sql
+│       ├── 002_fix_rls_policies.sql
+│       ├── 003_convert_tag_to_tags_array.sql
+│       ├── 004_add_columns_to_notes.sql
+│       ├── 005_set_default_ai_model.sql
+│       ├── 006_update_prompt_categories.sql
+│       ├── 007_create_arena_comparisons_table.sql
+│       └── 008_add_is_favorite_column.sql
 ├── scripts/                            # Scripts auxiliares
 │   ├── run-migration.mjs               # Ejecuta migraciones contra Supabase
 │   └── test-supabase.mjs               # Verifica la conexión con Supabase
@@ -248,39 +262,58 @@ ChatVault_Spec/
 
 ---
 
+## 📋 Migraciones de base de datos
+
+Las migraciones se ejecutan en orden secuencial para construir el esquema completo:
+
+| Orden | Archivo                                  | Descripción                                    |
+| ----- | ---------------------------------------- | ---------------------------------------------- |
+| 1     | `001_initial_schema.sql`                 | Crear tabla `notes` + RLS                      |
+| 2     | `002_fix_rls_policies.sql`               | Hard Reset de políticas RLS                    |
+| 3     | `003_convert_tag_to_tags_array.sql`      | Convertir columna `tag` a `tags` (TEXT[])      |
+| 4     | `004_add_columns_to_notes.sql`           | Añadir columnas a `notes`                      |
+| 5     | `005_set_default_ai_model.sql`           | Establecer DeepSeek-R1 como modelo por defecto |
+| 6     | `006_update_prompt_categories.sql`       | Actualizar categorías de prompts               |
+| 7     | `007_create_arena_comparisons_table.sql` | Crear tabla `arena_comparisons`                |
+| 8     | `008_add_is_favorite_column.sql`         | Añadir columna `is_favorite` a notes y prompts |
+
+---
+
 ## 🗄️ Base de datos
 
 ### Tabla `notes`
 
 Almacena las conversaciones y chats guardados por los usuarios.
 
-| Columna       | Tipo          | Descripción                            |
-| ------------- | ------------- | -------------------------------------- |
-| `id`          | `BIGINT`      | Identificador único (auto-incremental) |
-| `created_at`  | `TIMESTAMPTZ` | Fecha de creación                      |
-| `user_id`     | `UUID`        | Referencia al usuario autenticado      |
-| `title`       | `TEXT`        | Título de la nota                      |
-| `content`     | `TEXT`        | Contenido de la conversación           |
-| `summary`     | `TEXT`        | Resumen del hilo de la conversación    |
-| `tags`        | `TEXT[]`      | Array de etiquetas múltiples           |
-| `ai_model`    | `TEXT`        | Modelo de IA asociado a la nota        |
-| `source_type` | `TEXT`        | Tipo de fuente (text, url, file)       |
-| `source_url`  | `TEXT`        | URL original del chat (si aplica)      |
+| Columna       | Tipo          | Descripción                                  |
+| ------------- | ------------- | -------------------------------------------- |
+| `id`          | `BIGINT`      | Identificador único (auto-incremental)       |
+| `created_at`  | `TIMESTAMPTZ` | Fecha de creación                            |
+| `user_id`     | `UUID`        | Referencia al usuario autenticado            |
+| `title`       | `TEXT`        | Título de la nota                            |
+| `content`     | `TEXT`        | Contenido de la conversación                 |
+| `summary`     | `TEXT`        | Resumen del hilo de la conversación          |
+| `tags`        | `TEXT[]`      | Array de etiquetas múltiples                 |
+| `ai_model`    | `TEXT`        | Modelo de IA asociado a la nota              |
+| `source_type` | `TEXT`        | Tipo de fuente (text, url, file)             |
+| `source_url`  | `TEXT`        | URL original del chat (si aplica)            |
+| `is_favorite` | `BOOLEAN`     | Indica si la nota está marcada como favorita |
 
 ### Tabla `prompts`
 
 Almacena los prompts reutilizables organizados por categorías.
 
-| Columna      | Tipo          | Descripción                                         |
-| ------------ | ------------- | --------------------------------------------------- |
-| `id`         | `BIGINT`      | Identificador único (auto-incremental)              |
-| `created_at` | `TIMESTAMPTZ` | Fecha de creación                                   |
-| `user_id`    | `UUID`        | Referencia al usuario autenticado                   |
-| `title`      | `TEXT`        | Título del prompt                                   |
-| `content`    | `TEXT`        | Contenido del prompt                                |
-| `category`   | `TEXT`        | Categoría (imagen, texto, codigo, video, mcp, otro) |
-| `tags`       | `TEXT[]`      | Array de etiquetas múltiples                        |
-| `times_used` | `INTEGER`     | Contador de usos (se incrementa al copiar)          |
+| Columna       | Tipo          | Descripción                                         |
+| ------------- | ------------- | --------------------------------------------------- |
+| `id`          | `BIGINT`      | Identificador único (auto-incremental)              |
+| `created_at`  | `TIMESTAMPTZ` | Fecha de creación                                   |
+| `user_id`     | `UUID`        | Referencia al usuario autenticado                   |
+| `title`       | `TEXT`        | Título del prompt                                   |
+| `content`     | `TEXT`        | Contenido del prompt                                |
+| `category`    | `TEXT`        | Categoría (imagen, texto, codigo, video, mcp, otro) |
+| `tags`        | `TEXT[]`      | Array de etiquetas múltiples                        |
+| `times_used`  | `INTEGER`     | Contador de usos (se incrementa al copiar)          |
+| `is_favorite` | `BOOLEAN`     | Indica si el prompt está marcado como favorito      |
 
 ### Tabla `arena_comparisons`
 
