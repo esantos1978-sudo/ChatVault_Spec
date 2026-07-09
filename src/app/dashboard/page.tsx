@@ -22,6 +22,10 @@ interface Note {
   source_url?: string;
   created_at: string;
   is_favorite?: boolean;
+  prompt_id?: string;
+  prompts?: {
+    title: string;
+  };
 }
 
 interface Prompt {
@@ -78,6 +82,7 @@ export default function Dashboard({ user }: { user: any }) {
   const [selectedPromptCategory, setSelectedPromptCategory] = useState<
     string | null
   >(null);
+  const [selectedPromptId, setSelectedPromptId] = useState<string | null>(null);
 
   const [promptModalOpen, setPromptModalOpen] = useState(false);
   const [promptTitle, setPromptTitle] = useState("");
@@ -90,6 +95,12 @@ export default function Dashboard({ user }: { user: any }) {
   const [promptSelectedSuggestion, setPromptSelectedSuggestion] = useState(-1);
   const [promptSaving, setPromptSaving] = useState(false);
   const [editingPromptId, setEditingPromptId] = useState<string | null>(null);
+
+  // ==================== OBTENER PROMPTS PARA EL SELECTOR ====================
+  const promptOptions = prompts.map((p) => ({
+    id: p.id,
+    title: p.title,
+  }));
 
   // ==================== ESTADOS PARA LA ARENA ====================
   const [arenaComparisons, setArenaComparisons] = useState<any[]>([]);
@@ -346,6 +357,7 @@ export default function Dashboard({ user }: { user: any }) {
         source_type: noteSourceType,
         source_url: noteSourceType === "url" ? noteSourceUrl : null,
         user_id: user.id,
+        prompt_id: selectedPromptId,
       };
 
       let result;
@@ -383,6 +395,7 @@ export default function Dashboard({ user }: { user: any }) {
     setNoteSourceType("text");
     setNoteAiModel("DeepSeek-R1");
     setEditingNoteId(null);
+    setSelectedPromptId(null);
   }
 
   function openNoteModal(note?: Note) {
@@ -398,6 +411,7 @@ export default function Dashboard({ user }: { user: any }) {
         (note.source_type as "text" | "url" | "file") || "text",
       );
       setNoteSourceUrl(note.source_url || "");
+      setSelectedPromptId(note.prompt_id || null);
     } else {
       resetNoteForm();
     }
@@ -1222,6 +1236,9 @@ export default function Dashboard({ user }: { user: any }) {
         setShowSuggestions={setNoteShowSuggestions}
         setSelectedSuggestion={setNoteSelectedSuggestion}
         editingNoteId={editingNoteId}
+        prompts={promptOptions} // 👈 PASA LA LISTA DE PROMPTS
+        selectedPromptId={selectedPromptId}
+        setSelectedPromptId={setSelectedPromptId}
       />
 
       <PromptModal

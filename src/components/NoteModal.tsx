@@ -30,6 +30,9 @@ interface NoteModalProps {
   setShowSuggestions: (val: boolean) => void;
   setSelectedSuggestion: (val: number | ((prev: number) => number)) => void;
   editingNoteId?: string | null;
+  prompts: { id: string; title: string }[]; // 👈 NUEVO
+  selectedPromptId: string | null; // 👈 NUEVO
+  setSelectedPromptId: (id: string | null) => void; // 👈 NUEVO
 }
 
 export function NoteModal({

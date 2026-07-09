@@ -11,6 +11,8 @@ interface NoteCardProps {
     source_url?: string;
     created_at: string;
     is_favorite?: boolean;
+    prompt_id?: string; // 👈 Referencia al prompt
+    prompts?: { title: string }; // 👈 Relación de Supabase
   };
   onEdit: (note: any) => void;
   onDelete: (id: string) => void;
@@ -35,7 +37,7 @@ export function NoteCard({
       <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-transparent group-hover:ring-blue-500/20 transition-all duration-500 pointer-events-none" />
 
       <div className="relative z-10">
-        {/* Cabecera */}
+        {/* Cabecera: IA + Etiquetas + Botones */}
         <div className="flex items-start justify-between gap-2 mb-3">
           <div className="flex flex-wrap items-center gap-2">
             <span className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-zinc-100 to-zinc-200/80 dark:from-zinc-800 dark:to-zinc-700/80 px-3 py-1 text-[10px] font-semibold text-zinc-700 dark:text-zinc-300 shadow-sm">
@@ -132,6 +134,13 @@ export function NoteCard({
         <h3 className="text-base font-bold text-zinc-900 dark:text-zinc-50 line-clamp-1 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300">
           {note.title}
         </h3>
+
+        {/* 🔗 PROMPT ASOCIADO - Justo debajo del título */}
+        {note.prompts?.title && (
+          <div className="mt-1.5 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-purple-50 dark:bg-purple-950/30 text-purple-700 dark:text-purple-300 text-[10px] font-medium border border-purple-200/50 dark:border-purple-800/30">
+            🔗 {note.prompts.title}
+          </div>
+        )}
 
         {/* Resumen */}
         {note.summary && (
