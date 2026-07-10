@@ -165,9 +165,7 @@ export default function NoteModal({
         <div className="flex items-center justify-between mb-6 pb-4 border-b border-zinc-200/50 dark:border-zinc-800/50">
           <div>
             <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50 tracking-tight">
-              {editingNoteId
-                ? "✏️ Editar Historial"
-                : "📝 Guardar Historial de IA"}
+              {editingNoteId ? "✏️ Editar Nota" : "📝 Guardar conversación"}
             </h2>
             <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-0.5">
               {editingNoteId
@@ -207,7 +205,7 @@ export default function NoteModal({
                 : "text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50"
             }`}
           >
-            ✍️ Texto Copiado
+            ✍️ Pegar conversación
           </button>
 
           <button
@@ -219,7 +217,7 @@ export default function NoteModal({
                 : "text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50"
             }`}
           >
-            🔗 Enlace del Chat
+            🔗 Enlace de conversación compartida
           </button>
 
           <button
@@ -231,7 +229,7 @@ export default function NoteModal({
                 : "text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50"
             }`}
           >
-            📄 Subir Archivo
+            📄 Subir archivo (PDF, TXT, MD)
           </button>
         </div>
 
@@ -585,7 +583,7 @@ export default function NoteModal({
             ) : (
               <>
                 <span>🚀</span>
-                Guardar Conversación
+                Guardar Nota
               </>
             )}
           </button>

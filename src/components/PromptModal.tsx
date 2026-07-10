@@ -26,7 +26,6 @@ interface PromptModalProps {
   editingId?: string | null;
 }
 
-// 🆕 NUEVAS CATEGORÍAS POR TIPO DE CONTENIDO
 const CATEGORIES = [
   { value: "imagen", label: "🖼️ Imagen" },
   { value: "texto", label: "📝 Texto" },
@@ -36,7 +35,7 @@ const CATEGORIES = [
   { value: "otro", label: "📂 Otro" },
 ];
 
-export function PromptModal({
+export default function PromptModal({
   isOpen,
   onClose,
   onSubmit,
@@ -73,7 +72,9 @@ export function PromptModal({
         <div className="flex items-center justify-between mb-6 pb-4 border-b border-zinc-200/50 dark:border-zinc-800/50">
           <div>
             <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50 tracking-tight">
-              {editingId ? "✏️ Editar Prompt" : "📝 Guardar Prompt"}
+              {editingId
+                ? "✏️ Editar prompt"
+                : "📚 Guardar prompt reutilizable"}
             </h2>
             <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-0.5">
               {editingId
@@ -118,7 +119,7 @@ export function PromptModal({
             />
           </div>
 
-          {/* 🆕 Selector de Categorías (Nuevas opciones) */}
+          {/* Categoría */}
           <div>
             <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1.5">
               📂 Tipo de contenido
@@ -254,7 +255,7 @@ export function PromptModal({
           {/* Contenido del Prompt */}
           <div>
             <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1.5">
-              📝 Contenido del Prompt
+              📝 Contenido del prompt
             </label>
             <textarea
               rows={6}
@@ -313,7 +314,7 @@ export function PromptModal({
             ) : (
               <>
                 <span>💾</span>
-                Guardar Prompt
+                Guardar prompt
               </>
             )}
           </button>
