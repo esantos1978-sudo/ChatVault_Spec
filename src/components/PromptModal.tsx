@@ -78,7 +78,7 @@ export function PromptModal({
             <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-0.5">
               {editingId
                 ? "Modifica los datos de este prompt"
-                : "Guarda un prompt reutilizable para tus chats con IA"}
+                : "Crea prompts que puedas usar una y otra vez en tus conversaciones"}
             </p>
           </div>
           <button
@@ -107,13 +107,13 @@ export function PromptModal({
           {/* Título */}
           <div>
             <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1.5">
-              📌 Título
+              📌 Nombre del prompt
             </label>
             <input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="Ej: Generar imágenes de paisajes"
+              placeholder="Ej: Generar imágenes de paisajes realistas"
               className="w-full rounded-xl border-0 bg-zinc-100/80 dark:bg-zinc-800/80 px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-blue-500/50 dark:focus:ring-blue-400/50 transition-all duration-200"
             />
           </div>
@@ -121,7 +121,7 @@ export function PromptModal({
           {/* 🆕 Selector de Categorías (Nuevas opciones) */}
           <div>
             <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1.5">
-              📂 Categoría
+              📂 Tipo de contenido
             </label>
             <select
               value={category}
@@ -139,7 +139,7 @@ export function PromptModal({
           {/* Etiquetas */}
           <div>
             <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1.5">
-              🏷️ Etiquetas (separadas por comas)
+              🏷️ Etiquetas
             </label>
             <div className="relative">
               <input
@@ -196,7 +196,7 @@ export function PromptModal({
                     }
                   }
                 }}
-                placeholder="Ej: generativo, imagenes, arte"
+                placeholder="Ej: creatividad, diseño, ilustración"
                 className="w-full rounded-xl border-0 bg-zinc-100/80 dark:bg-zinc-800/80 px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-blue-500/50 dark:focus:ring-blue-400/50 transition-all duration-200"
               />
 
@@ -260,7 +260,7 @@ export function PromptModal({
               rows={6}
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              placeholder="Escribe el texto del prompt que quieres reutilizar..."
+              placeholder="Escribe el prompt que quieres guardar para futuras conversaciones..."
               className="w-full rounded-xl border-0 bg-zinc-100/80 dark:bg-zinc-800/80 px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-blue-500/50 dark:focus:ring-blue-400/50 transition-all duration-200 resize-none"
             />
           </div>

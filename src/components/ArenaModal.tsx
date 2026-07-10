@@ -108,7 +108,7 @@ export function ArenaModal({
               rows={3}
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
-              placeholder="Escribe el prompt que quieres comparar..."
+              placeholder="Escribe el prompt que quieres probar en ambos modelos..."
               className="w-full rounded-xl border-0 bg-zinc-100/80 dark:bg-zinc-800/80 px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-blue-500/50 dark:focus:ring-blue-400/50 transition-all duration-200 resize-none"
             />
           </div>
@@ -153,25 +153,25 @@ export function ArenaModal({
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1.5">
-                💬 Respuesta 1
+                💬 Respuesta del modelo 1
               </label>
               <textarea
                 rows={4}
                 value={response1}
                 onChange={(e) => setResponse1(e.target.value)}
-                placeholder="Pega aquí la respuesta del Modelo 1..."
+                placeholder="Pega aquí la respuesta del primer modelo..."
                 className="w-full rounded-xl border-0 bg-zinc-100/80 dark:bg-zinc-800/80 px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-blue-500/50 dark:focus:ring-blue-400/50 transition-all duration-200 resize-none"
               />
             </div>
             <div>
               <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1.5">
-                💬 Respuesta 2
+                💬 Respuesta del modelo 2
               </label>
               <textarea
                 rows={4}
                 value={response2}
                 onChange={(e) => setResponse2(e.target.value)}
-                placeholder="Pega aquí la respuesta del Modelo 2..."
+                placeholder="Pega aquí la respuesta del segundo modelo.."
                 className="w-full rounded-xl border-0 bg-zinc-100/80 dark:bg-zinc-800/80 px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-blue-500/50 dark:focus:ring-blue-400/50 transition-all duration-200 resize-none"
               />
             </div>

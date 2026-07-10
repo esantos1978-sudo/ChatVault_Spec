@@ -82,17 +82,26 @@ export default function NoteModal({
   if (!isOpen) return null;
 
   // ============================================================
-  // 🚀 FUNCIÓN PARA SUBIR ARCHIVOS (CON CARGA DINÁMICA DE PDFJS)
+  // 🚀 FUNCIÓN PARA SUBIR ARCHIVOS (CON WORKER CONFIGURADO)
   // ============================================================
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    console.log("📄 Archivo seleccionado:", file.name);
+    console.log("📄 Tipo:", file.type);
+    console.log("📄 Tamaño:", file.size, "bytes");
+
     setFileName(file.name);
 
     // Si es TXT o MD, leer directamente
     if (file.type === "text/plain" || file.name.endsWith(".md")) {
+      console.log("📄 Leyendo TXT/MD...");
       const text = await file.text();
+      console.log(
+        "📄 Texto extraído (primeros 100 chars):",
+        text.substring(0, 100),
+      );
       setFileContent(text);
       return;
     }
@@ -103,21 +112,45 @@ export default function NoteModal({
         // ✅ CARGA DINÁMICA: solo se ejecuta en el navegador
         const pdfjsLib = await import("pdfjs-dist");
 
+        // ✅ CONFIGURAR EL WORKER CON VERSIÓN ESTABLE
+        pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/6.1.200/pdf.worker.min.js`;
+
+        console.log("📄 Worker configurado correctamente");
+        console.log("📄 Versión de pdf.js instalada:", pdfjsLib.version);
+
+        console.log("📄 Leyendo PDF...");
         const arrayBuffer = await file.arrayBuffer();
+        console.log(
+          "📄 ArrayBuffer obtenido:",
+          arrayBuffer.byteLength,
+          "bytes",
+        );
+
         const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+        console.log("📄 PDF cargado, páginas:", pdf.numPages);
+
         let fullText = "";
         for (let i = 1; i <= pdf.numPages; i++) {
+          console.log(`📄 Procesando página ${i}...`);
           const page = await pdf.getPage(i);
           const textContent = await page.getTextContent();
           const pageText = textContent.items
             .map((item: any) => item.str)
             .join(" ");
           fullText += pageText + "\n";
+          console.log(`📄 Página ${i}: ${pageText.length} caracteres`);
         }
+
+        console.log("📄 Texto total extraído:", fullText.length, "caracteres");
         setFileContent(fullText);
       } catch (error) {
-        console.error("Error al leer PDF:", error);
-        setFileContent("Error al leer el archivo PDF.");
+        console.error("❌ Error al leer PDF:", error);
+        // ✅ TypeScript seguro: verificar si error es una instancia de Error
+        const errorMessage =
+          error instanceof Error
+            ? error.message
+            : "Error desconocido al leer el PDF";
+        setFileContent(`Error al leer el archivo PDF: ${errorMessage}`);
       }
     }
   };
@@ -176,6 +209,7 @@ export default function NoteModal({
           >
             ✍️ Texto Copiado
           </button>
+
           <button
             type="button"
             onClick={() => setSourceType("url")}
@@ -187,6 +221,7 @@ export default function NoteModal({
           >
             🔗 Enlace del Chat
           </button>
+
           <button
             type="button"
             onClick={() => setSourceType("file")}
