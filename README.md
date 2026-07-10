@@ -12,15 +12,15 @@
 
 ## 🚀 Tecnologías
 
-| Tecnología          | Propósito                                     |
-| ------------------- | --------------------------------------------- |
-| **Next.js 16**      | Framework React con App Router                |
-| **TypeScript**      | Tipado estricto (`strict: true`)              |
-| **Tailwind CSS v4** | Última versión del framework de estilos       |
-| **Supabase**        | Backend como servicio (Auth + DB PostgreSQL)  |
-| **react-hot-toast** | Notificaciones toast elegantes y modernas     |
-| **pdfjs-dist**      | Lectura y extracción de texto de archivos PDF |
-| **ESLint**          | Linting con configuración estándar de Next.js |
+| Tecnología          | Propósito                                                 |
+| ------------------- | --------------------------------------------------------- |
+| **Next.js 16**      | Framework React con App Router                            |
+| **TypeScript**      | Tipado estricto (`strict: true`)                          |
+| **Tailwind CSS v4** | Última versión del framework de estilos                   |
+| **Supabase**        | Backend como servicio (Auth + DB PostgreSQL)              |
+| **react-hot-toast** | Notificaciones toast elegantes y modernas                 |
+| **pdfjs-dist**      | Lectura y extracción de texto de archivos PDF (v3.11.174) |
+| **ESLint**          | Linting con configuración estándar de Next.js             |
 
 ---
 
@@ -60,9 +60,10 @@
 
 - **Sube archivos** directamente desde tu ordenador: PDF, TXT y Markdown.
 - **Extracción automática de texto:** el contenido se extrae y se guarda como contenido de la nota.
-- **PDF:** utiliza `pdfjs-dist` para parsear y extraer texto de documentos PDF.
-- **TXT y MD:** lectura directa del contenido del archivo.
-- **Selector de tipo de fuente:** el modal de notas ofrece tres pestañas: Texto, URL y Archivo.
+- **PDFs completamente funcionales:** utiliza `pdfjs-dist` v3.11.174 con worker configurado correctamente desde CDN para parsear y extraer texto de documentos PDF de forma fiable.
+- **TXT y MD:** lectura directa del contenido del archivo sin dependencias adicionales.
+- **Campo de título personalizado:** al subir un archivo, puedes escribir el título de la nota manualmente antes de guardarla.
+- **Selector de tipo de fuente:** el modal de notas ofrece tres pestañas intuitivas: Texto, URL y Archivo.
 
 ### 📚 Biblioteca de Prompts
 
@@ -139,6 +140,8 @@
 ### 🎨 Diseño responsive con animaciones premium
 
 - Interfaz adaptable a cualquier dispositivo (móvil, tablet, escritorio).
+- **Modales responsive:** todos los modales se adaptan a cualquier pantalla con scroll interno, mejor diseño en móviles y transiciones suaves.
+- **Sidebar con scroll:** en pantallas pequeñas, el sidebar tiene scroll vertical para acceder a todos los filtros y estadísticas sin perder información.
 - **Modo oscuro** integrado que respeta la preferencia del sistema operativo, con colores y contrastes refinados.
 - **Animaciones de entrada:** las tarjetas aparecen con un efecto `fade-in-up` escalonado (`animation-delay` progresivo) que crea una sensación de cascada visual.
 - **Efectos hover:** las tarjetas se elevan (`hover:-translate-y-1.5`) con sombras premium y un brillo sutil en la esquina superior izquierda.
@@ -383,6 +386,21 @@ Almacena las comparaciones de la Arena de LLMs.
 - [Documentación de Tailwind CSS](https://tailwindcss.com/docs)
 - [Arquitectura del proyecto](./docs/arquitectura.md)
 - [Constitución del proyecto](./.specify/constitution.md)
+
+---
+
+## ✅ Estado del proyecto
+
+Todas las funcionalidades principales están **operativas y probadas**. La aplicación es **completamente responsive** y funciona correctamente en dispositivos móviles, tablets y escritorio.
+
+### Novedades de esta sesión
+
+- ✅ **Carga de archivos completamente funcional:** PDF, TXT y MD con extracción automática de texto.
+- ✅ **PDFs funcionando:** usando `pdfjs-dist` versión 3.11.174 con worker configurado correctamente desde CDN.
+- ✅ **Modales responsive:** se adaptan a cualquier pantalla con scroll interno y mejor diseño en móviles.
+- ✅ **Sidebar con scroll:** en pantallas pequeñas, el sidebar tiene scroll vertical para ver todos los filtros.
+- ✅ **Campo de título en subida de archivos:** los usuarios pueden poner título al subir un archivo.
+- ✅ **Selector de modelos de IA ampliado:** más modelos predefinidos y opción "Otro" para escribir manualmente.
 
 ---
 
