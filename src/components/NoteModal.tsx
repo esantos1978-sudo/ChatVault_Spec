@@ -112,8 +112,8 @@ export default function NoteModal({
         // ✅ CARGA DINÁMICA: solo se ejecuta en el navegador
         const pdfjsLib = await import("pdfjs-dist");
 
-        // ✅ CONFIGURAR EL WORKER CON VERSIÓN ESTABLE
-        pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/6.1.200/pdf.worker.min.js`;
+        // ✅  CONFIGURAR EL WORKER CON VERSIÓN 3.11.174
+        pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js`;
 
         console.log("📄 Worker configurado correctamente");
         console.log("📄 Versión de pdf.js instalada:", pdfjsLib.version);
@@ -456,62 +456,79 @@ export default function NoteModal({
           )}
 
           {sourceType === "file" && (
-            <div className="flex flex-col items-center justify-center border-2 border-dashed border-zinc-300 dark:border-zinc-700 rounded-xl p-8 bg-zinc-50 dark:bg-zinc-800/30 hover:border-blue-500 dark:hover:border-blue-400 transition-colors duration-200">
-              <input
-                type="file"
-                accept=".pdf,.txt,.md"
-                onChange={handleFileUpload}
-                className="hidden"
-                id="file-upload"
-              />
-              <label
-                htmlFor="file-upload"
-                className="cursor-pointer flex flex-col items-center gap-2 w-full"
-              >
-                <span className="text-4xl">📄</span>
-                <p className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
-                  Haz clic para subir un archivo
-                </p>
-                <p className="text-xs text-zinc-400">
-                  Formatos soportados: PDF, TXT, MD
-                </p>
-              </label>
+            <div className="space-y-4">
+              {/* 📌 CAMPO DE TÍTULO */}
+              <div>
+                <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1.5">
+                  📌 Título
+                </label>
+                <input
+                  type="text"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="Ej: Mi conversación con DeepSeek"
+                  className="w-full rounded-xl border-0 bg-zinc-100/80 dark:bg-zinc-800/80 px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-blue-500/50 dark:focus:ring-blue-400/50 transition-all duration-200"
+                />
+              </div>
 
-              {fileName && (
-                <div className="mt-4 w-full">
-                  <div className="flex items-center justify-between gap-2 text-sm bg-emerald-50 dark:bg-emerald-950/30 p-3 rounded-lg border border-emerald-200 dark:border-emerald-800/30">
-                    <div className="flex items-center gap-2 text-emerald-700 dark:text-emerald-300">
-                      <span>✅</span>
-                      <span className="font-medium truncate max-w-[200px]">
-                        {fileName}
-                      </span>
-                      <span className="text-[10px] text-emerald-500/70">
-                        ({fileContent.length} caracteres)
-                      </span>
+              {/* 📄 ZONA DE SUBIDA DE ARCHIVOS */}
+              <div className="flex flex-col items-center justify-center border-2 border-dashed border-zinc-300 dark:border-zinc-700 rounded-xl p-8 bg-zinc-50 dark:bg-zinc-800/30 hover:border-blue-500 dark:hover:border-blue-400 transition-colors duration-200">
+                <input
+                  type="file"
+                  accept=".pdf,.txt,.md"
+                  onChange={handleFileUpload}
+                  className="hidden"
+                  id="file-upload"
+                />
+                <label
+                  htmlFor="file-upload"
+                  className="cursor-pointer flex flex-col items-center gap-2 w-full"
+                >
+                  <span className="text-4xl">📄</span>
+                  <p className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
+                    Haz clic para subir un archivo
+                  </p>
+                  <p className="text-xs text-zinc-400">
+                    Formatos soportados: PDF, TXT, MD
+                  </p>
+                </label>
+
+                {fileName && (
+                  <div className="mt-4 w-full">
+                    <div className="flex items-center justify-between gap-2 text-sm bg-emerald-50 dark:bg-emerald-950/30 p-3 rounded-lg border border-emerald-200 dark:border-emerald-800/30">
+                      <div className="flex items-center gap-2 text-emerald-700 dark:text-emerald-300">
+                        <span>✅</span>
+                        <span className="font-medium truncate max-w-[200px]">
+                          {fileName}
+                        </span>
+                        <span className="text-[10px] text-emerald-500/70">
+                          ({fileContent.length} caracteres)
+                        </span>
+                      </div>
+                      <button
+                        onClick={() => {
+                          setFileContent("");
+                          setFileName("");
+                          const input = document.getElementById(
+                            "file-upload",
+                          ) as HTMLInputElement;
+                          if (input) input.value = "";
+                        }}
+                        className="text-red-400 hover:text-red-600 transition-colors"
+                      >
+                        ✕
+                      </button>
                     </div>
-                    <button
-                      onClick={() => {
-                        setFileContent("");
-                        setFileName("");
-                        const input = document.getElementById(
-                          "file-upload",
-                        ) as HTMLInputElement;
-                        if (input) input.value = "";
-                      }}
-                      className="text-red-400 hover:text-red-600 transition-colors"
-                    >
-                      ✕
-                    </button>
+                    {fileContent && (
+                      <div className="mt-2 text-xs text-zinc-500 dark:text-zinc-400 max-h-20 overflow-y-auto bg-zinc-100/50 dark:bg-zinc-800/50 p-2 rounded border border-zinc-200 dark:border-zinc-700">
+                        <p className="whitespace-pre-wrap line-clamp-3">
+                          {fileContent.substring(0, 300)}...
+                        </p>
+                      </div>
+                    )}
                   </div>
-                  {fileContent && (
-                    <div className="mt-2 text-xs text-zinc-500 dark:text-zinc-400 max-h-20 overflow-y-auto bg-zinc-100/50 dark:bg-zinc-800/50 p-2 rounded border border-zinc-200 dark:border-zinc-700">
-                      <p className="whitespace-pre-wrap line-clamp-3">
-                        {fileContent.substring(0, 300)}...
-                      </p>
-                    </div>
-                  )}
-                </div>
-              )}
+                )}
+              </div>
             </div>
           )}
 
