@@ -675,6 +675,33 @@ export default function Dashboard({ user }: { user: any }) {
           </button>
         </div>
 
+        {/* 3. 🔄 BOTÓN DE RESETEO DE FILTROS */}
+        <button
+          onClick={() => {
+            setSelectedTag(null);
+            setSelectedAiModel(null);
+            setSelectedPromptCategory(null);
+            setDateFilter("all");
+            setStartDate("");
+            setEndDate("");
+            setSearchQuery("");
+            setPromptSearchQuery("");
+            setArenaSearchQuery("");
+            setShowFavorites(false);
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          }}
+          className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800/50 transition-colors border border-dashed border-zinc-300 dark:border-zinc-700"
+        >
+          <span className="text-base">🔄</span>
+          Mostrar todo
+          <span className="ml-auto text-[10px] text-zinc-400">
+            (resetear filtros)
+          </span>
+        </button>
+
+        {/* Línea separadora */}
+        <div className="border-t border-zinc-200/50 dark:border-zinc-800/50" />
+
         {/* FILTRO DE FAVORITOS */}
         <button
           onClick={() => setShowFavorites(!showFavorites)}
