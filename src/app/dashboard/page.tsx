@@ -987,6 +987,51 @@ export default function Dashboard({ user }: { user: any }) {
             </div>
           </div>
         )}
+        {/* 📊 ESTADÍSTICAS */}
+        <div className="mt-2 pt-2 border-t border-zinc-100 dark:border-zinc-800/50">
+          <p className="px-2 text-[10px] font-bold text-zinc-400 uppercase tracking-wider">
+            📊 Resumen
+          </p>
+          <div className="space-y-1 px-2 text-xs text-zinc-600 dark:text-zinc-400">
+            <div className="flex justify-between">
+              <span>📝 Notas</span>
+              <span className="font-medium">{notes.length}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>📚 Prompts</span>
+              <span className="font-medium">{prompts.length}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>🥊 Comparaciones</span>
+              <span className="font-medium">{arenaComparisons.length}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>⭐ Favoritas</span>
+              <span className="font-medium">
+                {notes.filter((n) => n.is_favorite).length +
+                  prompts.filter((p) => p.is_favorite).length}
+              </span>
+            </div>
+
+            {/* Prompt más usado */}
+            {prompts.length > 0 && (
+              <div className="mt-1 pt-1 border-t border-zinc-100/50 dark:border-zinc-800/50">
+                <p className="text-[10px] text-zinc-400">🔥 Más usado:</p>
+                <p className="text-[10px] font-medium text-zinc-700 dark:text-zinc-300 truncate">
+                  {prompts.sort((a, b) => b.times_used - a.times_used)[0]
+                    ?.title || "Ninguno"}
+                  <span className="text-zinc-400 font-normal">
+                    {" "}
+                    (
+                    {prompts.sort((a, b) => b.times_used - a.times_used)[0]
+                      ?.times_used || 0}{" "}
+                    usos)
+                  </span>
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
 
         {/* CERRAR SESIÓN */}
         <div className="mt-auto pt-4 border-t border-zinc-200 dark:border-zinc-800">
