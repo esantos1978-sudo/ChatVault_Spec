@@ -6,7 +6,7 @@
 ![Supabase](https://img.shields.io/badge/Supabase-2.0-green?style=flat-square&logo=supabase)
 ![Vercel](https://img.shields.io/badge/Vercel-Deployed-black?style=flat-square&logo=vercel)
 
-**Tu baúl de conocimiento para conversaciones con IA.** ChatVault es una aplicación web moderna para guardar, organizar y reutilizar chats, prompts y recursos de tus modelos de lenguaje favoritos (ChatGPT, DeepSeek, Claude, Gemini y más). Ofrece autenticación segura, un CRUD completo de notas y prompts, scraping inteligente de URLs, un sistema de etiquetas independientes por sección, filtros avanzados, una **Arena de LLMs** para comparar respuestas, **sistema de favoritos** para notas y prompts, y una experiencia de usuario premium con modo oscuro y animaciones.
+**Tu baúl de conocimiento para conversaciones con IA.** ChatVault es una aplicación web moderna para guardar, organizar y reutilizar chats, prompts y recursos de tus modelos de lenguaje favoritos (ChatGPT, DeepSeek, Claude, Gemini y más). Ofrece autenticación segura, un CRUD completo de notas y prompts, scraping inteligente de URLs, carga de archivos (PDF, TXT, MD) con extracción automática de texto, un sistema de etiquetas compartidas entre notas y prompts, filtros avanzados, una **Arena de LLMs** para comparar respuestas, **sistema de favoritos** ⭐ para notas y prompts, enlace entre notas y prompts, y una experiencia de usuario premium con modo oscuro y animaciones.
 
 ---
 
@@ -19,6 +19,7 @@
 | **Tailwind CSS v4** | Última versión del framework de estilos       |
 | **Supabase**        | Backend como servicio (Auth + DB PostgreSQL)  |
 | **react-hot-toast** | Notificaciones toast elegantes y modernas     |
+| **pdfjs-dist**      | Lectura y extracción de texto de archivos PDF |
 | **ESLint**          | Linting con configuración estándar de Next.js |
 
 ---
@@ -43,16 +44,25 @@
 
 ### 📝 CRUD completo de Notas
 
-- **Crear** notas con título, contenido, resumen, etiquetas múltiples y modelo de IA asociado.
+- **Crear** notas con título, contenido, resumen, etiquetas múltiples, modelo de IA asociado y prompt vinculado.
 - **Leer** todas las notas en una rejilla de tarjetas con diseño responsive.
 - **Editar** cualquier nota directamente desde la tarjeta con un clic en el icono de lápiz.
 - **Eliminar** notas con confirmación previa y feedback visual mediante toast.
+- **Tres métodos de entrada:** texto manual, scraping de URLs o carga de archivos (PDF, TXT, MD).
 
 ### 🌐 Scraping inteligente de URLs
 
 - Pega una URL pública de un chat compartido (DeepSeek, ChatGPT, Claude, etc.) y la aplicación **extrae automáticamente el título y el contenido**.
 - Si no se puede extraer contenido, se guarda un fallback con el enlace original.
 - Corrección automática de URLs sin protocolo (se añade `https://` si falta).
+
+### 📁 Carga de archivos (PDF, TXT, MD)
+
+- **Sube archivos** directamente desde tu ordenador: PDF, TXT y Markdown.
+- **Extracción automática de texto:** el contenido se extrae y se guarda como contenido de la nota.
+- **PDF:** utiliza `pdfjs-dist` para parsear y extraer texto de documentos PDF.
+- **TXT y MD:** lectura directa del contenido del archivo.
+- **Selector de tipo de fuente:** el modal de notas ofrece tres pestañas: Texto, URL y Archivo.
 
 ### 📚 Biblioteca de Prompts
 
@@ -68,12 +78,19 @@
 - **Feedback visual al copiar:** animación de 2 segundos que indica que el prompt se ha copiado al portapapeles.
 - **Filtro por categorías** en el sidebar con conteo de prompts por categoría.
 
+### 🔗 Enlace entre Notas y Prompts
+
+- **Selector de prompt asociado:** al crear o editar una nota, puedes seleccionar un prompt de tu biblioteca para asociarlo.
+- **Badge en la tarjeta:** las notas vinculadas a un prompt muestran un badge indicando el prompt asociado.
+- **Integración fluida:** los prompts aparecen en un selector desplegable dentro del modal de notas.
+
 ### 🥊 Arena de LLMs
 
 - **Comparación manual de respuestas:** pega el mismo prompt y las respuestas de dos modelos de IA diferentes para compararlas lado a lado.
 - **Sistema de votación:** selecciona qué respuesta te ha parecido mejor (Modelo 1 o Modelo 2).
 - **Resaltado del ganador:** la respuesta ganadora se muestra con un badge 🏆 y un fondo verde destacado.
-- **Modelos disponibles:** ChatGPT-4o, Claude 3.5 Sonnet, Gemini 1.5 Pro, DeepSeek-V3, Llama 3 y Otro.
+- **Modal expandido (ArenaDetailModal):** haz clic en cualquier comparación para ver las respuestas completas en un modal de pantalla completa con ambas columnas lado a lado.
+- **Modelos disponibles:** ChatGPT-4o, Claude 3.5 Sonnet, Gemini 1.5 Pro, DeepSeek-V3, Llama 3, GPT-4 Turbo, Claude 3 Opus, Gemini 2.0 Flash, Mistral Large, y posibilidad de escribir manualmente cualquier otro modelo.
 - **Búsqueda en comparaciones:** filtra por el texto del prompt en la barra de búsqueda.
 - **Eliminación** de comparaciones con confirmación previa.
 
@@ -84,14 +101,23 @@
 - **Estado persistente:** el estado de favorito se guarda en la base de datos (`is_favorite`) y se sincroniza en tiempo real.
 - **Indicador visual:** las tarjetas favoritas muestran la estrella rellena (⭐) con un color dorado distintivo.
 
-### 🏷️ Sistema de etiquetas independientes por sección
+### 🏷️ Sistema de etiquetas compartidas
 
-- Las etiquetas funcionan de forma **independiente** para notas y prompts, cada sección con su propio conjunto.
-- **Autosugerencia inteligente:** mientras escribes, aparece un menú desplegable con sugerencias de etiquetas existentes en esa sección, filtradas en tiempo real.
+- Las etiquetas funcionan de forma **compartida** entre notas y prompts, con autosugerencia cruzada.
+- **Autosugerencia inteligente:** mientras escribes, aparece un menú desplegable con sugerencias de etiquetas existentes en ambas secciones, filtradas en tiempo real.
 - Navegación por teclado (flechas ↑/↓, Enter para seleccionar, Escape para cerrar).
-- **Eliminación de etiquetas:** en el sidebar, cada etiqueta tiene un botón "✕" para eliminarla de todas las notas o prompts de esa sección.
-- Vista rápida del conteo de notas o prompts por etiqueta en el sidebar.
+- **Eliminación global de etiquetas:** en el sidebar, cada etiqueta tiene un botón "✕" para eliminarla de todas las notas y prompts que la contengan.
+- Vista rápida del conteo de notas y prompts por etiqueta en el sidebar.
 - **Scroll premium de etiquetas** con efecto de desvanecimiento en los bordes (`mask-image`).
+
+### 📊 Estadísticas en el Sidebar
+
+- **Resumen completo** con métricas clave del usuario:
+  - 📝 Total de notas guardadas.
+  - 📚 Total de prompts en la biblioteca.
+  - 🥊 Total de comparaciones realizadas en la Arena.
+  - ⭐ Total de elementos marcados como favoritos.
+  - 🔥 Prompt más usado (con su contador de usos).
 
 ### 🔍 Sistema de filtros avanzado
 
@@ -126,12 +152,13 @@
 ### 🧩 Componentes modulares
 
 - El código está organizado en componentes React reutilizables y auto-contenidos:
-  - **`NoteCard`**: tarjeta individual de nota con efectos hover y acciones.
-  - **`NoteModal`**: modal de creación/edición de notas con pestañas (texto, URL, archivo), autosugerencia de etiquetas y selector de modelo de IA.
-  - **`PromptCard`**: tarjeta de prompt con badge de categoría por colores, contador de usos y botón de copia con feedback visual.
+  - **`NoteCard`**: tarjeta individual de nota con efectos hover, badge de prompt asociado, icono de favoritos ⭐ y acciones.
+  - **`NoteModal`**: modal de creación/edición de notas con 3 pestañas (Texto, URL, Archivo), autosugerencia de etiquetas, selector de modelo de IA y selector de prompt asociado.
+  - **`PromptCard`**: tarjeta de prompt con badge de categoría por colores, contador de usos, botón de copia con feedback visual e icono de favoritos ⭐.
   - **`PromptModal`**: modal de creación/edición de prompts con selector de categorías y autosugerencia de etiquetas.
   - **`ArenaCard`**: tarjeta de comparación con dos columnas, badge del ganador y resaltado visual.
   - **`ArenaModal`**: modal de la Arena con formulario de comparación, selectores de modelo y sistema de votación.
+  - **`ArenaDetailModal`**: modal expandido para ver respuestas completas lado a lado en pantalla completa.
   - **`AuthForm`**: formulario de autenticación (login/registro) con validación y manejo de errores.
 
 ---
@@ -194,31 +221,33 @@ ChatVault_Spec/
 │   │   ├── api/
 │   │   │   └── scrape/route.ts         # API route para scraping de URLs
 │   │   ├── dashboard/
-│   │   │   └── page.tsx                # Dashboard con Notas, Prompts y Arena (~1110 líneas)
+│   │   │   └── page.tsx                # Dashboard con Notas, Prompts y Arena
 │   │   ├── layout.tsx                  # Layout raíz con fuentes Geist + Toaster
-│   │   ├── page.tsx                    # Landing page + lógica de autenticación (~320 líneas)
+│   │   ├── page.tsx                    # Landing page + lógica de autenticación
 │   │   └── globals.css                 # Estilos globales, animaciones y scroll premium
 │   ├── components/                     # Componentes React reutilizables
 │   │   ├── ArenaCard.tsx               # Tarjeta de comparación de la Arena de LLMs
+│   │   ├── ArenaDetailModal.tsx        # Modal expandido de comparación (respuestas completas)
 │   │   ├── ArenaModal.tsx              # Modal de la Arena con votación
 │   │   ├── AuthForm.tsx                # Formulario de autenticación (login/registro)
-│   │   ├── NoteCard.tsx                # Tarjeta individual de nota con efectos hover
-│   │   ├── NoteModal.tsx               # Modal de creación/edición de notas (3 pestañas)
-│   │   ├── PromptCard.tsx              # Tarjeta de prompt con badge de categoría y contador
-│   │   └── PromptModal.tsx             # Modal de creación/edición de prompts con categorías
+│   │   ├── NoteCard.tsx                # Tarjeta de nota con favoritos ⭐ y badge de prompt
+│   │   ├── NoteModal.tsx               # Modal de notas con 3 pestañas + selector de prompts
+│   │   ├── PromptCard.tsx              # Tarjeta de prompt con favoritos ⭐ y contador
+│   │   └── PromptModal.tsx             # Modal de creación/edición de prompts
 │   ├── lib/                            # Utilidades, helpers y lógica de negocio
 │   │   └── supabaseClient.ts           # Cliente de Supabase inicializado
 │   └── SupabaseClient.ts               # Cliente de Supabase (raíz, respaldo)
 ├── supabase/
-│   └── migrations/                     # Migraciones SQL versionadas (8 migraciones)
-│       ├── 001_initial_schema.sql
+│   └── migrations/                     # Migraciones SQL versionadas (9 migraciones)
+│       ├── 001_initial_notes_table.sql
 │       ├── 002_fix_rls_policies.sql
 │       ├── 003_convert_tag_to_tags_array.sql
 │       ├── 004_add_columns_to_notes.sql
 │       ├── 005_set_default_ai_model.sql
 │       ├── 006_update_prompt_categories.sql
-│       ├── 007_create_arena_comparisons_table.sql
-│       └── 008_add_is_favorite_column.sql
+│       ├── 007_create_arena_comparisons.sql
+│       ├── 008_add_is_favorite_column.sql
+│       └── 009_add_prompt_id_to_notes.sql
 ├── scripts/                            # Scripts auxiliares
 │   ├── run-migration.mjs               # Ejecuta migraciones contra Supabase
 │   └── test-supabase.mjs               # Verifica la conexión con Supabase
@@ -240,7 +269,7 @@ ChatVault_Spec/
 | Directorio             | Propósito                                                                                    |
 | ---------------------- | -------------------------------------------------------------------------------------------- |
 | `src/app/`             | Sistema de rutas basado en el App Router de Next.js. Cada subdirectorio representa una ruta. |
-| `src/app/dashboard/`   | Dashboard principal con tabs de Notas, Prompts y Arena, sidebar con filtros.                 |
+| `src/app/dashboard/`   | Dashboard principal con tabs de Notas, Prompts y Arena, sidebar con filtros y estadísticas.  |
 | `src/components/`      | Componentes React atómicos y reutilizables (autenticación, tarjetas, modales, arena).        |
 | `src/lib/`             | Lógica compartida: cliente de Supabase, helpers, utilidades.                                 |
 | `supabase/migrations/` | Migraciones SQL versionadas para la base de datos PostgreSQL.                                |
@@ -266,16 +295,17 @@ ChatVault_Spec/
 
 Las migraciones se ejecutan en orden secuencial para construir el esquema completo:
 
-| Orden | Archivo                                  | Descripción                                    |
-| ----- | ---------------------------------------- | ---------------------------------------------- |
-| 1     | `001_initial_schema.sql`                 | Crear tabla `notes` + RLS                      |
-| 2     | `002_fix_rls_policies.sql`               | Hard Reset de políticas RLS                    |
-| 3     | `003_convert_tag_to_tags_array.sql`      | Convertir columna `tag` a `tags` (TEXT[])      |
-| 4     | `004_add_columns_to_notes.sql`           | Añadir columnas a `notes`                      |
-| 5     | `005_set_default_ai_model.sql`           | Establecer DeepSeek-R1 como modelo por defecto |
-| 6     | `006_update_prompt_categories.sql`       | Actualizar categorías de prompts               |
-| 7     | `007_create_arena_comparisons_table.sql` | Crear tabla `arena_comparisons`                |
-| 8     | `008_add_is_favorite_column.sql`         | Añadir columna `is_favorite` a notes y prompts |
+| Orden | Archivo                             | Descripción                                    |
+| ----- | ----------------------------------- | ---------------------------------------------- |
+| 1     | `001_initial_notes_table.sql`       | Crear tabla `notes` + RLS                      |
+| 2     | `002_fix_rls_policies.sql`          | Hard Reset de políticas RLS                    |
+| 3     | `003_convert_tag_to_tags_array.sql` | Convertir columna `tag` a `tags` (TEXT[])      |
+| 4     | `004_add_columns_to_notes.sql`      | Añadir columnas a `notes`                      |
+| 5     | `005_set_default_ai_model.sql`      | Establecer DeepSeek-R1 como modelo por defecto |
+| 6     | `006_update_prompt_categories.sql`  | Actualizar categorías de prompts               |
+| 7     | `007_create_arena_comparisons.sql`  | Crear tabla `arena_comparisons`                |
+| 8     | `008_add_is_favorite_column.sql`    | Añadir columna `is_favorite` a notes y prompts |
+| 9     | `009_add_prompt_id_to_notes.sql`    | Añadir columna `prompt_id` a notes             |
 
 ---
 
@@ -298,6 +328,7 @@ Almacena las conversaciones y chats guardados por los usuarios.
 | `source_type` | `TEXT`        | Tipo de fuente (text, url, file)             |
 | `source_url`  | `TEXT`        | URL original del chat (si aplica)            |
 | `is_favorite` | `BOOLEAN`     | Indica si la nota está marcada como favorita |
+| `prompt_id`   | `BIGINT`      | Referencia al prompt asociado (FK)           |
 
 ### Tabla `prompts`
 
