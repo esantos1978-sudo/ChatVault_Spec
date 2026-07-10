@@ -989,25 +989,35 @@ export default function Dashboard({ user }: { user: any }) {
         )}
         {/* 📊 ESTADÍSTICAS */}
         <div className="mt-2 pt-2 border-t border-zinc-100 dark:border-zinc-800/50">
-          <p className="px-2 text-[10px] font-bold text-zinc-400 uppercase tracking-wider">
-            📊 Resumen
-          </p>
-          <div className="space-y-1 px-2 text-xs text-zinc-600 dark:text-zinc-400">
-            <div className="flex justify-between">
-              <span>📝 Notas</span>
-              <span className="font-medium">{notes.length}</span>
+          <div className="flex justify-between items-center border-b border-zinc-100/50 dark:border-zinc-800/50 pb-1">
+            <p className="px-1 text-[10px] font-bold text-zinc-400 uppercase tracking-wider">
+              📊 Resumen
+            </p>
+          </div>
+          <div className="space-y-1.5 px-1 text-xs text-zinc-600 dark:text-zinc-400 mt-1.5">
+            <div className="flex justify-between items-center">
+              <span className="flex items-center gap-1.5">📝 Notas</span>
+              <span className="font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/30 px-2 py-0.5 rounded-full text-[11px]">
+                {notes.length}
+              </span>
             </div>
-            <div className="flex justify-between">
-              <span>📚 Prompts</span>
-              <span className="font-medium">{prompts.length}</span>
+            <div className="flex justify-between items-center">
+              <span className="flex items-center gap-1.5">📚 Prompts</span>
+              <span className="font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30 px-2 py-0.5 rounded-full text-[11px]">
+                {prompts.length}
+              </span>
             </div>
-            <div className="flex justify-between">
-              <span>🥊 Comparaciones</span>
-              <span className="font-medium">{arenaComparisons.length}</span>
+            <div className="flex justify-between items-center">
+              <span className="flex items-center gap-1.5">
+                🥊 Comparaciones
+              </span>
+              <span className="font-medium text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-950/30 px-2 py-0.5 rounded-full text-[11px]">
+                {arenaComparisons.length}
+              </span>
             </div>
-            <div className="flex justify-between">
-              <span>⭐ Favoritas</span>
-              <span className="font-medium">
+            <div className="flex justify-between items-center">
+              <span className="flex items-center gap-1.5">⭐ Favoritas</span>
+              <span className="font-medium text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/30 px-2 py-0.5 rounded-full text-[11px]">
                 {notes.filter((n) => n.is_favorite).length +
                   prompts.filter((p) => p.is_favorite).length}
               </span>
@@ -1016,16 +1026,17 @@ export default function Dashboard({ user }: { user: any }) {
             {/* Prompt más usado */}
             {prompts.length > 0 && (
               <div className="mt-1 pt-1 border-t border-zinc-100/50 dark:border-zinc-800/50">
-                <p className="text-[10px] text-zinc-400">🔥 Más usado:</p>
-                <p className="text-[10px] font-medium text-zinc-700 dark:text-zinc-300 truncate">
-                  {prompts.sort((a, b) => b.times_used - a.times_used)[0]
-                    ?.title || "Ninguno"}
-                  <span className="text-zinc-400 font-normal">
-                    {" "}
-                    (
+                <p className="text-[10px] text-zinc-400 flex items-center gap-1">
+                  🔥 Más usado:
+                </p>
+                <p className="text-[10px] font-medium text-zinc-700 dark:text-zinc-300 truncate flex items-center justify-between">
+                  <span className="truncate max-w-[120px]">
                     {prompts.sort((a, b) => b.times_used - a.times_used)[0]
-                      ?.times_used || 0}{" "}
-                    usos)
+                      ?.title || "Ninguno"}
+                  </span>
+                  <span className="text-zinc-400 font-normal bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded-full text-[10px]">
+                    {prompts.sort((a, b) => b.times_used - a.times_used)[0]
+                      ?.times_used || 0}
                   </span>
                 </p>
               </div>
