@@ -252,7 +252,7 @@ export default function NoteModal({
             {/* MODELO IA */}
             <div>
               <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1.5">
-                🤖 Modelo de IA
+                🤖 Modelo IA
               </label>
               <select
                 value={aiModel === "otro" ? "otro" : aiModel}
@@ -314,7 +314,7 @@ export default function NoteModal({
             {/* ETIQUETAS */}
             <div>
               <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1.5">
-                🏷️ Etiquetas (separadas por comas)
+                🏷️ Etiquetas
               </label>
               <div className="relative">
                 <input

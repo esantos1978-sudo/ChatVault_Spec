@@ -108,7 +108,7 @@ export default function PromptModal({
           {/* Título */}
           <div>
             <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1.5">
-              📌 Nombre del prompt
+              📌 Titulo
             </label>
             <input
               type="text"
@@ -122,7 +122,7 @@ export default function PromptModal({
           {/* Categoría */}
           <div>
             <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1.5">
-              📂 Tipo de contenido
+              📂 CATEGORIA
             </label>
             <select
               value={category}
@@ -255,7 +255,7 @@ export default function PromptModal({
           {/* Contenido del Prompt */}
           <div>
             <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1.5">
-              📝 Contenido del prompt
+              📝 Prompt
             </label>
             <textarea
               rows={6}

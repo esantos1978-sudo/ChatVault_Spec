@@ -193,7 +193,7 @@ export default function ArenaModal({
           {/* Respuesta Modelo 1 */}
           <div>
             <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1.5">
-              📄 Respuesta del modelo 1
+              📄 Contenido
             </label>
             <textarea
               rows={4}
