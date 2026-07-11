@@ -10,7 +10,7 @@ import { NoteCard } from "@/components/NoteCard";
 import { PromptCard } from "@/components/PromptCard";
 import PromptModal from "@/components/PromptModal";
 import { ArenaCard } from "@/components/ArenaCard";
-import { ArenaModal } from "@/components/ArenaModal";
+import ArenaModal from "@/components/ArenaModal";
 import { ArenaDetailModal } from "@/components/ArenaDetailModal";
 
 // ✅ Ahora NoteModal tiene export default, así que es más simple

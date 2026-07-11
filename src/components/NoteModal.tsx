@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+
 interface NoteModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -81,6 +83,9 @@ export default function NoteModal({
 }: NoteModalProps) {
   if (!isOpen) return null;
 
+  // Estado local para el input "Otro" del selector de modelos
+  const [customModel, setCustomModel] = useState("");
+
   // ============================================================
   // 🚀 FUNCIÓN PARA SUBIR ARCHIVOS (CON WORKER CONFIGURADO)
   // ============================================================
@@ -159,8 +164,16 @@ export default function NoteModal({
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto animate-fade-in"
       style={{ backgroundColor: "rgba(15, 23, 42, 0.6)" }}
+      onClick={(e) => {
+        if (e.target === e.currentTarget) {
+          onClose();
+        }
+      }}
     >
-      <div className="w-full max-w-4xl rounded-2xl bg-white/95 dark:bg-zinc-900/95 backdrop-blur-xl shadow-2xl border border-white/20 dark:border-zinc-800/50 p-6 md:p-8 my-8 max-h-[90vh] overflow-y-auto animate-zoom-in">
+      <div
+        className="w-full max-w-4xl rounded-2xl bg-white/95 dark:bg-zinc-900/95 backdrop-blur-xl shadow-2xl border border-white/20 dark:border-zinc-800/50 p-6 md:p-8 my-8 max-h-[90vh] overflow-y-auto animate-zoom-in"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* HEADER */}
         <div className="flex items-center justify-between mb-6 pb-4 border-b border-zinc-200/50 dark:border-zinc-800/50">
           <div>
@@ -242,16 +255,60 @@ export default function NoteModal({
                 🤖 Modelo de IA
               </label>
               <select
-                value={aiModel}
-                onChange={(e) => setAiModel(e.target.value)}
+                value={aiModel === "otro" ? "otro" : aiModel}
+                onChange={(e) => {
+                  if (e.target.value !== "otro") {
+                    setAiModel(e.target.value);
+                    setCustomModel("");
+                  } else {
+                    setAiModel("otro");
+                  }
+                }}
                 className="w-full rounded-xl border-0 bg-zinc-100/80 dark:bg-zinc-800/80 px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-blue-500/50 dark:focus:ring-blue-400/50 transition-all duration-200"
               >
-                <option value="DeepSeek-R1">🧠 DeepSeek-R1</option>
                 <option value="ChatGPT-4o">💬 ChatGPT-4o</option>
+                <option value="ChatGPT-4o-mini">💬 ChatGPT-4o-mini</option>
+                <option value="ChatGPT-o1">🧠 ChatGPT-o1</option>
+                <option value="ChatGPT-o3-mini">🧠 ChatGPT-o3-mini</option>
                 <option value="Claude-3.5-Sonnet">🔮 Claude 3.5 Sonnet</option>
+                <option value="Claude-3.7-Sonnet">🔮 Claude 3.7 Sonnet</option>
                 <option value="Gemini-1.5-Pro">✨ Gemini 1.5 Pro</option>
-                <option value="Llama-3">🦙 Llama 3 (Meta)</option>
+                <option value="Gemini-2.0-Flash">✨ Gemini 2.0 Flash</option>
+                <option value="Gemini-2.5-Pro">✨ Gemini 2.5 Pro</option>
+                <option value="DeepSeek-R1">🧠 DeepSeek-R1</option>
+                <option value="DeepSeek-V3">🧠 DeepSeek-V3</option>
+                <option value="Llama-3">🦙 Llama 3</option>
+                <option value="Llama-3.1">🦙 Llama 3.1</option>
+                <option value="Llama-4">🦙 Llama 4</option>
+                <option value="Mistral-Large">🌊 Mistral Large</option>
+                <option value="Mistral-Small">🌊 Mistral Small</option>
+                <option value="Grok-2">🤖 Grok-2</option>
+                <option value="Grok-3">🤖 Grok-3</option>
+                <option value="Perplexity-Sonar">🔍 Perplexity Sonar</option>
+                <option value="Perplexity-Pro">🔍 Perplexity Pro</option>
+                <option value="otro">📦 Otro (escribir manualmente)</option>
               </select>
+
+              {aiModel === "otro" && (
+                <input
+                  type="text"
+                  value={customModel}
+                  onChange={(e) => setCustomModel(e.target.value)}
+                  onBlur={() => {
+                    if (customModel.trim()) {
+                      setAiModel(customModel.trim());
+                    }
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && customModel.trim()) {
+                      setAiModel(customModel.trim());
+                    }
+                  }}
+                  placeholder="Escribe el nombre del modelo y presiona Enter..."
+                  className="mt-2 w-full rounded-xl border-0 bg-zinc-100/80 dark:bg-zinc-800/80 px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-blue-500/50 dark:focus:ring-blue-400/50 transition-all duration-200"
+                  autoFocus
+                />
+              )}
             </div>
 
             {/* ETIQUETAS */}
