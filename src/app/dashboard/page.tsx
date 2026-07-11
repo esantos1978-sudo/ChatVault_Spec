@@ -637,7 +637,7 @@ export default function Dashboard({ user }: { user: any }) {
         <div className="flex items-center gap-2 px-2">
           <span className="text-xl">🔒</span>
           <h1 className="text-lg font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
-            ChatVault
+            Kimberlite
           </h1>
         </div>
 

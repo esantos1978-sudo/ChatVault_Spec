@@ -15,7 +15,7 @@ function LandingPage({ onGetStarted }: { onGetStarted: () => void }) {
           <div className="flex items-center gap-2">
             <span className="text-2xl">🔒</span>
             <span className="text-xl font-bold text-zinc-900 dark:text-zinc-50">
-              ChatVault
+              Kimberlite
             </span>
           </div>
           <button

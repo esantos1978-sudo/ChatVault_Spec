@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ChatVault - Notas seguras",
+  title: "Kimberlite, where diamonds are",
   description: "Tus notas seguras en la nube con ChatVault",
 };
 
