@@ -1,4 +1,4 @@
-# 🔒 ChatVault
+# 💎 Kimberlite
 
 ![Next.js](https://img.shields.io/badge/Next.js-16-black?style=flat-square&logo=next.js)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=flat-square&logo=typescript)
@@ -6,47 +6,72 @@
 ![Supabase](https://img.shields.io/badge/Supabase-2.0-green?style=flat-square&logo=supabase)
 ![Vercel](https://img.shields.io/badge/Vercel-Deployed-black?style=flat-square&logo=vercel)
 
-**Tu baúl de conocimiento para conversaciones con IA.** ChatVault es una aplicación web moderna para guardar, organizar y reutilizar chats, prompts y recursos de tus modelos de lenguaje favoritos (ChatGPT, DeepSeek, Claude, Gemini y más). Ofrece autenticación segura, un CRUD completo de notas y prompts, scraping inteligente de URLs, carga de archivos (PDF, TXT, MD) con extracción automática de texto, un sistema de etiquetas compartidas entre notas y prompts, filtros avanzados, una **Arena de LLMs** para comparar respuestas, **sistema de favoritos** ⭐ para notas y prompts, enlace entre notas y prompts, y una experiencia de usuario premium con modo oscuro y animaciones.
+**Your data, refined & resilient.** Kimberlite es una aplicación web moderna para organizar conversaciones con IA, gestionar prompts reutilizables y comparar modelos de lenguaje. Construida con Next.js 16, TypeScript, Tailwind CSS v4 y Supabase, ofrece una experiencia premium con autenticación segura, CRUD completo de notas y prompts, scraping inteligente de URLs, carga de archivos (PDF, TXT, MD) con extracción automática de texto, sistema de etiquetas independientes por sección, filtros avanzados, una **Arena de LLMs** para comparar respuestas, **sistema de favoritos** ⭐, enlace entre notas y prompts, y un diseño oscuro optimizado con la paleta de violetas característica de Kimberlite.
 
 ---
 
 ## 🚀 Tecnologías
 
-| Tecnología          | Propósito                                                 |
-| ------------------- | --------------------------------------------------------- |
-| **Next.js 16**      | Framework React con App Router                            |
-| **TypeScript**      | Tipado estricto (`strict: true`)                          |
-| **Tailwind CSS v4** | Última versión del framework de estilos                   |
-| **Supabase**        | Backend como servicio (Auth + DB PostgreSQL)              |
-| **react-hot-toast** | Notificaciones toast elegantes y modernas                 |
-| **pdfjs-dist**      | Lectura y extracción de texto de archivos PDF (v3.11.174) |
-| **ESLint**          | Linting con configuración estándar de Next.js             |
+| Tecnología           | Propósito                                                 |
+| -------------------- | --------------------------------------------------------- |
+| **Next.js 16**       | Framework React con App Router                            |
+| **TypeScript**       | Tipado estricto (`strict: true`)                          |
+| **Tailwind CSS v4**  | Última versión del framework de estilos                   |
+| **Supabase**         | Backend como servicio (Auth + DB PostgreSQL)              |
+| **react-hot-toast**  | Notificaciones toast elegantes y modernas                 |
+| **pdfjs-dist**       | Lectura y extracción de texto de archivos PDF (v3.11.174) |
+| **Material Symbols** | Iconografía premium de Google Fonts                       |
+| **ESLint**           | Linting con configuración estándar de Next.js             |
+
+---
+
+## 🎨 Diseño Kimberlite
+
+Kimberlite presenta una identidad visual premium con una paleta de violetas característica:
+
+| Elemento                | Detalle                                                            |
+| ----------------------- | ------------------------------------------------------------------ |
+| **Colores principales** | Violetas `#8b5cf6` a `#7c3aed`                                     |
+| **Degradado**           | `gemstone-gradient` en botones principales (`#8b5cf6` → `#7c3aed`) |
+| **Iconos**              | Material Symbols (Google Fonts) en lugar de emojis                 |
+| **Tarjetas**            | Diseño premium con borde violeta sutil y hover con fondo violeta   |
+| **Logo**                | Centrado y más grande en el sidebar                                |
+| **Modo oscuro**         | Optimizado y coherente en toda la aplicación                       |
+
+### ✨ Novedades de diseño
+
+- **Landing page mejorada** con badges de seguridad (E2E Encrypted, Zero-Knowledge, Your Knowledge Your Control) y footer actualizado con enlaces a Privacy Policy, Terms y Security Audit.
+- **Login premium** con efectos de fondo (blobs decorativos + patrón vault), micro-interacciones y badge de seguridad E2E.
+- **Sidebar** con Material Symbols (`neurology`, `sell`, `calendar_month`, `folder`, `analytics`, `star`, `logout`) y logo centrado de mayor tamaño.
+- **Tarjetas de notas, prompts y arena** con diseño premium, borde violeta (`border-primary/40`), hover con fondo violeta (`hover:bg-primary/10`) y sombras premium.
+- **Degradado Kimberlite** (`gemstone-gradient`) aplicado a botones principales (login, CTA).
 
 ---
 
 ## ✨ Funcionalidades
 
-### 🏠 Landing Page Moderna
+### 🏠 Landing Page Premium
 
-- **Hero atractivo** con gradientes, badge animado y llamada a la acción.
+- **Hero atractivo** con logo Kimberlite, eslogan "Your data, refined & resilient." y badges de seguridad animados.
 - **Sección de funcionalidades** con grid de 6 tarjetas interactivas (Notas inteligentes, Biblioteca de Prompts, Scraping de URLs, Etiquetas múltiples, Búsqueda avanzada, Seguridad).
 - **"Cómo funciona"** en 3 pasos: Regístrate → Guarda → Organiza.
 - **Placeholder de video** para futura demostración visual.
-- **Footer** con enlaces a Términos, Privacidad y Contacto.
+- **Footer** con enlaces a Privacy Policy, Terms y Security Audit.
 - **Modo oscuro** integrado que respeta la preferencia del sistema operativo.
 
 ### 🔐 Autenticación de usuarios
 
 - **Registro e inicio de sesión** con correo electrónico y contraseña mediante Supabase Auth.
+- **Login premium** con fondo degradado, patrón vault, blobs decorativos y badge E2E Encrypted.
 - **Protección de rutas:** el dashboard solo es accesible para usuarios autenticados.
-- **Cierre de sesión** con un clic desde el sidebar.
+- **Cierre de sesión** con un clic desde el sidebar (icono Material Symbol `logout`).
 - **Row Level Security (RLS):** cada usuario solo ve, crea, edita y elimina sus propios datos.
 
 ### 📝 CRUD completo de Notas
 
 - **Crear** notas con título, contenido, resumen, etiquetas múltiples, modelo de IA asociado y prompt vinculado.
-- **Leer** todas las notas en una rejilla de tarjetas con diseño responsive.
-- **Editar** cualquier nota directamente desde la tarjeta con un clic en el icono de lápiz.
+- **Leer** todas las notas en una rejilla de tarjetas con diseño responsive y animaciones fade-in-up.
+- **Editar** cualquier nota directamente desde la tarjeta con un clic.
 - **Eliminar** notas con confirmación previa y feedback visual mediante toast.
 - **Tres métodos de entrada:** texto manual, scraping de URLs o carga de archivos (PDF, TXT, MD).
 
@@ -97,27 +122,27 @@
 
 ### ⭐ Sistema de Favoritos
 
-- **Marcar como favorito:** cada nota y prompt tiene un icono de estrella (⭐) que permite marcarlo como favorito con un solo clic.
+- **Marcar como favorito:** cada nota y prompt tiene un icono de estrella (Material Symbol `star`) que permite marcarlo como favorito con un solo clic.
 - **Filtro de favoritos en el sidebar:** un botón dedicado "Ver favoritos" que muestra exclusivamente los elementos marcados como favoritos, con indicador visual "Mostrando favoritos".
 - **Estado persistente:** el estado de favorito se guarda en la base de datos (`is_favorite`) y se sincroniza en tiempo real.
-- **Indicador visual:** las tarjetas favoritas muestran la estrella rellena (⭐) con un color dorado distintivo.
+- **Indicador visual:** las tarjetas favoritas muestran la estrella rellena con un color dorado distintivo.
 
-### 🏷️ Sistema de etiquetas compartidas
+### 🏷️ Sistema de etiquetas independientes por sección
 
-- Las etiquetas funcionan de forma **compartida** entre notas y prompts, con autosugerencia cruzada.
-- **Autosugerencia inteligente:** mientras escribes, aparece un menú desplegable con sugerencias de etiquetas existentes en ambas secciones, filtradas en tiempo real.
+- Las etiquetas funcionan de forma **independiente** entre notas y prompts, con autosugerencia dentro de cada sección.
+- **Autosugerencia inteligente:** mientras escribes, aparece un menú desplegable con sugerencias de etiquetas existentes en la misma sección, filtradas en tiempo real.
 - Navegación por teclado (flechas ↑/↓, Enter para seleccionar, Escape para cerrar).
-- **Eliminación global de etiquetas:** en el sidebar, cada etiqueta tiene un botón "✕" para eliminarla de todas las notas y prompts que la contengan.
+- **Eliminación global de etiquetas:** en el sidebar, cada etiqueta tiene un botón "✕" para eliminarla de todas las notas o prompts que la contengan.
 - Vista rápida del conteo de notas y prompts por etiqueta en el sidebar.
 - **Scroll premium de etiquetas** con efecto de desvanecimiento en los bordes (`mask-image`).
 
 ### 📊 Estadísticas en el Sidebar
 
 - **Resumen completo** con métricas clave del usuario:
-  - 📝 Total de notas guardadas.
-  - 📚 Total de prompts en la biblioteca.
-  - 🥊 Total de comparaciones realizadas en la Arena.
-  - ⭐ Total de elementos marcados como favoritos.
+  - 📝 Total de notas guardadas (icono `description`).
+  - 📚 Total de prompts en la biblioteca (icono `bolt`).
+  - 🥊 Total de comparaciones realizadas en la Arena (icono `swords`).
+  - ⭐ Total de elementos marcados como favoritos (icono `star` relleno).
   - 🔥 Prompt más usado (con su contador de usos).
 
 ### 🔍 Sistema de filtros avanzado
@@ -151,18 +176,19 @@
 - **Sombras premium:** sombras personalizadas (`shadow-premium`, `shadow-premium-hover`) con variantes para modo oscuro que dan profundidad y sofisticación.
 - **Skeleton loaders:** animaciones de carga placeholder mientras se obtienen los datos.
 - **Scroll premium de etiquetas** con efecto de desvanecimiento en bordes y scrollbar estilizado.
+- **Scrollbar personalizado** en toda la aplicación con diseño thin y colores adaptados al modo oscuro.
 
 ### 🧩 Componentes modulares
 
 - El código está organizado en componentes React reutilizables y auto-contenidos:
-  - **`NoteCard`**: tarjeta individual de nota con efectos hover, badge de prompt asociado, icono de favoritos ⭐ y acciones.
+  - **`NoteCard`**: tarjeta individual de nota con efectos hover, badge de modelo de IA con colores por tipo, badge de prompt asociado, icono de favoritos ⭐ y acciones.
   - **`NoteModal`**: modal de creación/edición de notas con 3 pestañas (Texto, URL, Archivo), autosugerencia de etiquetas, selector de modelo de IA y selector de prompt asociado.
   - **`PromptCard`**: tarjeta de prompt con badge de categoría por colores, contador de usos, botón de copia con feedback visual e icono de favoritos ⭐.
   - **`PromptModal`**: modal de creación/edición de prompts con selector de categorías y autosugerencia de etiquetas.
   - **`ArenaCard`**: tarjeta de comparación con dos columnas, badge del ganador y resaltado visual.
   - **`ArenaModal`**: modal de la Arena con formulario de comparación, selectores de modelo y sistema de votación.
   - **`ArenaDetailModal`**: modal expandido para ver respuestas completas lado a lado en pantalla completa.
-  - **`AuthForm`**: formulario de autenticación (login/registro) con validación y manejo de errores.
+  - **`AuthForm`**: formulario de autenticación (login/registro) con diseño premium, patrón vault y micro-interacciones.
 
 ---
 
@@ -218,22 +244,22 @@ Abre [http://localhost:3000](http://localhost:3000) en tu navegador.
 ## 🗂️ Estructura del proyecto
 
 ```
-ChatVault_Spec/
+Kimberlite/
 ├── src/
 │   ├── app/                            # Rutas y páginas (App Router de Next.js)
 │   │   ├── api/
 │   │   │   └── scrape/route.ts         # API route para scraping de URLs
 │   │   ├── dashboard/
 │   │   │   └── page.tsx                # Dashboard con Notas, Prompts y Arena
-│   │   ├── layout.tsx                  # Layout raíz con fuentes Geist + Toaster
+│   │   ├── layout.tsx                  # Layout raíz con fuentes Geist + Toaster + Material Symbols
 │   │   ├── page.tsx                    # Landing page + lógica de autenticación
-│   │   └── globals.css                 # Estilos globales, animaciones y scroll premium
+│   │   └── globals.css                 # Estilos globales, animaciones, scroll premium, gemstone-gradient
 │   ├── components/                     # Componentes React reutilizables
 │   │   ├── ArenaCard.tsx               # Tarjeta de comparación de la Arena de LLMs
 │   │   ├── ArenaDetailModal.tsx        # Modal expandido de comparación (respuestas completas)
 │   │   ├── ArenaModal.tsx              # Modal de la Arena con votación
-│   │   ├── AuthForm.tsx                # Formulario de autenticación (login/registro)
-│   │   ├── NoteCard.tsx                # Tarjeta de nota con favoritos ⭐ y badge de prompt
+│   │   ├── AuthForm.tsx                # Formulario de autenticación premium (login/registro)
+│   │   ├── NoteCard.tsx                # Tarjeta de nota con favoritos ⭐, badge de modelo y prompt
 │   │   ├── NoteModal.tsx               # Modal de notas con 3 pestañas + selector de prompts
 │   │   ├── PromptCard.tsx              # Tarjeta de prompt con favoritos ⭐ y contador
 │   │   └── PromptModal.tsx             # Modal de creación/edición de prompts
@@ -393,14 +419,15 @@ Almacena las comparaciones de la Arena de LLMs.
 
 Todas las funcionalidades principales están **operativas y probadas**. La aplicación es **completamente responsive** y funciona correctamente en dispositivos móviles, tablets y escritorio.
 
-### Novedades de esta sesión
+### Novedades de esta sesión de diseño
 
-- ✅ **Carga de archivos completamente funcional:** PDF, TXT y MD con extracción automática de texto.
-- ✅ **PDFs funcionando:** usando `pdfjs-dist` versión 3.11.174 con worker configurado correctamente desde CDN.
-- ✅ **Modales responsive:** se adaptan a cualquier pantalla con scroll interno y mejor diseño en móviles.
-- ✅ **Sidebar con scroll:** en pantallas pequeñas, el sidebar tiene scroll vertical para ver todos los filtros.
-- ✅ **Campo de título en subida de archivos:** los usuarios pueden poner título al subir un archivo.
-- ✅ **Selector de modelos de IA ampliado:** más modelos predefinidos y opción "Otro" para escribir manualmente.
+- ✅ **Landing page mejorada** con badges de seguridad (SOC2, E2E Encrypted) y footer actualizado con enlaces a Privacy Policy, Terms y Security Audit.
+- ✅ **Login premium** con efectos de fondo (blobs decorativos + patrón vault), micro-interacciones y badge de seguridad E2E.
+- ✅ **Sidebar con Material Symbols** y logo centrado de mayor tamaño.
+- ✅ **Tarjetas de notas, prompts y arena** con diseño premium y paleta de violetas característica.
+- ✅ **Degradado Kimberlite** (`gemstone-gradient`) aplicado a botones principales.
+- ✅ **Modo oscuro optimizado** y coherente en toda la aplicación.
+- ✅ **Scrollbar personalizado** en toda la aplicación con diseño thin y colores adaptados al modo oscuro.
 
 ---
 

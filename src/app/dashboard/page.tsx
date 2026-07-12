@@ -148,6 +148,24 @@ export default function Dashboard({ user }: { user: any }) {
     fetchArenaComparisons();
   }, []);
 
+  // ==================== ATAJO DE TECLADO ⌘K ====================
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        const searchInput = document.querySelector(
+          'input[placeholder*="Buscar"]',
+        ) as HTMLInputElement;
+        if (searchInput) {
+          searchInput.focus();
+        }
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
   // ==================== FUNCIONES PARA NOTAS ====================
   async function fetchNotes() {
     try {
@@ -1126,48 +1144,66 @@ export default function Dashboard({ user }: { user: any }) {
       </aside>
 
       {/* ================= CONTENIDO PRINCIPAL ================= */}
-      <main className="flex-1 flex flex-col overflow-hidden bg-white dark:bg-zinc-950">
-        {/* HEADER */}
-        <header className="flex items-center justify-between border-b border-zinc-200 p-4 dark:border-zinc-800">
-          <div className="flex-1 max-w-md">
-            <input
-              type="text"
-              placeholder={
-                activeTab === "notes"
-                  ? "Buscar en notas..."
-                  : activeTab === "prompts"
-                    ? "Buscar en prompts (título, contenido, tags)..."
-                    : "Buscar en comparaciones..."
-              }
-              value={
-                activeTab === "notes"
-                  ? searchQuery
-                  : activeTab === "prompts"
-                    ? promptSearchQuery
-                    : arenaSearchQuery
-              }
-              onChange={(e) => {
-                if (activeTab === "notes") setSearchQuery(e.target.value);
-                else if (activeTab === "prompts")
-                  setPromptSearchQuery(e.target.value);
-                else setArenaSearchQuery(e.target.value);
-              }}
-              className="w-full rounded-lg border border-zinc-300 px-4 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-zinc-400 dark:focus:border-zinc-600"
-            />
+      <main className="flex-1 flex flex-col overflow-hidden bg-white dark:bg-zinc-950 pt-20">
+        {/* ================= HEADER ================= */}
+        <header className="h-20 fixed top-0 right-0 left-[256px] z-10 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-md border-b border-zinc-200/50 dark:border-zinc-800/50 flex items-center justify-between px-8">
+          {/* Búsqueda */}
+          <div className="flex-1 max-w-2xl">
+            <div className="relative group">
+              <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 group-focus-within:text-primary transition-colors">
+                search
+              </span>
+              <input
+                type="text"
+                placeholder="Buscar en notas... (⌘ K)"
+                value={
+                  activeTab === "notes"
+                    ? searchQuery
+                    : activeTab === "prompts"
+                      ? promptSearchQuery
+                      : arenaSearchQuery
+                }
+                onChange={(e) => {
+                  if (activeTab === "notes") setSearchQuery(e.target.value);
+                  else if (activeTab === "prompts")
+                    setPromptSearchQuery(e.target.value);
+                  else setArenaSearchQuery(e.target.value);
+                }}
+                className="w-full bg-zinc-100 dark:bg-zinc-900 border-0 rounded-2xl py-3 pl-12 pr-4 text-sm text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:ring-2 focus:ring-primary/30 transition-all"
+              />
+            </div>
           </div>
 
-          <button
-            onClick={() => {
-              if (activeTab === "notes") openNoteModal();
-              else if (activeTab === "prompts") openPromptModal();
-              else setArenaModalOpen(true);
-            }}
-            className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-zinc-50 hover:bg-zinc-800 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200 transition-colors ml-4"
-          >
-            {activeTab === "notes" && "➕ Nueva nota"}
-            {activeTab === "prompts" && "📚 Nuevo prompt"}
-            {activeTab === "arena" && "🥊 Nueva comparación"}
-          </button>
+          {/* Botones de acción */}
+          <div className="flex items-center gap-6">
+            <div className="flex items-center gap-2">
+              <button className="p-2 text-zinc-400 hover:text-primary hover:bg-primary/10 rounded-full transition-all">
+                <span className="material-symbols-outlined">notifications</span>
+              </button>
+              <button className="p-2 text-zinc-400 hover:text-primary hover:bg-primary/10 rounded-full transition-all">
+                <span className="material-symbols-outlined">help</span>
+              </button>
+            </div>
+
+            <div className="h-8 w-px bg-zinc-200 dark:bg-zinc-800" />
+
+            {/* Botón Nueva nota */}
+            <button
+              onClick={() => {
+                if (activeTab === "notes") openNoteModal();
+                else if (activeTab === "prompts") openPromptModal();
+                else setArenaModalOpen(true);
+              }}
+              className="flex items-center gap-3 gemstone-gradient text-white px-5 py-2.5 rounded-xl font-bold shadow-lg shadow-primary/25 hover:shadow-primary/40 hover:scale-[1.02] active:scale-[0.98] transition-all"
+            >
+              <span className="material-symbols-outlined text-[20px]">add</span>
+              <span className="text-sm font-semibold">
+                {activeTab === "notes" && "Nueva nota"}
+                {activeTab === "prompts" && "Nuevo prompt"}
+                {activeTab === "arena" && "Nueva comparación"}
+              </span>
+            </button>
+          </div>
         </header>
 
         {error && (
