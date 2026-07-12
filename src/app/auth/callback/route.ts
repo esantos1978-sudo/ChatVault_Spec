@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url);
+  const type = requestUrl.searchParams.get("type");
   const code = requestUrl.searchParams.get("code");
 
   if (code) {
@@ -25,6 +26,11 @@ export async function GET(request: Request) {
       },
     );
     await supabase.auth.exchangeCodeForSession(code);
+  }
+  if (type === "recovery") {
+    return NextResponse.redirect(
+      new URL("/auth/reset-password", requestUrl.origin),
+    );
   }
 
   // URL to redirect to after sign in process completes

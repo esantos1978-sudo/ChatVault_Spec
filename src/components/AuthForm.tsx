@@ -42,33 +42,33 @@ export default function AuthForm({ onAuth }: AuthFormProps) {
       setLoading(false);
     }
   };
+  // ==================== RECUPERACIÓN DE CONTRASEÑA ====================
+  const handleForgotPassword = async () => {
+    if (!email) {
+      toast.error("Please enter your email address first.");
+      return;
+    }
 
-  const handleGoogleLogin = async () => {
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
-        },
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/auth/callback?type=recovery`,
       });
       if (error) throw error;
+      toast.success("Password reset email sent! Check your inbox.");
     } catch (error: any) {
       toast.error(error.message);
     }
   };
 
+  // Funciones OAuth (placeholder)
+  const handleGoogleLogin = async () => {
+    // TODO: Implementar Google OAuth
+    toast.info("Google login coming soon!");
+  };
+
   const handleGitHubLogin = async () => {
-    try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: "github",
-        options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
-        },
-      });
-      if (error) throw error;
-    } catch (error: any) {
-      toast.error(error.message);
-    }
+    // TODO: Implementar GitHub OAuth
+    toast.info("GitHub login coming soon!");
   };
 
   return (
@@ -77,30 +77,27 @@ export default function AuthForm({ onAuth }: AuthFormProps) {
       <div className="absolute inset-0 vault-pattern z-0" />
 
       {/* Blobs decorativos */}
-      <div className="absolute -top-48 -left-48 w-[600px] h-[600px] bg-blue-500/10 rounded-full blur-[120px]" />
-      <div className="absolute -bottom-48 -right-48 w-[600px] h-[600px] bg-emerald-500/10 rounded-full blur-[120px]" />
+      <div className="absolute -top-48 -left-48 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[120px]" />
+      <div className="absolute -bottom-48 -right-48 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[120px]" />
 
       <div className="w-full max-w-md relative z-10">
         {/* Logo y título */}
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <img
-              src="/images/kimberlite-logo.png"
-              alt="Kimberlite"
-              className="h-10 w-auto"
-            />
+        <div className="w-full max-w-md relative z-10">
+          <div className="text-center mb-10">
+            <div className="flex items-center justify-center">
+              <img
+                src="/images/kimberlite-logo.png"
+                alt="Kimberlite"
+                className="h-20 w-auto md:h-24"
+              />
+            </div>
           </div>
-          <h1 className="text-3xl font-bold text-zinc-900 dark:text-zinc-50">
-            {mode === "login" ? "Welcome back" : "Create your account"}
-          </h1>
-          <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-2">
-            {mode === "login"
-              ? "Securely access your encrypted workspace."
-              : "Start your journey with Kimberlite."}
-          </p>
-          <div className="mt-3 inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-300 text-xs font-medium rounded-full border border-emerald-200/50 dark:border-emerald-800/30">
-            🔒 End-to-End Encrypted
-          </div>
+
+          {/* Formulario */}
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {/* ... */}
+          </form>
+          {/* ... */}
         </div>
 
         {/* Formulario */}
@@ -114,7 +111,7 @@ export default function AuthForm({ onAuth }: AuthFormProps) {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="name@company.com"
-              className="w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-4 py-3 text-sm text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 dark:focus:ring-blue-400/50 transition-all duration-200"
+              className="w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-4 py-3 text-sm text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all duration-200"
               required
             />
           </div>
@@ -126,8 +123,11 @@ export default function AuthForm({ onAuth }: AuthFormProps) {
               </label>
               {mode === "login" && (
                 <a
-                  href="#"
-                  className="text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleForgotPassword();
+                  }}
+                  className="text-sm font-medium text-primary hover:text-primary/80 transition-colors cursor-pointer"
                 >
                   Forgot?
                 </a>
@@ -138,7 +138,7 @@ export default function AuthForm({ onAuth }: AuthFormProps) {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
-              className="w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-4 py-3 text-sm text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 dark:focus:ring-blue-400/50 transition-all duration-200"
+              className="w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-4 py-3 text-sm text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all duration-200"
               required
             />
           </div>
@@ -154,7 +154,7 @@ export default function AuthForm({ onAuth }: AuthFormProps) {
                 {mode === "login" ? "Logging in..." : "Creating account..."}
               </div>
             ) : mode === "login" ? (
-              "Secure Login"
+              "Enter Kimberlite"
             ) : (
               "Create Account"
             )}
@@ -178,7 +178,7 @@ export default function AuthForm({ onAuth }: AuthFormProps) {
           <button
             type="button"
             onClick={handleGoogleLogin}
-            className="flex items-center justify-center gap-2 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-4 py-2.5 text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors"
+            className="flex items-center justify-center gap-2 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-4 py-2.5 text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 hover:border-primary/30 transition-all duration-200"
           >
             <svg className="h-5 w-5" viewBox="0 0 24 24">
               <path
@@ -203,7 +203,7 @@ export default function AuthForm({ onAuth }: AuthFormProps) {
           <button
             type="button"
             onClick={handleGitHubLogin}
-            className="flex items-center justify-center gap-2 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-4 py-2.5 text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors"
+            className="flex items-center justify-center gap-2 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-4 py-2.5 text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 hover:border-primary/30 transition-all duration-200"
           >
             <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
               <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.468-2.38 1.235-3.22-.123-.3-.535-1.52.117-3.16 0 0 1.008-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.29-1.552 3.297-1.23 3.297-1.23.653 1.64.24 2.86.118 3.16.768.84 1.233 1.91 1.233 3.22 0 4.61-2.804 5.62-5.476 5.92.43.37.824 1.102.824 2.22 0 1.602-.015 2.894-.015 3.287 0 .322.216.694.825.577C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" />
@@ -220,7 +220,7 @@ export default function AuthForm({ onAuth }: AuthFormProps) {
               <button
                 type="button"
                 onClick={() => setMode("register")}
-                className="font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
+                className="font-semibold text-primary hover:text-primary/80 transition-colors"
               >
                 Create account
               </button>
@@ -231,7 +231,7 @@ export default function AuthForm({ onAuth }: AuthFormProps) {
               <button
                 type="button"
                 onClick={() => setMode("login")}
-                className="font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
+                className="font-semibold text-primary hover:text-primary/80 transition-colors"
               >
                 Log in
               </button>
