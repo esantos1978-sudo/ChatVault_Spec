@@ -62,13 +62,11 @@ export default function AuthForm({ onAuth }: AuthFormProps) {
 
   // Funciones OAuth (placeholder)
   const handleGoogleLogin = async () => {
-    // TODO: Implementar Google OAuth
-    toast.info("Google login coming soon!");
+    toast("Google login coming soon!");
   };
 
   const handleGitHubLogin = async () => {
-    // TODO: Implementar GitHub OAuth
-    toast.info("GitHub login coming soon!");
+    toast("GitHub login coming soon!");
   };
 
   return (
