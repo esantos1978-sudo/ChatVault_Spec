@@ -634,15 +634,12 @@ export default function Dashboard({ user }: { user: any }) {
       {/* ================= SIDEBAR ================= */}
       <aside className="w-64 border-r border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-800 dark:bg-zinc-900/60 flex flex-col gap-4 select-none h-full overflow-y-auto">
         {/* LOGO */}
-        <div className="flex items-center gap-2 px-2">
+        <div className="flex justify-center py-2">
           <img
             src="/images/kimberlite-logo.png"
             alt="Kimberlite"
-            className="h-8 w-auto"
+            className="h-12 w-auto"
           />
-          <h1 className="text-lg font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
-            Kimberlite
-          </h1>
         </div>
 
         {/* TABS: Notas / Prompts / Arena */}
