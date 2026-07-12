@@ -1168,20 +1168,20 @@ export default function Dashboard({ user }: { user: any }) {
 
             <div className="h-8 w-px bg-zinc-200 dark:bg-zinc-800" />
 
-            {/* Botón Nueva nota */}
+            {/* Botón Nueva nota / Nuevo prompt / Nueva comparación */}
             <button
               onClick={() => {
                 if (activeTab === "notes") openNoteModal();
                 else if (activeTab === "prompts") openPromptModal();
                 else setArenaModalOpen(true);
               }}
-              className="flex items-center gap-3 gemstone-gradient text-white px-5 py-2.5 rounded-xl font-bold shadow-lg shadow-primary/25 hover:shadow-primary/40 hover:scale-[1.02] active:scale-[0.98] transition-all"
+              className="flex items-center gap-2 gemstone-gradient text-white px-4 py-2.5 rounded-xl font-bold shadow-lg shadow-primary/25 hover:shadow-primary/40 hover:scale-[1.02] active:scale-[0.98] transition-all"
             >
               <span className="material-symbols-outlined text-[20px]">add</span>
               <span className="text-sm font-semibold">
-                {activeTab === "notes" && "Nueva nota"}
-                {activeTab === "prompts" && "Nuevo prompt"}
-                {activeTab === "arena" && "Nueva comparación"}
+                {activeTab === "notes" && "Nota"}
+                {activeTab === "prompts" && "Prompt"}
+                {activeTab === "arena" && "Batalla"}
               </span>
             </button>
           </div>
