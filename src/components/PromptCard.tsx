@@ -82,7 +82,7 @@ export function PromptCard({
       className="group bg-surface-container border border-primary/40 rounded-2xl p-6 hover:border-primary/70 hover:bg-primary/10 hover:shadow-xl hover:shadow-primary/20 hover:-translate-y-1 transition-all duration-300 flex flex-col h-full relative overflow-hidden cursor-pointer"
       onClick={() => onEdit(prompt)}
     >
-      {/* Cabecera: Badge + Favorito */}
+      {/* Cabecera: Badge + Favoritos + Eliminar */}
       <div className="flex items-start justify-between mb-4">
         <span
           className={`px-2.5 py-1 rounded-full ${colors.bg} ${colors.text} text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5 border ${colors.border}`}
@@ -93,25 +93,44 @@ export function PromptCard({
           {prompt.category}
         </span>
 
-        {/* ⭐ Favorito */}
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            onToggleFavorite(prompt.id, !prompt.is_favorite);
-          }}
-          className="text-on-surface-variant hover:text-yellow-400 transition-colors"
-        >
-          <span
-            className="material-symbols-outlined text-[20px]"
-            style={{
-              fontVariationSettings: prompt.is_favorite
-                ? "'FILL' 1"
-                : "'FILL' 0",
+        <div className="flex items-center gap-1">
+          {/* ⭐ Favorito */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleFavorite(prompt.id, !prompt.is_favorite);
             }}
+            className="p-1.5 text-zinc-400 hover:text-yellow-400 transition-colors rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800"
+            title={
+              prompt.is_favorite ? "Quitar de favoritos" : "Añadir a favoritos"
+            }
           >
-            {prompt.is_favorite ? "star" : "star"}
-          </span>
-        </button>
+            <span
+              className="material-symbols-outlined text-[20px]"
+              style={{
+                fontVariationSettings: prompt.is_favorite
+                  ? "'FILL' 1"
+                  : "'FILL' 0",
+              }}
+            >
+              star
+            </span>
+          </button>
+
+          {/* 🗑️ Eliminar */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete(prompt.id);
+            }}
+            className="p-1.5 text-zinc-400 hover:text-red-500 transition-colors rounded-lg hover:bg-red-50 dark:hover:bg-red-950/20"
+            title="Eliminar prompt"
+          >
+            <span className="material-symbols-outlined text-[20px]">
+              delete
+            </span>
+          </button>
+        </div>
       </div>
 
       {/* Título */}

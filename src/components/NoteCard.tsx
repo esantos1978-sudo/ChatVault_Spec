@@ -142,6 +142,7 @@ export function NoteCard({
       onClick={() => onEdit(note)}
     >
       {/* Cabecera: Badge + Favorito */}
+      {/* Cabecera: Badge + Favoritos + Eliminar */}
       <div className="flex items-start justify-between mb-4">
         <span
           className={`px-2.5 py-1 rounded-full ${colors.bg} ${colors.text} text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5 border ${colors.border}`}
@@ -152,23 +153,44 @@ export function NoteCard({
           {note.ai_model || "Desconocido"}
         </span>
 
-        {/* ⭐ Favorito */}
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            onToggleFavorite(note.id, !note.is_favorite);
-          }}
-          className="text-on-surface-variant hover:text-yellow-400 transition-colors"
-        >
-          <span
-            className="material-symbols-outlined text-[20px]"
-            style={{
-              fontVariationSettings: note.is_favorite ? "'FILL' 1" : "'FILL' 0",
+        <div className="flex items-center gap-1">
+          {/* ⭐ Favorito */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleFavorite(note.id, !note.is_favorite);
             }}
+            className="p-1.5 text-zinc-400 hover:text-yellow-400 transition-colors rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800"
+            title={
+              note.is_favorite ? "Quitar de favoritos" : "Añadir a favoritos"
+            }
           >
-            {note.is_favorite ? "star" : "star"}
-          </span>
-        </button>
+            <span
+              className="material-symbols-outlined text-[20px]"
+              style={{
+                fontVariationSettings: note.is_favorite
+                  ? "'FILL' 1"
+                  : "'FILL' 0",
+              }}
+            >
+              star
+            </span>
+          </button>
+
+          {/* 🗑️ Eliminar */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete(note.id);
+            }}
+            className="p-1.5 text-zinc-400 hover:text-red-500 transition-colors rounded-lg hover:bg-red-50 dark:hover:bg-red-950/20"
+            title="Eliminar nota"
+          >
+            <span className="material-symbols-outlined text-[20px]">
+              delete
+            </span>
+          </button>
+        </div>
       </div>
 
       {/* Título */}

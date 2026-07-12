@@ -43,6 +43,34 @@ export default function AuthForm({ onAuth }: AuthFormProps) {
     }
   };
 
+  const handleGoogleLogin = async () => {
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
+      if (error) throw error;
+    } catch (error: any) {
+      toast.error(error.message);
+    }
+  };
+
+  const handleGitHubLogin = async () => {
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "github",
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
+      if (error) throw error;
+    } catch (error: any) {
+      toast.error(error.message);
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-zinc-50 to-white dark:from-zinc-950 dark:to-zinc-900 p-4 relative overflow-hidden">
       {/* Patrón de fondo estilo Vault */}
@@ -149,6 +177,7 @@ export default function AuthForm({ onAuth }: AuthFormProps) {
         <div className="grid grid-cols-2 gap-3">
           <button
             type="button"
+            onClick={handleGoogleLogin}
             className="flex items-center justify-center gap-2 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-4 py-2.5 text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors"
           >
             <svg className="h-5 w-5" viewBox="0 0 24 24">
@@ -173,6 +202,7 @@ export default function AuthForm({ onAuth }: AuthFormProps) {
           </button>
           <button
             type="button"
+            onClick={handleGitHubLogin}
             className="flex items-center justify-center gap-2 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-4 py-2.5 text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors"
           >
             <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
