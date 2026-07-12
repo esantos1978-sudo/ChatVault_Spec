@@ -134,7 +134,7 @@ export function PromptCard({
       </div>
 
       {/* Título */}
-      <h3 className="font-headline-md text-on-surface mb-2 group-hover:text-primary transition-colors text-base font-semibold line-clamp-1">
+      <h3 className="text-base font-bold text-primary mb-2 group-hover:text-primary/80 transition-colors line-clamp-1">
         {prompt.title}
       </h3>
 

@@ -194,7 +194,7 @@ export function NoteCard({
       </div>
 
       {/* Título */}
-      <h3 className="font-headline-md text-on-surface mb-2 group-hover:text-primary transition-colors text-base font-semibold line-clamp-1">
+      <h3 className="font-headline-md text-primary mb-2 group-hover:text-primary/80 transition-colors text-base font-semibold line-clamp-1">
         {note.title}
       </h3>
 

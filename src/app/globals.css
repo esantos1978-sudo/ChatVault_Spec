@@ -308,3 +308,40 @@ body {
 .dark .scrollbar-thin::-webkit-scrollbar-thumb:hover {
   background: #52525b;
 }
+/* ==================== COLORES KIMBERLITE ==================== */
+.text-primary {
+  color: #8b5cf6;
+}
+
+.text-primary\/80 {
+  color: rgba(139, 92, 246, 0.8);
+}
+
+.text-primary\/60 {
+  color: rgba(139, 92, 246, 0.6);
+}
+
+.text-primary\/40 {
+  color: rgba(139, 92, 246, 0.4);
+}
+
+.border-primary {
+  border-color: #8b5cf6;
+}
+
+.bg-primary\/10 {
+  background-color: rgba(139, 92, 246, 0.1);
+}
+
+/* Modo oscuro */
+.dark .text-primary {
+  color: #a78bfa;
+}
+
+.dark .border-primary {
+  border-color: #a78bfa;
+}
+
+.dark .bg-primary\/10 {
+  background-color: rgba(167, 139, 250, 0.1);
+}

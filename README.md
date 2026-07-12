@@ -29,23 +29,26 @@
 
 Kimberlite presenta una identidad visual premium con una paleta de violetas característica:
 
-| Elemento                | Detalle                                                            |
-| ----------------------- | ------------------------------------------------------------------ |
-| **Colores principales** | Violetas `#8b5cf6` a `#7c3aed`                                     |
-| **Degradado**           | `gemstone-gradient` en botones principales (`#8b5cf6` → `#7c3aed`) |
-| **Iconos**              | Material Symbols (Google Fonts) en lugar de emojis                 |
-| **Tarjetas**            | Diseño premium con borde violeta sutil y hover con fondo violeta   |
-| **Logo**                | Centrado y más grande en el sidebar, con fondo transparente        |
-| **Modo oscuro**         | Optimizado y coherente en toda la aplicación                       |
+| Elemento                | Detalle                                                              |
+| ----------------------- | -------------------------------------------------------------------- |
+| **Colores principales** | Violetas `#8b5cf6` a `#7c3aed`                                       |
+| **Degradado V2**        | `kimberlite-gradient` en botones principales (`#8b5cf6` → `#d946ef`) |
+| **Iconos**              | Material Symbols (Google Fonts) en lugar de emojis                   |
+| **Tarjetas**            | Diseño premium con borde violeta sutil y hover con fondo violeta     |
+| **Logo**                | Centrado y más grande en el sidebar, con fondo transparente          |
+| **Modo oscuro**         | Optimizado y coherente en toda la aplicación                         |
 
-### ✨ Novedades de diseño (rama `feature/mejoras-diseno-stitch`)
+### ✨ Novedades de diseño
 
-- **Landing page mejorada** con badges de seguridad (E2E Encrypted, Zero-Knowledge, Your Knowledge Your Control) y footer actualizado con enlaces a Privacy Policy, Terms y Security Audit.
-- **Login premium** con efectos de fondo (blobs decorativos + patrón vault), micro-interacciones y badge de seguridad E2E.
+- **Landing page mejorada:** Hero con logo grande, eslogan "The rock where diamonds are", subtítulo y botones CTA. Sección "Enterprise Grade" con features destacadas. Footer limpio y profesional.
+- **Login minimalista:** Logo grande y centrado, sin títulos ni badges innecesarios. Botón con degradado Kimberlite V2.
+- **Degradado Kimberlite V2:** Nuevo degradado violeta-rosa (`#8b5cf6` → `#d946ef`) en todos los botones principales.
+- **Títulos de notas en violeta:** Los títulos de las tarjetas ahora usan el color primario de Kimberlite para mejorar la jerarquía visual.
+- **Logo sin fondo:** Logo con fondo transparente en toda la app.
 - **Sidebar** con Material Symbols (`neurology`, `sell`, `calendar_month`, `folder`, `analytics`, `star`, `logout`) y logo centrado de mayor tamaño con fondo transparente.
 - **Tarjetas de notas, prompts y arena** con diseño premium, borde violeta (`border-primary/40`), hover con fondo violeta (`hover:bg-primary/10`) y sombras premium.
-- **Degradado Kimberlite** (`gemstone-gradient`) aplicado a botones principales (login, CTA).
-- **Logo con fondo transparente** en el sidebar para una integración visual más limpia.
+- **Modo oscuro** optimizado y coherente en toda la aplicación.
+- **Scrollbar personalizado** en toda la aplicación con diseño thin y colores adaptados al modo oscuro.
 
 ---
 
@@ -53,18 +56,17 @@ Kimberlite presenta una identidad visual premium con una paleta de violetas cara
 
 ### 🏠 Landing Page Premium
 
-- **Hero atractivo** con logo Kimberlite, eslogan "Your data, refined & resilient." y badges de seguridad animados.
-- **Sección de funcionalidades** con grid de 6 tarjetas interactivas (Notas inteligentes, Biblioteca de Prompts, Scraping de URLs, Etiquetas múltiples, Búsqueda avanzada, Seguridad).
-- **"Cómo funciona"** en 3 pasos: Regístrate → Guarda → Organiza.
-- **Placeholder de video** para futura demostración visual.
-- **Footer** con enlaces a Privacy Policy, Terms y Security Audit.
+- **Hero atractivo** con logo Kimberlite grande, eslogan "The rock where diamonds are", subtítulo y botones CTA.
+- **Sección "Enterprise Grade"** con features destacadas (E2E Encrypted, Zero-Knowledge, Your Knowledge Your Control).
+- **Footer** limpio y profesional con enlaces a Privacy Policy, Terms y Security Audit.
 - **Modo oscuro** integrado que respeta la preferencia del sistema operativo.
 
 ### 🔐 Autenticación de usuarios
 
 - **Registro e inicio de sesión** con correo electrónico y contraseña mediante Supabase Auth.
 - **OAuth** con proveedores externos (Google, GitHub, etc.) mediante callback en `/auth/callback`.
-- **Login premium** con fondo degradado, patrón vault, blobs decorativos y badge E2E Encrypted.
+- **Login minimalista:** Logo grande y centrado, sin títulos ni badges innecesarios. Botón con degradado Kimberlite V2.
+- **Recuperación de contraseña:** Flujo completo implementado con Supabase: "Forgot?" → email → reset-password.
 - **Protección de rutas:** el dashboard solo es accesible para usuarios autenticados.
 - **Cierre de sesión** con un clic desde el sidebar (icono Material Symbol `logout`).
 - **Row Level Security (RLS):** cada usuario solo ve, crea, edita y elimina sus propios datos.
@@ -76,6 +78,7 @@ Kimberlite presenta una identidad visual premium con una paleta de violetas cara
 - **Editar** cualquier nota directamente desde la tarjeta con un clic.
 - **Eliminar** notas con confirmación previa y feedback visual mediante toast.
 - **Tres métodos de entrada:** texto manual, scraping de URLs o carga de archivos (PDF, TXT, MD).
+- **Títulos en violeta:** los títulos de las tarjetas usan el color primario de Kimberlite para mejorar la jerarquía visual.
 
 ### 🌐 Scraping inteligente de URLs
 
@@ -195,7 +198,7 @@ Kimberlite presenta una identidad visual premium con una paleta de violetas cara
   - **`ArenaCard`**: tarjeta de comparación con dos columnas, badge del ganador y resaltado visual.
   - **`ArenaModal`**: modal de la Arena con formulario de comparación, selectores de modelo y sistema de votación.
   - **`ArenaDetailModal`**: modal expandido para ver respuestas completas lado a lado en pantalla completa.
-  - **`AuthForm`**: formulario de autenticación (login/registro) con diseño premium, patrón vault y micro-interacciones.
+  - **`AuthForm`**: formulario de autenticación (login/registro) con diseño minimalista, logo grande y degradado Kimberlite V2.
 
 ---
 
@@ -255,18 +258,20 @@ Kimberlite/
 ├── src/
 │   ├── app/                            # Rutas y páginas (App Router de Next.js)
 │   │   ├── auth/
-│   │   │   └── callback/
-│   │   │       └── route.ts            # Callback OAuth (manejo de sesión post-autenticación)
+│   │   │   ├── callback/
+│   │   │   │   └── route.ts            # Callback OAuth y recovery (manejo de sesión post-autenticación)
+│   │   │   └── reset-password/
+│   │   │       └── page.tsx            # Página de restablecimiento de contraseña
 │   │   ├── dashboard/
 │   │   │   └── page.tsx                # Dashboard con Notas, Prompts y Arena
 │   │   ├── layout.tsx                  # Layout raíz con fuentes Geist + Toaster + Material Symbols
 │   │   ├── page.tsx                    # Landing page + lógica de autenticación
-│   │   └── globals.css                 # Estilos globales, animaciones, scroll premium, gemstone-gradient
+│   │   └── globals.css                 # Estilos globales, animaciones, scroll premium, kimberlite-gradient
 │   ├── components/                     # Componentes React reutilizables
 │   │   ├── ArenaCard.tsx               # Tarjeta de comparación de la Arena de LLMs
 │   │   ├── ArenaDetailModal.tsx        # Modal expandido de comparación (respuestas completas)
 │   │   ├── ArenaModal.tsx              # Modal de la Arena con votación
-│   │   ├── AuthForm.tsx                # Formulario de autenticación premium (login/registro)
+│   │   ├── AuthForm.tsx                # Formulario de autenticación minimalista (login/registro)
 │   │   ├── NoteCard.tsx                # Tarjeta de nota con favoritos ⭐, badge de modelo y prompt
 │   │   ├── NoteModal.tsx               # Modal de notas con 3 pestañas + selector de prompts
 │   │   ├── PromptCard.tsx              # Tarjeta de prompt con favoritos ⭐ y contador
@@ -303,16 +308,17 @@ Kimberlite/
 
 ### Descripción de directorios clave
 
-| Directorio               | Propósito                                                                                        |
-| ------------------------ | ------------------------------------------------------------------------------------------------ |
-| `src/app/`               | Sistema de rutas basado en el App Router de Next.js. Cada subdirectorio representa una ruta.     |
-| `src/app/auth/callback/` | Ruta de callback OAuth para manejar la sesión después de autenticación con proveedores externos. |
-| `src/app/dashboard/`     | Dashboard principal con tabs de Notas, Prompts y Arena, sidebar con filtros y estadísticas.      |
-| `src/components/`        | Componentes React atómicos y reutilizables (autenticación, tarjetas, modales, arena).            |
-| `src/lib/`               | Lógica compartida: cliente de Supabase, helpers, utilidades.                                     |
-| `supabase/migrations/`   | Migraciones SQL versionadas para la base de datos PostgreSQL.                                    |
-| `scripts/`               | Scripts Node.js para tareas auxiliares (migraciones, tests de conexión).                         |
-| `docs/`                  | Documentación técnica detallada (arquitectura, componentes, base de datos).                      |
+| Directorio                     | Propósito                                                                                    |
+| ------------------------------ | -------------------------------------------------------------------------------------------- |
+| `src/app/`                     | Sistema de rutas basado en el App Router de Next.js. Cada subdirectorio representa una ruta. |
+| `src/app/auth/callback/`       | Ruta de callback OAuth para manejo de sesión post-autenticación y recovery de contraseña.    |
+| `src/app/auth/reset-password/` | Página de restablecimiento de contraseña con flujo completo de Supabase.                     |
+| `src/app/dashboard/`           | Dashboard principal con tabs de Notas, Prompts y Arena, sidebar con filtros y estadísticas.  |
+| `src/components/`              | Componentes React atómicos y reutilizables (autenticación, tarjetas, modales, arena).        |
+| `src/lib/`                     | Lógica compartida: cliente de Supabase, helpers, utilidades.                                 |
+| `supabase/migrations/`         | Migraciones SQL versionadas para la base de datos PostgreSQL.                                |
+| `scripts/`                     | Scripts Node.js para tareas auxiliares (migraciones, tests de conexión).                     |
+| `docs/`                        | Documentación técnica detallada (arquitectura, componentes, base de datos).                  |
 
 ---
 
@@ -428,16 +434,18 @@ Almacena las comparaciones de la Arena de LLMs.
 
 Todas las funcionalidades principales están **operativas y probadas**. La aplicación es **completamente responsive** y funciona correctamente en dispositivos móviles, tablets y escritorio.
 
-### Novedades tras fusionar `feature/mejoras-diseno-stitch`
+### Novedades de esta sesión
 
-- ✅ **Landing page mejorada** con badges de seguridad (E2E Encrypted, Zero-Knowledge, Your Knowledge Your Control) y footer actualizado con enlaces a Privacy Policy, Terms y Security Audit.
-- ✅ **Login premium** con efectos de fondo (blobs decorativos + patrón vault), micro-interacciones y badge de seguridad E2E.
+- ✅ **Landing page mejorada:** Hero con logo grande, eslogan "The rock where diamonds are", subtítulo y botones CTA. Sección "Enterprise Grade" con features destacadas. Footer limpio y profesional.
+- ✅ **Login minimalista:** Logo grande y centrado, sin títulos ni badges innecesarios. Botón con degradado Kimberlite V2.
+- ✅ **Recuperación de contraseña:** Implementada con Supabase. Flujo completo: "Forgot?" → email → reset-password.
+- ✅ **Degradado Kimberlite V2:** Nuevo degradado violeta-rosa (`#8b5cf6` → `#d946ef`) en todos los botones principales.
+- ✅ **Títulos de notas en violeta:** Los títulos de las tarjetas ahora usan el color primario de Kimberlite para mejorar la jerarquía visual.
+- ✅ **Logo sin fondo:** Logo con fondo transparente en toda la app.
 - ✅ **Sidebar con Material Symbols** y logo centrado de mayor tamaño con fondo transparente.
 - ✅ **Tarjetas de notas, prompts y arena** con diseño premium y paleta de violetas característica.
-- ✅ **Degradado Kimberlite** (`gemstone-gradient`) aplicado a botones principales.
 - ✅ **Modo oscuro optimizado** y coherente en toda la aplicación.
 - ✅ **Scrollbar personalizado** en toda la aplicación con diseño thin y colores adaptados al modo oscuro.
-- ✅ **Logo con fondo transparente** en el sidebar para una integración visual más limpia.
 - ✅ **Atajo de teclado ⌘K** para búsqueda rápida de notas y prompts.
 - ✅ **Callback OAuth** implementado en `/auth/callback/route.ts` para autenticación con proveedores externos.
 
