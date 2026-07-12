@@ -6,7 +6,7 @@
 ![Supabase](https://img.shields.io/badge/Supabase-2.0-green?style=flat-square&logo=supabase)
 ![Vercel](https://img.shields.io/badge/Vercel-Deployed-black?style=flat-square&logo=vercel)
 
-**Your data, refined & resilient.** Kimberlite es una aplicación web moderna para organizar conversaciones con IA, gestionar prompts reutilizables y comparar modelos de lenguaje. Construida con Next.js 16, TypeScript, Tailwind CSS v4 y Supabase, ofrece una experiencia premium con autenticación segura, CRUD completo de notas y prompts, scraping inteligente de URLs, carga de archivos (PDF, TXT, MD) con extracción automática de texto, sistema de etiquetas independientes por sección, filtros avanzados, una **Arena de LLMs** para comparar respuestas, **sistema de favoritos** ⭐, enlace entre notas y prompts, y un diseño oscuro optimizado con la paleta de violetas característica de Kimberlite.
+**Your data, refined & resilient.** Kimberlite (anteriormente ChatVault) es una aplicación web moderna para organizar conversaciones con IA, gestionar prompts reutilizables y comparar modelos de lenguaje. Construida con Next.js 16, TypeScript, Tailwind CSS v4 y Supabase, ofrece una experiencia premium con autenticación segura, CRUD completo de notas y prompts, scraping inteligente de URLs, carga de archivos (PDF, TXT, MD) con extracción automática de texto, sistema de etiquetas independientes por sección, filtros avanzados, una **Arena de LLMs** para comparar respuestas, **sistema de favoritos** ⭐, enlace entre notas y prompts, y un diseño oscuro optimizado con la paleta de violetas característica de Kimberlite.
 
 ---
 
@@ -35,16 +35,17 @@ Kimberlite presenta una identidad visual premium con una paleta de violetas cara
 | **Degradado**           | `gemstone-gradient` en botones principales (`#8b5cf6` → `#7c3aed`) |
 | **Iconos**              | Material Symbols (Google Fonts) en lugar de emojis                 |
 | **Tarjetas**            | Diseño premium con borde violeta sutil y hover con fondo violeta   |
-| **Logo**                | Centrado y más grande en el sidebar                                |
+| **Logo**                | Centrado y más grande en el sidebar, con fondo transparente        |
 | **Modo oscuro**         | Optimizado y coherente en toda la aplicación                       |
 
-### ✨ Novedades de diseño
+### ✨ Novedades de diseño (rama `feature/mejoras-diseno-stitch`)
 
 - **Landing page mejorada** con badges de seguridad (E2E Encrypted, Zero-Knowledge, Your Knowledge Your Control) y footer actualizado con enlaces a Privacy Policy, Terms y Security Audit.
 - **Login premium** con efectos de fondo (blobs decorativos + patrón vault), micro-interacciones y badge de seguridad E2E.
-- **Sidebar** con Material Symbols (`neurology`, `sell`, `calendar_month`, `folder`, `analytics`, `star`, `logout`) y logo centrado de mayor tamaño.
+- **Sidebar** con Material Symbols (`neurology`, `sell`, `calendar_month`, `folder`, `analytics`, `star`, `logout`) y logo centrado de mayor tamaño con fondo transparente.
 - **Tarjetas de notas, prompts y arena** con diseño premium, borde violeta (`border-primary/40`), hover con fondo violeta (`hover:bg-primary/10`) y sombras premium.
 - **Degradado Kimberlite** (`gemstone-gradient`) aplicado a botones principales (login, CTA).
+- **Logo con fondo transparente** en el sidebar para una integración visual más limpia.
 
 ---
 
@@ -62,6 +63,7 @@ Kimberlite presenta una identidad visual premium con una paleta de violetas cara
 ### 🔐 Autenticación de usuarios
 
 - **Registro e inicio de sesión** con correo electrónico y contraseña mediante Supabase Auth.
+- **OAuth** con proveedores externos (Google, GitHub, etc.) mediante callback en `/auth/callback`.
 - **Login premium** con fondo degradado, patrón vault, blobs decorativos y badge E2E Encrypted.
 - **Protección de rutas:** el dashboard solo es accesible para usuarios autenticados.
 - **Cierre de sesión** con un clic desde el sidebar (icono Material Symbol `logout`).
@@ -156,6 +158,11 @@ Kimberlite presenta una identidad visual premium con una paleta de violetas cara
 - **Combinación de filtros:** todos los filtros se pueden usar simultáneamente.
 - **Sidebar reordenado:** Modelos de IA → Etiquetas → Fechas, para una navegación más intuitiva.
 
+### ⌨️ Atajo de teclado (⌘K)
+
+- **Búsqueda rápida** con el atajo de teclado `⌘K` (o `Ctrl+K` en Windows/Linux).
+- Abre un modal de búsqueda instantánea para localizar notas y prompts sin navegar entre secciones.
+
 ### 🔔 Notificaciones Toast
 
 - Se han reemplazado todos los `alert()` por notificaciones elegantes con **react-hot-toast**.
@@ -247,8 +254,9 @@ Abre [http://localhost:3000](http://localhost:3000) en tu navegador.
 Kimberlite/
 ├── src/
 │   ├── app/                            # Rutas y páginas (App Router de Next.js)
-│   │   ├── api/
-│   │   │   └── scrape/route.ts         # API route para scraping de URLs
+│   │   ├── auth/
+│   │   │   └── callback/
+│   │   │       └── route.ts            # Callback OAuth (manejo de sesión post-autenticación)
 │   │   ├── dashboard/
 │   │   │   └── page.tsx                # Dashboard con Notas, Prompts y Arena
 │   │   ├── layout.tsx                  # Layout raíz con fuentes Geist + Toaster + Material Symbols
@@ -295,15 +303,16 @@ Kimberlite/
 
 ### Descripción de directorios clave
 
-| Directorio             | Propósito                                                                                    |
-| ---------------------- | -------------------------------------------------------------------------------------------- |
-| `src/app/`             | Sistema de rutas basado en el App Router de Next.js. Cada subdirectorio representa una ruta. |
-| `src/app/dashboard/`   | Dashboard principal con tabs de Notas, Prompts y Arena, sidebar con filtros y estadísticas.  |
-| `src/components/`      | Componentes React atómicos y reutilizables (autenticación, tarjetas, modales, arena).        |
-| `src/lib/`             | Lógica compartida: cliente de Supabase, helpers, utilidades.                                 |
-| `supabase/migrations/` | Migraciones SQL versionadas para la base de datos PostgreSQL.                                |
-| `scripts/`             | Scripts Node.js para tareas auxiliares (migraciones, tests de conexión).                     |
-| `docs/`                | Documentación técnica detallada (arquitectura, componentes, base de datos).                  |
+| Directorio               | Propósito                                                                                        |
+| ------------------------ | ------------------------------------------------------------------------------------------------ |
+| `src/app/`               | Sistema de rutas basado en el App Router de Next.js. Cada subdirectorio representa una ruta.     |
+| `src/app/auth/callback/` | Ruta de callback OAuth para manejar la sesión después de autenticación con proveedores externos. |
+| `src/app/dashboard/`     | Dashboard principal con tabs de Notas, Prompts y Arena, sidebar con filtros y estadísticas.      |
+| `src/components/`        | Componentes React atómicos y reutilizables (autenticación, tarjetas, modales, arena).            |
+| `src/lib/`               | Lógica compartida: cliente de Supabase, helpers, utilidades.                                     |
+| `supabase/migrations/`   | Migraciones SQL versionadas para la base de datos PostgreSQL.                                    |
+| `scripts/`               | Scripts Node.js para tareas auxiliares (migraciones, tests de conexión).                         |
+| `docs/`                  | Documentación técnica detallada (arquitectura, componentes, base de datos).                      |
 
 ---
 
@@ -419,15 +428,18 @@ Almacena las comparaciones de la Arena de LLMs.
 
 Todas las funcionalidades principales están **operativas y probadas**. La aplicación es **completamente responsive** y funciona correctamente en dispositivos móviles, tablets y escritorio.
 
-### Novedades de esta sesión de diseño
+### Novedades tras fusionar `feature/mejoras-diseno-stitch`
 
-- ✅ **Landing page mejorada** con badges de seguridad (SOC2, E2E Encrypted) y footer actualizado con enlaces a Privacy Policy, Terms y Security Audit.
+- ✅ **Landing page mejorada** con badges de seguridad (E2E Encrypted, Zero-Knowledge, Your Knowledge Your Control) y footer actualizado con enlaces a Privacy Policy, Terms y Security Audit.
 - ✅ **Login premium** con efectos de fondo (blobs decorativos + patrón vault), micro-interacciones y badge de seguridad E2E.
-- ✅ **Sidebar con Material Symbols** y logo centrado de mayor tamaño.
+- ✅ **Sidebar con Material Symbols** y logo centrado de mayor tamaño con fondo transparente.
 - ✅ **Tarjetas de notas, prompts y arena** con diseño premium y paleta de violetas característica.
 - ✅ **Degradado Kimberlite** (`gemstone-gradient`) aplicado a botones principales.
 - ✅ **Modo oscuro optimizado** y coherente en toda la aplicación.
 - ✅ **Scrollbar personalizado** en toda la aplicación con diseño thin y colores adaptados al modo oscuro.
+- ✅ **Logo con fondo transparente** en el sidebar para una integración visual más limpia.
+- ✅ **Atajo de teclado ⌘K** para búsqueda rápida de notas y prompts.
+- ✅ **Callback OAuth** implementado en `/auth/callback/route.ts` para autenticación con proveedores externos.
 
 ---
 
