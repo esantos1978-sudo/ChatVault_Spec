@@ -9,71 +9,113 @@ import Dashboard from "./dashboard/page";
 function LandingPage({ onGetStarted }: { onGetStarted: () => void }) {
   return (
     <div className="min-h-screen bg-gradient-to-br from-zinc-50 via-white to-zinc-100 dark:from-zinc-950 dark:via-zinc-900 dark:to-zinc-950">
-      {/* HEADER */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-xl border-b border-zinc-200/50 dark:border-zinc-800/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+          {/* Logo - centrado visualmente */}
           <div className="flex items-center gap-2">
             <img
               src="/images/kimberlite-logo.png"
               alt="Kimberlite"
-              className="h-8 w-auto"
+              className="h-10 w-auto"
             />
-            <span className="text-xl font-bold text-zinc-900 dark:text-zinc-50">
-              Kimberlite
-            </span>
+            {/* ❌ Texto eliminado */}
           </div>
           <button
             onClick={onGetStarted}
-            className="px-8 py-3 text-sm font-medium text-white gemstone-gradient rounded-xl shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+            className="px-4 py-2 text-sm font-medium text-white gemstone-gradient rounded-lg shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
           >
             Get Started
           </button>
         </div>
       </header>
 
-      {/* HERO */}
-      <section className="flex flex-col items-center justify-center min-h-[80vh] text-center px-4 bg-gradient-to-b from-zinc-50 to-white dark:from-zinc-950 dark:to-zinc-900">
-        <div className="max-w-4xl mx-auto space-y-8">
-          <div className="flex items-center justify-center gap-4">
+      {/* HERO - MÁS COMPACTO */}
+      <section className="flex flex-col items-center justify-center min-h-[50vh] text-center px-4 bg-gradient-to-b from-zinc-50 to-white dark:from-zinc-950 dark:to-zinc-900">
+        <div className="max-w-4xl mx-auto space-y-4">
+          {/* Logo + Eslogan */}
+          <div className="flex flex-col items-center justify-center gap-2">
             <img
               src="/images/kimberlite-logo.png"
               alt="Kimberlite"
-              className="h-12 w-auto"
+              className="h-16 w-auto md:h-20"
             />
-            <h1 className="text-6xl md:text-7xl font-bold tracking-tight bg-gradient-to-r from-zinc-900 to-zinc-600 dark:from-zinc-50 dark:to-zinc-400 bg-clip-text text-transparent">
-              Kimberlite
-            </h1>
-          </div>
-          <p className="text-2xl md:text-3xl font-light text-zinc-700 dark:text-zinc-300">
-            Your data,{" "}
-            <span className="font-semibold">refined & resilient.</span>
-          </p>
-          <p className="text-lg text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto leading-relaxed">
-            The premier secure infrastructure for enterprise AI, built with
-            diamond-hard security protocols and zero-knowledge architecture.
-          </p>
-
-          {/* Badges de seguridad */}
-          <div className="flex flex-wrap justify-center gap-3 pt-2">
-            <span className="px-4 py-1.5 text-xs font-semibold bg-blue-50 text-blue-700 dark:bg-blue-950/30 dark:text-blue-400 rounded-full border border-blue-200/50 dark:border-blue-800/30">
-              🔒 E2E Encrypted
-            </span>
-            <span className="px-4 py-1.5 text-xs font-semibold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-400 rounded-full border border-emerald-200/50 dark:border-emerald-800/30">
-              🛡️ Zero-Knowledge
-            </span>
-            <span className="px-4 py-1.5 text-xs font-semibold bg-purple-50 text-purple-700 dark:bg-purple-950/30 dark:text-purple-400 rounded-full border border-purple-200/50 dark:border-purple-800/30">
-              💎 Your Knowledge, Your Control
-            </span>
+            <p className="text-lg md:text-xl font-light tracking-wide text-zinc-700 dark:text-zinc-300">
+              The rock{" "}
+              <span className="font-semibold text-primary">where diamonds</span>{" "}
+              are.
+            </p>
           </div>
 
-          {/* Botón CTA */}
-          <div className="pt-4">
+          {/* Subtítulo */}
+          <p className="text-sm md:text-base text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto leading-relaxed">
+            Organiza tus conversaciones con IA, reutiliza tus mejores prompts y
+            compara modelos en un solo lugar. Seguro, privado y diseñado para
+            ti.
+          </p>
+
+          {/* Botones CTA */}
+          <div className="flex flex-wrap items-center justify-center gap-3 pt-1">
             <button
               onClick={onGetStarted}
-              className="px-10 py-4 text-base font-semibold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 rounded-2xl shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 transition-all duration-300 hover:-translate-y-0.5"
+              className="px-6 py-2.5 text-sm font-semibold text-white gemstone-gradient rounded-xl shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
             >
-              Start Your Journey →
+              Get Started
             </button>
+            <button
+              onClick={() => {
+                const demoSection = document.getElementById("demo-section");
+                if (demoSection) {
+                  demoSection.scrollIntoView({ behavior: "smooth" });
+                }
+              }}
+              className="px-6 py-2.5 text-sm font-semibold text-zinc-700 dark:text-zinc-300 border border-zinc-300 dark:border-zinc-700 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all duration-300"
+            >
+              View Demo
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* SUBSECCIONES: Funcionalidades clave (justo después del hero) */}
+      <section
+        id="demo-section"
+        className="py-8 px-4 bg-white/50 dark:bg-zinc-900/30"
+      >
+        <div className="max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {[
+              {
+                icon: "📝",
+                title: "Notas inteligentes",
+                description:
+                  "Guarda conversaciones completas con tus modelos de IA favoritos. Título, contenido, resumen y más.",
+              },
+              {
+                icon: "📚",
+                title: "Biblioteca de Prompts",
+                description:
+                  "Reutiliza tus mejores prompts con un solo clic. Organízalos por categorías y tags.",
+              },
+              {
+                icon: "⚔️",
+                title: "Arena de LLMs",
+                description:
+                  "Compara respuestas de diferentes modelos lado a lado. Vota y elige al ganador.",
+              },
+            ].map((feature, index) => (
+              <div
+                key={index}
+                className="group p-5 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200/60 dark:border-zinc-800/60 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+              >
+                <div className="text-2xl mb-2">{feature.icon}</div>
+                <h3 className="text-base font-semibold text-zinc-900 dark:text-zinc-50 group-hover:text-primary transition-colors">
+                  {feature.title}
+                </h3>
+                <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
+                  {feature.description}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -142,6 +184,50 @@ function LandingPage({ onGetStarted }: { onGetStarted: () => void }) {
                 </p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+      {/* ENTERPRISE GRADE */}
+      <section className="py-16 px-4 bg-gradient-to-b from-white to-zinc-50 dark:from-zinc-950 dark:to-zinc-900">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <span className="inline-block px-4 py-1.5 text-xs font-semibold text-primary bg-primary/10 rounded-full border border-primary/20">
+              Enterprise Grade
+            </span>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+            <div className="space-y-6">
+              <h2 className="text-3xl md:text-4xl font-bold text-zinc-900 dark:text-zinc-50 leading-tight">
+                Extracción refinada de{" "}
+                <span className="text-primary">conocimiento</span>.
+              </h2>
+              <p className="text-lg text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                Kimberlite no es solo una base de datos; es el entorno donde tus
+                ideas crudas se convierten en diamantes. Nuestra arquitectura de
+                seguridad y diseño centrado en el usuario garantizan que cada
+                interacción sea rápida, privada y brillante.
+              </p>
+              <ul className="space-y-3">
+                {[
+                  "🔒 Encripción de extremo a extremo",
+                  "📱 Sincronización multi-dispositivo",
+                  "🤖 Integración con GPT-4, Claude y más",
+                ].map((item, index) => (
+                  <li
+                    key={index}
+                    className="flex items-center gap-3 text-sm text-zinc-700 dark:text-zinc-300"
+                  >
+                    <span className="text-primary">{item.split(" ")[0]}</span>
+                    <span>{item.split(" ").slice(1).join(" ")}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="relative">
+              <div className="aspect-square rounded-3xl bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20 flex items-center justify-center">
+                <span className="text-8xl opacity-20">💎</span>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -220,41 +306,22 @@ function LandingPage({ onGetStarted }: { onGetStarted: () => void }) {
       {/* FOOTER */}
       <footer className="border-t border-zinc-200/60 dark:border-zinc-800/60 py-8 px-4">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <img
-              src="/images/kimberlite-logo.png"
-              alt="Kimberlite"
-              className="h-6 w-auto"
-            />
-            <span className="font-semibold text-zinc-900 dark:text-zinc-50">
-              Kimberlite
-            </span>
-            <span className="text-sm text-zinc-500 dark:text-zinc-400">
-              Systems
-            </span>
-          </div>
+          {/* Logo + año */}
           <div className="text-sm text-zinc-500 dark:text-zinc-400">
-            © {new Date().getFullYear()} Kimberlite Systems. All rights
-            reserved.
+            © {new Date().getFullYear()} Kimberlite AI. The rock where diamonds
+            are.
           </div>
+
+          {/* Enlaces */}
           <div className="flex items-center gap-6 text-sm text-zinc-600 dark:text-zinc-400">
-            <a
-              href="#"
-              className="hover:text-zinc-900 dark:hover:text-zinc-200"
-            >
+            <a href="#" className="hover:text-primary transition-colors">
               Privacy Policy
             </a>
-            <a
-              href="#"
-              className="hover:text-zinc-900 dark:hover:text-zinc-200"
-            >
-              Terms
+            <a href="#" className="hover:text-primary transition-colors">
+              Terms of Service
             </a>
-            <a
-              href="#"
-              className="hover:text-zinc-900 dark:hover:text-zinc-200"
-            >
-              Security Audit
+            <a href="#" className="hover:text-primary transition-colors">
+              Contact
             </a>
           </div>
         </div>
