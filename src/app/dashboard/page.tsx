@@ -750,7 +750,7 @@ export default function Dashboard({ user }: { user: any }) {
               </span>
               Modelos de IA
             </p>
-            <div className="space-y-0.5">
+            <div className="max-h-32 overflow-y-auto pr-1 space-y-0.5 scrollbar-thin">
               {allAiModels.map((model) => (
                 <button
                   key={model}
@@ -784,7 +784,7 @@ export default function Dashboard({ user }: { user: any }) {
                 ? "(Prompts)"
                 : ""}
           </p>
-          <div className="max-h-32 overflow-y-auto pr-1 space-y-1 scroll-tags">
+          <div className="max-h-32 overflow-y-auto pr-1 space-y-1 scrollbar-thin">
             {activeTab === "notes" && (
               <>
                 {noteTagsFromNotes.length === 0 ? (
@@ -1107,25 +1107,6 @@ export default function Dashboard({ user }: { user: any }) {
                   prompts.filter((p) => p.is_favorite).length}
               </span>
             </div>
-
-            {/* Prompt más usado */}
-            {prompts.length > 0 && (
-              <div className="mt-1 pt-1 border-t border-zinc-100/50 dark:border-zinc-800/50">
-                <p className="text-[10px] text-zinc-400 flex items-center gap-1">
-                  🔥 Más usado:
-                </p>
-                <p className="text-[10px] font-medium text-zinc-700 dark:text-zinc-300 truncate flex items-center justify-between">
-                  <span className="truncate max-w-[120px]">
-                    {prompts.sort((a, b) => b.times_used - a.times_used)[0]
-                      ?.title || "Ninguno"}
-                  </span>
-                  <span className="text-zinc-400 font-normal bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded-full text-[10px]">
-                    {prompts.sort((a, b) => b.times_used - a.times_used)[0]
-                      ?.times_used || 0}
-                  </span>
-                </p>
-              </div>
-            )}
           </div>
         </div>
 

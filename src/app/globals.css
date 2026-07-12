@@ -290,3 +290,39 @@ body {
     rgba(124, 58, 237, 0.2)
   );
 }
+/* ==================== SCROLL PARA ETIQUETAS ==================== */
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: #d4d4d8 transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 4px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: #d4d4d8;
+  border-radius: 9999px;
+  transition: background 0.2s ease;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: #a1a1aa;
+}
+
+/* Modo oscuro */
+.dark .scrollbar-thin {
+  scrollbar-color: #3f3f46 transparent;
+}
+
+.dark .scrollbar-thin::-webkit-scrollbar-thumb {
+  background: #3f3f46;
+}
+
+.dark .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: #52525b;
+}
