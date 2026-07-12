@@ -13,70 +13,66 @@ function LandingPage({ onGetStarted }: { onGetStarted: () => void }) {
       <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-xl border-b border-zinc-200/50 dark:border-zinc-800/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="text-2xl">🔒</span>
+            <img
+              src="/images/kimberlite-logo.png"
+              alt="Kimberlite"
+              className="h-8 w-auto"
+            />
             <span className="text-xl font-bold text-zinc-900 dark:text-zinc-50">
               Kimberlite
             </span>
           </div>
           <button
             onClick={onGetStarted}
-            className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 rounded-lg shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 transition-all duration-200"
+            className="px-8 py-3 text-sm font-medium text-white gemstone-gradient rounded-xl shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
           >
-            Comenzar
+            Get Started
           </button>
         </div>
       </header>
 
       {/* HERO */}
-      <section className="pt-32 pb-16 md:pt-40 md:pb-24 px-4">
-        <div className="max-w-7xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-300 text-xs font-medium mb-6 border border-blue-200/50 dark:border-blue-800/30">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
-            </span>
-            Organiza tu conocimiento con IA
+      <section className="flex flex-col items-center justify-center min-h-[80vh] text-center px-4 bg-gradient-to-b from-zinc-50 to-white dark:from-zinc-950 dark:to-zinc-900">
+        <div className="max-w-4xl mx-auto space-y-8">
+          <div className="flex items-center justify-center gap-4">
+            <img
+              src="/images/kimberlite-logo.png"
+              alt="Kimberlite"
+              className="h-12 w-auto"
+            />
+            <h1 className="text-6xl md:text-7xl font-bold tracking-tight bg-gradient-to-r from-zinc-900 to-zinc-600 dark:from-zinc-50 dark:to-zinc-400 bg-clip-text text-transparent">
+              Kimberlite
+            </h1>
           </div>
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
-            Guarda, organiza y reutiliza
-            <br />
-            <span className="bg-gradient-to-r from-blue-600 to-emerald-500 bg-clip-text text-transparent">
-              tus conversaciones con IA
-            </span>
-          </h1>
-          <p className="mt-6 max-w-2xl mx-auto text-lg text-zinc-600 dark:text-zinc-400">
-            ChatVault es tu baúl de conocimiento. Guarda chats, prompts y
-            recursos de tus modelos de IA favoritos. Todo organizado, etiquetado
-            y listo para reutilizar.
+          <p className="text-2xl md:text-3xl font-light text-zinc-700 dark:text-zinc-300">
+            Your data,{" "}
+            <span className="font-semibold">refined & resilient.</span>
           </p>
-          <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
+          <p className="text-lg text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto leading-relaxed">
+            The premier secure infrastructure for enterprise AI, built with
+            diamond-hard security protocols and zero-knowledge architecture.
+          </p>
+
+          {/* Badges de seguridad */}
+          <div className="flex flex-wrap justify-center gap-3 pt-2">
+            <span className="px-4 py-1.5 text-xs font-semibold bg-blue-50 text-blue-700 dark:bg-blue-950/30 dark:text-blue-400 rounded-full border border-blue-200/50 dark:border-blue-800/30">
+              🔒 E2E Encrypted
+            </span>
+            <span className="px-4 py-1.5 text-xs font-semibold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-400 rounded-full border border-emerald-200/50 dark:border-emerald-800/30">
+              🛡️ Zero-Knowledge
+            </span>
+            <span className="px-4 py-1.5 text-xs font-semibold bg-purple-50 text-purple-700 dark:bg-purple-950/30 dark:text-purple-400 rounded-full border border-purple-200/50 dark:border-purple-800/30">
+              💎 Your Knowledge, Your Control
+            </span>
+          </div>
+
+          {/* Botón CTA */}
+          <div className="pt-4">
             <button
               onClick={onGetStarted}
-              className="px-6 py-3 text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 rounded-xl shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 transition-all duration-200 flex items-center gap-2"
+              className="px-10 py-4 text-base font-semibold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 rounded-2xl shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 transition-all duration-300 hover:-translate-y-0.5"
             >
-              Regístrate gratis 🚀
-            </button>
-            <button className="px-6 py-3 text-sm font-medium text-zinc-700 dark:text-zinc-300 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-all duration-200 flex items-center gap-2">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="w-5 h-5"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                />
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M15.91 11.672a.375.375 0 0 1 0 .656l-5.603 3.113a.375.375 0 0 1-.557-.328V8.887c0-.286.307-.466.557-.327l5.603 3.112Z"
-                />
-              </svg>
-              Ver demo
+              Start Your Journey →
             </button>
           </div>
         </div>
@@ -225,32 +221,40 @@ function LandingPage({ onGetStarted }: { onGetStarted: () => void }) {
       <footer className="border-t border-zinc-200/60 dark:border-zinc-800/60 py-8 px-4">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <span className="text-xl">🔒</span>
+            <img
+              src="/images/kimberlite-logo.png"
+              alt="Kimberlite"
+              className="h-6 w-auto"
+            />
             <span className="font-semibold text-zinc-900 dark:text-zinc-50">
-              ChatVault
+              Kimberlite
             </span>
             <span className="text-sm text-zinc-500 dark:text-zinc-400">
-              © {new Date().getFullYear()}
+              Systems
             </span>
+          </div>
+          <div className="text-sm text-zinc-500 dark:text-zinc-400">
+            © {new Date().getFullYear()} Kimberlite Systems. All rights
+            reserved.
           </div>
           <div className="flex items-center gap-6 text-sm text-zinc-600 dark:text-zinc-400">
             <a
               href="#"
-              className="hover:text-zinc-900 dark:hover:text-zinc-200 transition-colors"
+              className="hover:text-zinc-900 dark:hover:text-zinc-200"
             >
-              Términos
+              Privacy Policy
             </a>
             <a
               href="#"
-              className="hover:text-zinc-900 dark:hover:text-zinc-200 transition-colors"
+              className="hover:text-zinc-900 dark:hover:text-zinc-200"
             >
-              Privacidad
+              Terms
             </a>
             <a
               href="#"
-              className="hover:text-zinc-900 dark:hover:text-zinc-200 transition-colors"
+              className="hover:text-zinc-900 dark:hover:text-zinc-200"
             >
-              Contacto
+              Security Audit
             </a>
           </div>
         </div>
@@ -295,27 +299,7 @@ export default function Home() {
 
   // Si el usuario no está logueado y está en la landing
   if (showAuth) {
-    return (
-      <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 flex items-center justify-center p-4">
-        <div className="w-full max-w-md">
-          <div className="mb-6 text-center">
-            <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">
-              🔒 ChatVault
-            </h1>
-            <p className="text-sm text-zinc-600 dark:text-zinc-400">
-              Inicia sesión para acceder a tu baúl de conocimiento
-            </p>
-          </div>
-          <AuthForm onAuth={() => setShowAuth(false)} />
-          <button
-            onClick={() => setShowAuth(false)}
-            className="mt-4 w-full text-center text-sm text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 transition-colors"
-          >
-            ← Volver a la landing
-          </button>
-        </div>
-      </div>
-    );
+    return <AuthForm onAuth={() => setShowAuth(false)} />;
   }
 
   // Si no hay usuario y no está en el login, mostrar la landing

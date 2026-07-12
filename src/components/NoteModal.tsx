@@ -621,7 +621,7 @@ export default function NoteModal({
             className={`px-6 py-2.5 text-sm font-medium text-white rounded-xl transition-all duration-200 flex items-center gap-2 ${
               saving || (sourceType === "file" && !fileContent)
                 ? "bg-zinc-400 dark:bg-zinc-700 cursor-not-allowed"
-                : "bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
+                : "gemstone-gradient shadow-lg shadow-primary/25 hover:shadow-primary/40 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
             }`}
           >
             {saving ? (

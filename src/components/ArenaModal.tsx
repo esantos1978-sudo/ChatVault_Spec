@@ -336,11 +336,7 @@ export default function ArenaModal({
             disabled={
               saving || !prompt.trim() || !response1.trim() || !response2.trim()
             }
-            className={`px-6 py-2.5 text-sm font-medium text-white rounded-xl transition-all duration-200 flex items-center gap-2 ${
-              saving || !prompt.trim() || !response1.trim() || !response2.trim()
-                ? "bg-zinc-400 dark:bg-zinc-700 cursor-not-allowed"
-                : "bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
-            }`}
+            className={`px-6 py-2.5 text-sm font-medium text-white rounded-xl transition-all duration-200 flex items-center gap-2 gemstone-gradient shadow-lg shadow-primary/25 hover:shadow-primary/40 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]`}
           >
             {saving ? (
               <>

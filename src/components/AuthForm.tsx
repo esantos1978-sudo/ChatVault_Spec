@@ -2,179 +2,212 @@
 
 import { useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
+import toast from "react-hot-toast";
 
-type Mode = "login" | "register";
+interface AuthFormProps {
+  onAuth: () => void;
+}
 
-export default function AuthForm({ onAuth }: { onAuth: () => void }) {
-  const [mode, setMode] = useState<Mode>("login");
+export default function AuthForm({ onAuth }: AuthFormProps) {
+  const [mode, setMode] = useState<"login" | "register">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
-  async function handleSubmit(e: React.FormEvent) {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
     setLoading(true);
 
-    const trimmedEmail = email.trim();
-    const trimmedPassword = password.trim();
-
-    if (!trimmedEmail || !trimmedPassword) {
-      setError("Todos los campos son obligatorios");
+    try {
+      if (mode === "login") {
+        const { error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+        if (error) throw error;
+        toast.success("Welcome back!");
+        onAuth();
+      } else {
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+        });
+        if (error) throw error;
+        toast.success("Account created! Welcome to Kimberlite.");
+        onAuth();
+      }
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
       setLoading(false);
-      return;
     }
-
-    if (trimmedPassword.length < 6) {
-      setError("La contraseña debe tener al menos 6 caracteres");
-      setLoading(false);
-      return;
-    }
-
-    const { error: authError } =
-      mode === "login"
-        ? await supabase.auth.signInWithPassword({
-            email: trimmedEmail,
-            password: trimmedPassword,
-          })
-        : await supabase.auth.signUp({
-            email: trimmedEmail,
-            password: trimmedPassword,
-          });
-
-    setLoading(false);
-
-    if (authError) {
-      setError(authError.message);
-      return;
-    }
-
-    // Si es registro, mostrar mensaje de confirmación
-    if (mode === "register") {
-      setError(null);
-      setMode("login");
-      setPassword("");
-      alert(
-        "Registro exitoso. Revisa tu correo para confirmar la cuenta (si tienes confirmación habilitada). Luego inicia sesión."
-      );
-      return;
-    }
-
-    // Login exitoso — notificar al padre
-    onAuth();
-  }
+  };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 px-4 dark:bg-zinc-950">
-      <div className="w-full max-w-sm">
-        {/* Logo / Título */}
-        <div className="mb-8 text-center">
-          <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
-            ChatVault
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-zinc-50 to-white dark:from-zinc-950 dark:to-zinc-900 p-4 relative overflow-hidden">
+      {/* Patrón de fondo estilo Vault */}
+      <div className="absolute inset-0 vault-pattern z-0" />
+
+      {/* Blobs decorativos */}
+      <div className="absolute -top-48 -left-48 w-[600px] h-[600px] bg-blue-500/10 rounded-full blur-[120px]" />
+      <div className="absolute -bottom-48 -right-48 w-[600px] h-[600px] bg-emerald-500/10 rounded-full blur-[120px]" />
+
+      <div className="w-full max-w-md relative z-10">
+        {/* Logo y título */}
+        <div className="text-center mb-8">
+          <div className="flex items-center justify-center gap-2 mb-4">
+            <img
+              src="/images/kimberlite-logo.png"
+              alt="Kimberlite"
+              className="h-10 w-auto"
+            />
+          </div>
+          <h1 className="text-3xl font-bold text-zinc-900 dark:text-zinc-50">
+            {mode === "login" ? "Welcome back" : "Create your account"}
           </h1>
-          <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
+          <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-2">
             {mode === "login"
-              ? "Inicia sesión para acceder a tus notas"
-              : "Crea una cuenta para empezar"}
+              ? "Securely access your encrypted workspace."
+              : "Start your journey with Kimberlite."}
           </p>
+          <div className="mt-3 inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-300 text-xs font-medium rounded-full border border-emerald-200/50 dark:border-emerald-800/30">
+            🔒 End-to-End Encrypted
+          </div>
         </div>
 
         {/* Formulario */}
-        <form
-          onSubmit={handleSubmit}
-          className="rounded-xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900"
-        >
-          <h2 className="mb-5 text-lg font-semibold text-zinc-800 dark:text-zinc-200">
-            {mode === "login" ? "Iniciar sesión" : "Crear cuenta"}
-          </h2>
-
-          {error && (
-            <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700 dark:border-red-800 dark:bg-red-950 dark:text-red-400">
-              {error}
-            </div>
-          )}
-
-          <div className="mb-4">
-            <label
-              htmlFor="auth-email"
-              className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300"
-            >
-              Correo electrónico
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
+              Email Address
             </label>
             <input
-              id="auth-email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="tu@correo.com"
-              autoComplete="email"
-              className="w-full rounded-lg border border-zinc-300 px-4 py-2 text-sm text-zinc-900 placeholder-zinc-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:placeholder-zinc-500"
+              placeholder="name@company.com"
+              className="w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-4 py-3 text-sm text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 dark:focus:ring-blue-400/50 transition-all duration-200"
+              required
             />
           </div>
 
-          <div className="mb-5">
-            <label
-              htmlFor="auth-password"
-              className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300"
-            >
-              Contraseña
-            </label>
+          <div>
+            <div className="flex justify-between items-center mb-1">
+              <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                Password
+              </label>
+              {mode === "login" && (
+                <a
+                  href="#"
+                  className="text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
+                >
+                  Forgot?
+                </a>
+              )}
+            </div>
             <input
-              id="auth-password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Mín. 6 caracteres"
-              autoComplete={mode === "login" ? "current-password" : "new-password"}
-              className="w-full rounded-lg border border-zinc-300 px-4 py-2 text-sm text-zinc-900 placeholder-zinc-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:placeholder-zinc-500"
+              placeholder="••••••••"
+              className="w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-4 py-3 text-sm text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 dark:focus:ring-blue-400/50 transition-all duration-200"
+              required
             />
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:cursor-not-allowed disabled:opacity-50"
+            className="w-full py-3.5 text-sm font-semibold text-white gemstone-gradient rounded-xl shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading
-              ? "Procesando..."
-              : mode === "login"
-                ? "Iniciar sesión"
-                : "Crear cuenta"}
-          </button>
-
-          <div className="mt-4 text-center text-sm text-zinc-500 dark:text-zinc-400">
-            {mode === "login" ? (
-              <>
-                ¿No tienes cuenta?{" "}
-                <button
-                  type="button"
-                  onClick={() => {
-                    setMode("register");
-                    setError(null);
-                  }}
-                  className="font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400"
-                >
-                  Regístrate
-                </button>
-              </>
+            {loading ? (
+              <div className="flex items-center justify-center gap-2">
+                <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                {mode === "login" ? "Logging in..." : "Creating account..."}
+              </div>
+            ) : mode === "login" ? (
+              "Secure Login"
             ) : (
-              <>
-                ¿Ya tienes cuenta?{" "}
-                <button
-                  type="button"
-                  onClick={() => {
-                    setMode("login");
-                    setError(null);
-                  }}
-                  className="font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400"
-                >
-                  Inicia sesión
-                </button>
-              </>
+              "Create Account"
             )}
-          </div>
+          </button>
         </form>
+
+        {/* Separador */}
+        <div className="relative my-6">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-zinc-200 dark:border-zinc-700" />
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-white dark:bg-zinc-900 px-3 text-zinc-500 dark:text-zinc-400">
+              or access via
+            </span>
+          </div>
+        </div>
+
+        {/* Social login */}
+        <div className="grid grid-cols-2 gap-3">
+          <button
+            type="button"
+            className="flex items-center justify-center gap-2 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-4 py-2.5 text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors"
+          >
+            <svg className="h-5 w-5" viewBox="0 0 24 24">
+              <path
+                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"
+                fill="#4285F4"
+              />
+              <path
+                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                fill="#34A853"
+              />
+              <path
+                d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                fill="#FBBC05"
+              />
+              <path
+                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                fill="#EA4335"
+              />
+            </svg>
+            Google
+          </button>
+          <button
+            type="button"
+            className="flex items-center justify-center gap-2 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-4 py-2.5 text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors"
+          >
+            <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.468-2.38 1.235-3.22-.123-.3-.535-1.52.117-3.16 0 0 1.008-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.29-1.552 3.297-1.23 3.297-1.23.653 1.64.24 2.86.118 3.16.768.84 1.233 1.91 1.233 3.22 0 4.61-2.804 5.62-5.476 5.92.43.37.824 1.102.824 2.22 0 1.602-.015 2.894-.015 3.287 0 .322.216.694.825.577C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" />
+            </svg>
+            GitHub
+          </button>
+        </div>
+
+        {/* Cambiar modo */}
+        <p className="mt-6 text-center text-sm text-zinc-600 dark:text-zinc-400">
+          {mode === "login" ? (
+            <>
+              New to Kimberlite?{" "}
+              <button
+                type="button"
+                onClick={() => setMode("register")}
+                className="font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
+              >
+                Create account
+              </button>
+            </>
+          ) : (
+            <>
+              Already have an account?{" "}
+              <button
+                type="button"
+                onClick={() => setMode("login")}
+                className="font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
+              >
+                Log in
+              </button>
+            </>
+          )}
+        </p>
       </div>
     </div>
   );

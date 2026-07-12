@@ -635,7 +635,11 @@ export default function Dashboard({ user }: { user: any }) {
       <aside className="w-64 border-r border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-800 dark:bg-zinc-900/60 flex flex-col gap-4 select-none h-full overflow-y-auto">
         {/* LOGO */}
         <div className="flex items-center gap-2 px-2">
-          <span className="text-xl">🔒</span>
+          <img
+            src="/images/kimberlite-logo.png"
+            alt="Kimberlite"
+            className="h-8 w-auto"
+          />
           <h1 className="text-lg font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
             Kimberlite
           </h1>
@@ -671,11 +675,11 @@ export default function Dashboard({ user }: { user: any }) {
                 : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-300"
             }`}
           >
-            🥊 Arena
+            ⚔️ Batalla
           </button>
         </div>
 
-        {/* 3. 🔄 BOTÓN DE RESETEO DE FILTROS */}
+        {/* 🔄 BOTÓN DE RESETEO DE FILTROS */}
         <button
           onClick={() => {
             setSelectedTag(null);
@@ -692,7 +696,9 @@ export default function Dashboard({ user }: { user: any }) {
           }}
           className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800/50 transition-colors border border-dashed border-zinc-300 dark:border-zinc-700"
         >
-          <span className="text-base">🔄</span>
+          <span className="material-symbols-outlined text-[18px]">
+            grid_view
+          </span>
           Mostrar todo
           <span className="ml-auto text-[10px] text-zinc-400">
             (resetear filtros)
@@ -711,14 +717,23 @@ export default function Dashboard({ user }: { user: any }) {
               : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800/50"
           }`}
         >
-          ⭐ {showFavorites ? "Mostrando favoritos" : "Ver favoritos"}
+          <span
+            className="material-symbols-outlined text-[18px] text-yellow-400"
+            style={{ fontVariationSettings: "'FILL' 1" }}
+          >
+            star
+          </span>
+          {showFavorites ? "Mostrando favoritos" : "Ver favoritos"}
         </button>
 
         {/* 1. FILTRO POR IA (PRIMERO) */}
         {activeTab === "notes" && allAiModels.length > 0 && (
           <div className="space-y-1">
-            <p className="px-2 text-xs font-semibold text-zinc-400 uppercase tracking-wider">
-              🤖 Modelos de IA
+            <p className="px-2 text-[11px] font-bold text-zinc-400 uppercase tracking-[0.15em] flex items-center gap-2">
+              <span className="material-symbols-outlined text-[14px]">
+                neurology
+              </span>
+              Modelos de IA
             </p>
             <div className="space-y-0.5">
               {allAiModels.map((model) => (
@@ -745,8 +760,9 @@ export default function Dashboard({ user }: { user: any }) {
 
         {/* 2. ETIQUETAS POR SECCIÓN (Independientes) */}
         <div className="space-y-1 flex-none">
-          <p className="px-2 text-xs font-semibold text-zinc-400 uppercase tracking-wider">
-            #️⃣ Etiquetas{" "}
+          <p className="px-2 text-[11px] font-bold text-zinc-400 uppercase tracking-[0.15em] flex items-center gap-2">
+            <span className="material-symbols-outlined text-[14px]">sell</span>
+            Etiquetas{" "}
             {activeTab === "notes"
               ? "(Notas)"
               : activeTab === "prompts"
@@ -776,7 +792,7 @@ export default function Dashboard({ user }: { user: any }) {
                             : "text-zinc-600 dark:text-zinc-400"
                         }`}
                       >
-                        # {t}
+                        <span className="opacity-60">#</span> {t}
                       </button>
                       <div className="flex items-center gap-2">
                         <span className="text-xs bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded-full text-zinc-400">
@@ -833,7 +849,7 @@ export default function Dashboard({ user }: { user: any }) {
                             : "text-zinc-600 dark:text-zinc-400"
                         }`}
                       >
-                        # {t}
+                        <span className="opacity-60">#</span> {t}
                       </button>
                       <div className="flex items-center gap-2">
                         <span className="text-xs bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded-full text-zinc-400">
@@ -879,8 +895,11 @@ export default function Dashboard({ user }: { user: any }) {
         {/* 3. FILTROS POR FECHA (TERCERO) */}
         {activeTab === "notes" && (
           <div className="space-y-1 pt-2 border-t border-zinc-100 dark:border-zinc-800/50">
-            <p className="px-2 text-[10px] font-bold text-zinc-400 uppercase tracking-wider">
-              🕒 Por Fecha
+            <p className="px-2 text-[11px] font-bold text-zinc-400 uppercase tracking-[0.15em] flex items-center gap-2">
+              <span className="material-symbols-outlined text-[14px]">
+                calendar_month
+              </span>
+              Por Fecha
             </p>
             <div className="space-y-1">
               <button
@@ -929,7 +948,7 @@ export default function Dashboard({ user }: { user: any }) {
 
             {/* RANGO PERSONALIZADO */}
             <div className="pt-2 mt-1 border-t border-zinc-100 dark:border-zinc-800/40 space-y-1.5">
-              <p className="px-2 text-[9px] font-bold text-zinc-400 uppercase tracking-wider">
+              <p className="px-2 text-[10px] font-bold text-zinc-400 uppercase tracking-wider">
                 Rango personalizado
               </p>
               <div className="grid grid-cols-2 gap-1.5 px-2">
@@ -980,8 +999,11 @@ export default function Dashboard({ user }: { user: any }) {
         {/* CATEGORÍAS (Solo visibles en la tab de Prompts) */}
         {activeTab === "prompts" && (
           <div className="space-y-1 pt-2 border-t border-zinc-100 dark:border-zinc-800/50">
-            <p className="px-2 text-xs font-semibold text-zinc-400 uppercase tracking-wider">
-              📂 Categorías
+            <p className="px-2 text-[11px] font-bold text-zinc-400 uppercase tracking-[0.15em] flex items-center gap-2">
+              <span className="material-symbols-outlined text-[14px]">
+                folder
+              </span>
+              Categorías
             </p>
             <div className="space-y-0.5">
               {["imagen", "texto", "codigo", "video", "mcp", "otro"].map(
@@ -1014,37 +1036,58 @@ export default function Dashboard({ user }: { user: any }) {
             </div>
           </div>
         )}
+
         {/* 📊 ESTADÍSTICAS */}
         <div className="mt-2 pt-2 border-t border-zinc-100 dark:border-zinc-800/50">
-          <div className="flex justify-between items-center border-b border-zinc-100/50 dark:border-zinc-800/50 pb-1">
-            <p className="px-1 text-[10px] font-bold text-zinc-400 uppercase tracking-wider">
-              📊 Resumen
-            </p>
-          </div>
-          <div className="space-y-1.5 px-1 text-xs text-zinc-600 dark:text-zinc-400 mt-1.5">
-            <div className="flex justify-between items-center">
-              <span className="flex items-center gap-1.5">📝 Notas</span>
-              <span className="font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/30 px-2 py-0.5 rounded-full text-[11px]">
-                {notes.length}
+          <p className="px-2 text-[11px] font-bold text-zinc-400 uppercase tracking-[0.15em] flex items-center gap-2">
+            <span className="material-symbols-outlined text-[14px]">
+              analytics
+            </span>
+            Resumen
+          </p>
+          <div className="space-y-1 px-2 text-xs text-zinc-600 dark:text-zinc-400">
+            <div className="flex items-center justify-between">
+              <span className="flex items-center gap-2">
+                <span className="material-symbols-outlined text-[18px] text-primary">
+                  description
+                </span>
+                Notas
               </span>
+              <span className="font-medium text-primary">{notes.length}</span>
             </div>
-            <div className="flex justify-between items-center">
-              <span className="flex items-center gap-1.5">📚 Prompts</span>
-              <span className="font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30 px-2 py-0.5 rounded-full text-[11px]">
+            <div className="flex items-center justify-between">
+              <span className="flex items-center gap-2">
+                <span className="material-symbols-outlined text-[18px] text-secondary">
+                  bolt
+                </span>
+                Prompts
+              </span>
+              <span className="font-medium text-secondary">
                 {prompts.length}
               </span>
             </div>
-            <div className="flex justify-between items-center">
-              <span className="flex items-center gap-1.5">
-                🥊 Comparaciones
+            <div className="flex items-center justify-between">
+              <span className="flex items-center gap-2">
+                <span className="material-symbols-outlined text-[18px] text-tertiary">
+                  swords
+                </span>
+                Comparaciones
               </span>
-              <span className="font-medium text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-950/30 px-2 py-0.5 rounded-full text-[11px]">
+              <span className="font-medium text-tertiary">
                 {arenaComparisons.length}
               </span>
             </div>
-            <div className="flex justify-between items-center">
-              <span className="flex items-center gap-1.5">⭐ Favoritas</span>
-              <span className="font-medium text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/30 px-2 py-0.5 rounded-full text-[11px]">
+            <div className="flex items-center justify-between">
+              <span className="flex items-center gap-2">
+                <span
+                  className="material-symbols-outlined text-[18px] text-yellow-400"
+                  style={{ fontVariationSettings: "'FILL' 1" }}
+                >
+                  star
+                </span>
+                Favoritas
+              </span>
+              <span className="font-medium text-yellow-400">
                 {notes.filter((n) => n.is_favorite).length +
                   prompts.filter((p) => p.is_favorite).length}
               </span>
@@ -1075,9 +1118,11 @@ export default function Dashboard({ user }: { user: any }) {
         <div className="mt-auto pt-4 border-t border-zinc-200 dark:border-zinc-800">
           <button
             onClick={handleLogout}
-            className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/20 transition-colors"
+            className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/20 transition-colors"
           >
-            <span>🚪</span>
+            <span className="material-symbols-outlined text-[18px]">
+              logout
+            </span>
             Cerrar sesión
           </button>
         </div>

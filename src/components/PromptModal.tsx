@@ -281,11 +281,7 @@ export default function PromptModal({
             type="button"
             onClick={onSubmit}
             disabled={saving}
-            className={`px-6 py-2.5 text-sm font-medium text-white rounded-xl transition-all duration-200 flex items-center gap-2 ${
-              saving
-                ? "bg-zinc-400 dark:bg-zinc-700 cursor-not-allowed"
-                : "bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
-            }`}
+            className={`px-6 py-2.5 text-sm font-medium text-white rounded-xl transition-all duration-200 flex items-center gap-2 gemstone-gradient shadow-lg shadow-primary/25 hover:shadow-primary/40 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]`}
           >
             {saving ? (
               <>

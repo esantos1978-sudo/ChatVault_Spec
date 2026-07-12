@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { Toaster } from "react-hot-toast"; // 👈 IMPORTA EL TOASTER
+import { Toaster } from "react-hot-toast";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Kimberlite, where diamonds are",
-  description: "Tus notas seguras en la nube con ChatVault",
+  title: "Kimberlite",
+  description: "Your data, refined & resilient.",
 };
 
 export default function RootLayout({
@@ -24,38 +24,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es">
+    <html lang="es" suppressHydrationWarning>
+      <head>
+        {/* 👇 MATERIAL SYMBOLS - ICONOS PREMIUM */}
+        <link
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+          rel="stylesheet"
+        />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {children}
-        {/* 👇 AÑADE EL TOASTER AQUÍ */}
-        <Toaster
-          position="bottom-right"
-          toastOptions={{
-            duration: 3000,
-            style: {
-              background: "#363636",
-              color: "#fff",
-              borderRadius: "12px",
-              padding: "16px 20px",
-            },
-            success: {
-              duration: 3000,
-              iconTheme: {
-                primary: "#22c55e",
-                secondary: "#fff",
-              },
-            },
-            error: {
-              duration: 4000,
-              iconTheme: {
-                primary: "#ef4444",
-                secondary: "#fff",
-              },
-            },
-          }}
-        />
+        <Toaster position="bottom-right" />
       </body>
     </html>
   );

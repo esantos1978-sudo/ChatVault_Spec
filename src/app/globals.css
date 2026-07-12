@@ -212,3 +212,81 @@ body {
 .dark * {
   scrollbar-color: #3f3f46 transparent;
 }
+/* ==================== PATRÓN DE FONDO VAULT ==================== */
+.vault-pattern {
+  background-color: #0b1326;
+  background-image:
+    radial-gradient(#2d3449 0.5px, transparent 0.5px),
+    radial-gradient(#2d3449 0.5px, #0b1326 0.5px);
+  background-size: 24px 24px;
+  background-position:
+    0 0,
+    12px 12px;
+  opacity: 0.3;
+}
+
+.dark .vault-pattern {
+  opacity: 0.3;
+}
+
+/* ==================== AUTH CARD ==================== */
+.auth-card {
+  backdrop-filter: blur(12px);
+  background-color: rgba(23, 31, 51, 0.85);
+}
+/* ==================== MATERIAL SYMBOLS ==================== */
+.material-symbols-outlined {
+  font-variation-settings:
+    "FILL" 0,
+    "wght" 400,
+    "GRAD" 0,
+    "opsz" 24;
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+}
+
+/* Para versiones rellenas (filled) */
+.material-symbols-outlined.filled {
+  font-variation-settings:
+    "FILL" 1,
+    "wght" 400,
+    "GRAD" 0,
+    "opsz" 24;
+}
+/* ==================== DEGRADADO KIMBERLITE ==================== */
+.gemstone-gradient {
+  background: linear-gradient(to right, #8b5cf6, #7c3aed);
+  transition: all 0.2s ease;
+}
+
+.gemstone-gradient:hover {
+  background: linear-gradient(to right, #7c3aed, #6d28d9);
+  box-shadow: 0 8px 30px rgba(139, 92, 246, 0.4);
+}
+
+.gemstone-gradient:active {
+  transform: scale(0.98);
+}
+
+/* Versión más clara (para hover de tarjetas) */
+.gemstone-gradient-light {
+  background: linear-gradient(
+    to right,
+    rgba(139, 92, 246, 0.1),
+    rgba(124, 58, 237, 0.1)
+  );
+  border: 1px solid rgba(139, 92, 246, 0.2);
+}
+
+.gemstone-gradient-light:hover {
+  background: linear-gradient(
+    to right,
+    rgba(139, 92, 246, 0.2),
+    rgba(124, 58, 237, 0.2)
+  );
+}
