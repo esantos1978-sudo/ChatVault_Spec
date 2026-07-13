@@ -6,7 +6,7 @@
 ![Supabase](https://img.shields.io/badge/Supabase-2.0-green?style=flat-square&logo=supabase)
 ![Vercel](https://img.shields.io/badge/Vercel-Deployed-black?style=flat-square&logo=vercel)
 
-**Your data, refined & resilient.** Kimberlite (anteriormente ChatVault) es una aplicación web moderna para organizar conversaciones con IA, gestionar prompts reutilizables y comparar modelos de lenguaje. Construida con Next.js 16, TypeScript, Tailwind CSS v4 y Supabase, ofrece una experiencia premium con autenticación segura, CRUD completo de notas y prompts, scraping inteligente de URLs, carga de archivos (PDF, TXT, MD) con extracción automática de texto, sistema de etiquetas independientes por sección, filtros avanzados, una **Arena de LLMs** para comparar respuestas, **sistema de favoritos** ⭐, enlace entre notas y prompts, y un diseño oscuro optimizado con paleta equilibrada de violetas, azules y terracota.
+**Your data, refined & resilient.** Kimberlite (anteriormente ChatVault) es una aplicación web moderna para organizar conversaciones con IA, gestionar prompts reutilizables y comparar modelos de lenguaje. Construida con Next.js 16, TypeScript, Tailwind CSS v4 y Supabase, ofrece una experiencia premium con autenticación segura, CRUD completo de notas y prompts, scraping inteligente de URLs, **carga de archivos (PDF, TXT, MD) con extracción automática de texto completamente funcional**, sistema de etiquetas independientes por sección, filtros avanzados, una **Arena de LLMs** para comparar respuestas, **sistema de favoritos** ⭐, enlace entre notas y prompts, **botón "Copiar MD" en todas las tarjetas**, **sidebar responsive** con menú hamburguesa en móviles, y un diseño oscuro optimizado con paleta equilibrada de violetas, azules y terracota.
 
 ---
 
@@ -46,10 +46,13 @@ Kimberlite presenta una identidad visual premium con una paleta de violetas cara
 - **Títulos en terracota:** Los títulos de las tarjetas ahora usan un tono terracota (`text-amber-700 dark:text-amber-400`) para mejorar la jerarquía visual y evitar la saturación de violeta.
 - **Logo sin fondo:** Logo con fondo transparente en toda la app.
 - **Sidebar** con Material Symbols (`neurology`, `sell`, `calendar_month`, `folder`, `analytics`, `star`, `logout`) y logo centrado de mayor tamaño con fondo transparente.
+- **Sidebar responsive:** El sidebar se oculta en móviles con un menú hamburguesa. En pantallas grandes (`md:`) siempre está visible.
+- **Header adaptativo:** El header se adapta a móviles con botón de menú y botón "Nueva nota" más compacto.
 - **Filtros en azul:** Los filtros del sidebar (Modelos IA, Etiquetas, Por Fecha, Categorías) ahora usan azul en lugar de violeta, creando una paleta más equilibrada.
 - **Tarjetas con borde lateral violeta:** Nuevo estilo con borde lateral en color primario (`border-l-4 border-primary`) en todas las tarjetas (Notas, Prompts y Arena). Más moderno y distintivo.
 - **Selectores personalizados:** Los selectores de los modales tienen un estilo personalizado con flecha SVG y mejor contraste en modo oscuro.
 - **Etiquetas con Enter:** Ahora se pueden añadir etiquetas presionando Enter en el campo de etiquetas, además de la coma. Funciona tanto en notas como en prompts.
+- **Copiar en Markdown:** Nuevo botón "Copiar MD" en las tarjetas de notas, prompts y arena para copiar el contenido en formato Markdown.
 - **Modo oscuro** optimizado y coherente en toda la aplicación.
 - **Scrollbar personalizado** en toda la aplicación con diseño thin y colores adaptados al modo oscuro.
 
@@ -181,6 +184,8 @@ Kimberlite presenta una identidad visual premium con una paleta de violetas cara
 ### 🎨 Diseño responsive con animaciones premium
 
 - Interfaz adaptable a cualquier dispositivo (móvil, tablet, escritorio).
+- **Sidebar responsive:** el sidebar se oculta en móviles con un menú hamburguesa. En pantallas grandes (`md:`) siempre está visible.
+- **Header adaptativo:** el header se adapta a móviles con botón de menú y botón "Nueva nota" más compacto.
 - **Modales responsive:** todos los modales se adaptan a cualquier pantalla con scroll interno, mejor diseño en móviles y transiciones suaves.
 - **Sidebar con scroll:** en pantallas pequeñas, el sidebar tiene scroll vertical para acceder a todos los filtros y estadísticas sin perder información.
 - **Modo oscuro** integrado que respeta la preferencia del sistema operativo, con colores y contrastes refinados.
@@ -314,17 +319,17 @@ Kimberlite/
 
 ### Descripción de directorios clave
 
-| Directorio                     | Propósito                                                                                    |
-| ------------------------------ | -------------------------------------------------------------------------------------------- |
-| `src/app/`                     | Sistema de rutas basado en el App Router de Next.js. Cada subdirectorio representa una ruta. |
-| `src/app/auth/callback/`       | Ruta de callback OAuth para manejo de sesión post-autenticación y recovery de contraseña.    |
-| `src/app/auth/reset-password/` | Página de restablecimiento de contraseña con flujo completo de Supabase.                     |
-| `src/app/dashboard/`           | Dashboard principal con tabs de Notas, Prompts y Arena, sidebar con filtros y estadísticas.  |
-| `src/components/`              | Componentes React atómicos y reutilizables (autenticación, tarjetas, modales, arena).        |
-| `src/lib/`                     | Lógica compartida: cliente de Supabase, helpers, utilidades.                                 |
-| `supabase/migrations/`         | Migraciones SQL versionadas para la base de datos PostgreSQL.                                |
-| `scripts/`                     | Scripts Node.js para tareas auxiliares (migraciones, tests de conexión).                     |
-| `docs/`                        | Documentación técnica detallada (arquitectura, componentes, base de datos).                  |
+| Directorio                     | Propósito                                                                                              |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------ |
+| `src/app/`                     | Sistema de rutas basado en el App Router de Next.js. Cada subdirectorio representa una ruta.           |
+| `src/app/auth/callback/`       | Ruta de callback OAuth para manejo de sesión post-autenticación y recovery de contraseña.              |
+| `src/app/auth/reset-password/` | Página de restablecimiento de contraseña con flujo completo de Supabase.                               |
+| `src/app/dashboard/`           | Dashboard principal con tabs de Notas, Prompts y Arena, sidebar responsive con filtros y estadísticas. |
+| `src/components/`              | Componentes React atómicos y reutilizables (autenticación, tarjetas, modales, arena).                  |
+| `src/lib/`                     | Lógica compartida: cliente de Supabase, helpers, utilidades.                                           |
+| `supabase/migrations/`         | Migraciones SQL versionadas para la base de datos PostgreSQL.                                          |
+| `scripts/`                     | Scripts Node.js para tareas auxiliares (migraciones, tests de conexión).                               |
+| `docs/`                        | Documentación técnica detallada (arquitectura, componentes, base de datos).                            |
 
 ---
 
@@ -436,16 +441,31 @@ Almacena las comparaciones de la Arena de LLMs.
 
 ---
 
+## 🎨 Colores Kimberlite
+
+| Elemento                | Color                                                     |
+| ----------------------- | --------------------------------------------------------- |
+| **Primario**            | Violeta `#8b5cf6` → Rosa `#d946ef` (degradado en botones) |
+| **Títulos de tarjetas** | Terracota `#b45309` (dark: `#d97706`)                     |
+| **Filtros sidebar**     | Azul `#3b82f6`                                            |
+| **Borde lateral**       | Violeta `#8b5cf6` (`border-l-4 border-primary`)           |
+
+---
+
 ## ✅ Estado del proyecto
 
 Todas las funcionalidades principales están **operativas y probadas**. La aplicación es **completamente responsive** y funciona correctamente en dispositivos móviles, tablets y escritorio.
 
 ### Novedades de esta sesión
 
-- ✅ **Diseño de tarjetas:** Nuevo estilo con borde lateral en color primario (violeta) en todas las tarjetas (Notas, Prompts y Arena). Más moderno y distintivo.
+- ✅ **Subida de archivos completamente funcional:** PDF, TXT y MD con extracción automática de texto. El contenido extraído se guarda correctamente en la nota.
+- ✅ **Sidebar responsive:** El sidebar se oculta en móviles con un menú hamburguesa. En pantallas grandes (`md:`) siempre está visible.
+- ✅ **Header adaptativo:** El header se adapta a móviles con botón de menú y botón "Nueva nota" más compacto.
 - ✅ **Colores de títulos:** Los títulos de las tarjetas ahora usan un tono terracota (`text-amber-700 dark:text-amber-400`) para mejorar la jerarquía visual y evitar la saturación de violeta.
+- ✅ **Etiquetas con Enter:** Se pueden añadir etiquetas presionando Enter en el campo de etiquetas (además de la coma).
+- ✅ **Copiar en Markdown:** Nuevo botón "Copiar MD" en las tarjetas de notas, prompts y arena.
+- ✅ **Diseño de tarjetas:** Nuevo estilo con borde lateral en color primario (violeta) en todas las tarjetas (Notas, Prompts y Arena). Más moderno y distintivo.
 - ✅ **Colores en el sidebar:** Los filtros (Modelos IA, Etiquetas, Por Fecha, Categorías) ahora usan azul en lugar de violeta, creando una paleta más equilibrada.
-- ✅ **Etiquetas con Enter:** Ahora se pueden añadir etiquetas presionando Enter en el campo de etiquetas, además de la coma. Funciona tanto en notas como en prompts.
 - ✅ **Selectores mejorados:** Los selectores de los modales ahora tienen un estilo personalizado con flecha SVG y mejor contraste en modo oscuro.
 - ✅ **Landing page mejorada:** Hero con logo grande, eslogan "The rock where diamonds are", subtítulo y botones CTA. Sección "Enterprise Grade" con features destacadas. Footer limpio y profesional.
 - ✅ **Login minimalista:** Logo grande y centrado, sin títulos ni badges innecesarios. Botón con degradado Kimberlite V2.
