@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 interface ArenaCardProps {
   comparison: {
@@ -115,17 +116,30 @@ export function ArenaCard({
 
       {/* Pie de tarjeta */}
       <div className="flex items-center justify-between pt-3 border-t border-primary/15">
-        <div className="flex items-center gap-1.5 text-on-surface-variant/50">
-          <span className="material-symbols-outlined text-[14px]">
-            calendar_today
-          </span>
-          <span className="font-label-sm text-[11px]">
-            {new Date(comparison.created_at).toLocaleDateString("es-ES", {
-              year: "numeric",
-              month: "short",
-              day: "numeric",
-            })}
-          </span>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1.5 text-on-surface-variant/50">
+            <span className="material-symbols-outlined text-[14px]">
+              calendar_today
+            </span>
+            <span className="font-label-sm text-[11px]">
+              {new Date(comparison.created_at).toLocaleDateString("es-ES", {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+              })}
+            </span>
+          </div>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              const markdown = `# Comparación: ${comparison.prompt}\n\n## ${comparison.responses.model1}\n${comparison.responses.response1}\n\n## ${comparison.responses.model2}\n${comparison.responses.response2}\n\n**Ganador:** ${comparison.winner === "model1" ? comparison.responses.model1 : comparison.winner === "model2" ? comparison.responses.model2 : "No definido"}\n\n---\n*Copiado desde Kimberlite*`;
+              navigator.clipboard.writeText(markdown);
+              toast.success("📋 Comparación copiada en Markdown");
+            }}
+            className="text-zinc-400 hover:text-primary transition-colors text-[11px]"
+          >
+            Copiar MD
+          </button>
         </div>
 
         <div className="flex items-center gap-2">

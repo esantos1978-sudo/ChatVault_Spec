@@ -183,6 +183,39 @@ export default function Dashboard({ user }: { user: any }) {
       setNotesLoading(false);
     }
   }
+  function resetNoteForm() {
+    setNoteTitle("");
+    setNoteContent("");
+    setNoteSummary("");
+    setNoteTags([]);
+    setNoteTagsInput("");
+    setNoteSourceUrl("");
+    setNoteSourceType("text");
+    setNoteAiModel("DeepSeek-R1");
+    setEditingNoteId(null);
+    setSelectedPromptId(null);
+    setFileContent("");
+    setFileName("");
+  }
+  function openNoteModal(note?: Note) {
+    if (note) {
+      setEditingNoteId(note.id);
+      setNoteTitle(note.title);
+      setNoteContent(note.content);
+      setNoteSummary(note.summary || "");
+      setNoteTags(note.tags || []);
+      setNoteTagsInput((note.tags || []).join(", "));
+      setNoteAiModel(note.ai_model || "DeepSeek-R1");
+      setNoteSourceType(
+        (note.source_type as "text" | "url" | "file") || "text",
+      );
+      setNoteSourceUrl(note.source_url || "");
+      setSelectedPromptId(note.prompt_id || null);
+    } else {
+      resetNoteForm();
+    }
+    setNoteModalOpen(true);
+  }
 
   const filteredNotes = notes
     .filter((n) => (showFavorites ? n.is_favorite === true : true))
@@ -375,9 +408,22 @@ export default function Dashboard({ user }: { user: any }) {
         editingNoteId ? "Actualizando nota..." : "Guardando nota...",
       );
 
+      // ✅ DETERMINAR EL CONTENIDO FINAL
+      let finalContent = noteContent.trim();
+
+      // ✅ SI ES UN ARCHIVO Y HAY CONTENIDO EXTRAÍDO, USARLO
+      if (noteSourceType === "file" && fileContent) {
+        finalContent = fileContent;
+        console.log(
+          "📄 Usando contenido del archivo:",
+          finalContent.length,
+          "caracteres",
+        );
+      }
+
       const noteData = {
         title: noteTitle.trim(),
-        content: noteContent.trim(),
+        content: finalContent, // 👈 AHORA USA EL CONTENIDO CORRECTO
         summary: noteSummary.trim() || null,
         tags: noteTags.length > 0 ? noteTags : null,
         ai_model: noteAiModel,
@@ -386,6 +432,8 @@ export default function Dashboard({ user }: { user: any }) {
         user_id: user.id,
         prompt_id: selectedPromptId,
       };
+
+      console.log("📤 Datos a guardar:", noteData);
 
       let result;
       if (editingNoteId) {
@@ -411,42 +459,6 @@ export default function Dashboard({ user }: { user: any }) {
       setNoteSaving(false);
     }
   };
-
-  function resetNoteForm() {
-    setNoteTitle("");
-    setNoteContent("");
-    setNoteSummary("");
-    setNoteTags([]);
-    setNoteTagsInput("");
-    setNoteSourceUrl("");
-    setNoteSourceType("text");
-    setNoteAiModel("DeepSeek-R1");
-    setEditingNoteId(null);
-    setSelectedPromptId(null);
-    setFileContent("");
-    setFileName("");
-  }
-
-  function openNoteModal(note?: Note) {
-    if (note) {
-      setEditingNoteId(note.id);
-      setNoteTitle(note.title);
-      setNoteContent(note.content);
-      setNoteSummary(note.summary || "");
-      setNoteTags(note.tags || []);
-      setNoteTagsInput((note.tags || []).join(", "));
-      setNoteAiModel(note.ai_model || "DeepSeek-R1");
-      setNoteSourceType(
-        (note.source_type as "text" | "url" | "file") || "text",
-      );
-      setNoteSourceUrl(note.source_url || "");
-      setSelectedPromptId(note.prompt_id || null);
-    } else {
-      resetNoteForm();
-    }
-    setNoteModalOpen(true);
-  }
-
   // ==================== HANDLE SUBMIT PROMPTS ====================
   const handlePromptSubmit = async () => {
     if (!promptTitle.trim() || !promptContent.trim()) {

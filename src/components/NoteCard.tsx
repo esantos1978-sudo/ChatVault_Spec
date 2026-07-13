@@ -1,5 +1,7 @@
 "use client";
 
+import toast from "react-hot-toast";
+
 interface NoteCardProps {
   note: {
     id: string;
@@ -224,17 +226,30 @@ export function NoteCard({
           )}
         </div>
 
-        <div className="flex items-center justify-end gap-1.5 text-on-surface-variant/50">
-          <span className="material-symbols-outlined text-[14px]">
-            calendar_today
-          </span>
-          <span className="font-label-sm text-[11px]">
-            {new Date(note.created_at).toLocaleDateString("es-ES", {
-              year: "numeric",
-              month: "short",
-              day: "numeric",
-            })}
-          </span>
+        <div className="flex items-center justify-between text-on-surface-variant/50">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              const markdown = `# ${note.title}\n\n${note.content}\n\n---\n*Copiado desde Kimberlite*`;
+              navigator.clipboard.writeText(markdown);
+              toast.success("📋 Nota copiada en Markdown");
+            }}
+            className="text-zinc-400 hover:text-primary transition-colors text-[11px]"
+          >
+            Copiar MD
+          </button>
+          <div className="flex items-center gap-1.5">
+            <span className="material-symbols-outlined text-[14px]">
+              calendar_today
+            </span>
+            <span className="font-label-sm text-[11px]">
+              {new Date(note.created_at).toLocaleDateString("es-ES", {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+              })}
+            </span>
+          </div>
         </div>
       </div>
     </div>

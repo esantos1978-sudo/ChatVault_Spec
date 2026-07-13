@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 interface PromptCardProps {
   prompt: {
@@ -167,33 +168,50 @@ export function PromptCard({
         </div>
 
         <div className="flex items-center justify-between text-on-surface-variant/50">
-          <div className="flex items-center gap-1.5">
-            <span className="material-symbols-outlined text-[14px]">bolt</span>
-            <span className="font-label-sm text-[11px]">
-              {prompt.times_used} usos
-            </span>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1.5">
+              <span className="material-symbols-outlined text-[14px]">
+                bolt
+              </span>
+              <span className="font-label-sm text-[11px]">
+                {prompt.times_used} usos
+              </span>
+            </div>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                const markdown = `## ${prompt.title}\n\n**Categoría:** ${prompt.category}\n\n${prompt.content}\n\n---\n*Copiado desde Kimberlite*`;
+                navigator.clipboard.writeText(markdown);
+                toast.success("📋 Prompt copiado en Markdown");
+              }}
+              className="text-zinc-400 hover:text-primary transition-colors text-[11px]"
+            >
+              Copiar MD
+            </button>
           </div>
-          <div className="flex items-center gap-1.5">
-            <span className="material-symbols-outlined text-[14px]">
-              calendar_today
-            </span>
-            <span className="font-label-sm text-[11px]">
-              {new Date(prompt.created_at).toLocaleDateString("es-ES", {
-                year: "numeric",
-                month: "short",
-                day: "numeric",
-              })}
-            </span>
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5">
+              <span className="material-symbols-outlined text-[14px]">
+                calendar_today
+              </span>
+              <span className="font-label-sm text-[11px]">
+                {new Date(prompt.created_at).toLocaleDateString("es-ES", {
+                  year: "numeric",
+                  month: "short",
+                  day: "numeric",
+                })}
+              </span>
+            </div>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleCopy();
+              }}
+              className="px-3 py-1 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 text-[10px] font-bold transition-colors"
+            >
+              {copied ? "✅ Copiado" : "📋 Copiar"}
+            </button>
           </div>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              handleCopy();
-            }}
-            className="px-3 py-1 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 text-[10px] font-bold transition-colors"
-          >
-            {copied ? "✅ Copiado" : "📋 Copiar"}
-          </button>
         </div>
       </div>
     </div>
