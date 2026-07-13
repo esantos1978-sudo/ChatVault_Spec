@@ -139,7 +139,7 @@ export default function ArenaModal({
                   setCustomModel1("");
                 }
               }}
-              className="w-full rounded-xl border-0 bg-zinc-100/80 dark:bg-zinc-800/80 px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-blue-500/50 dark:focus:ring-blue-400/50 transition-all duration-200"
+              className="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-200 appearance-none cursor-pointer"
             >
               <option value="ChatGPT-4o">💬 ChatGPT-4o</option>
               <option value="ChatGPT-4o-mini">💬 ChatGPT-4o-mini</option>
@@ -218,7 +218,7 @@ export default function ArenaModal({
                   setCustomModel2("");
                 }
               }}
-              className="w-full rounded-xl border-0 bg-zinc-100/80 dark:bg-zinc-800/80 px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-blue-500/50 dark:focus:ring-blue-400/50 transition-all duration-200"
+              className="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-200 appearance-none cursor-pointer"
             >
               <option value="ChatGPT-4o">💬 ChatGPT-4o</option>
               <option value="ChatGPT-4o-mini">💬 ChatGPT-4o-mini</option>

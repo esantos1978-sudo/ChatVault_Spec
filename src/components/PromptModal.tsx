@@ -127,7 +127,7 @@ export default function PromptModal({
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              className="w-full rounded-xl border-0 bg-zinc-100/80 dark:bg-zinc-800/80 px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-blue-500/50 dark:focus:ring-blue-400/50 transition-all duration-200"
+              className="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-200 appearance-none cursor-pointer"
             >
               {CATEGORIES.map((cat) => (
                 <option key={cat.value} value={cat.value}>
@@ -137,7 +137,7 @@ export default function PromptModal({
             </select>
           </div>
 
-          {/* Etiquetas */}
+          {/* ETIQUETAS */}
           <div>
             <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1.5">
               🏷️ Etiquetas
@@ -149,13 +149,16 @@ export default function PromptModal({
                 onChange={(e) => {
                   const raw = e.target.value;
                   setTagsInput(raw);
-                  const array = raw
-                    .split(",")
-                    .map((t) => t.trim())
-                    .filter((t) => t.length > 0);
-                  setTags(array);
-                  const lastTag =
-                    array.length > 0 ? array[array.length - 1] : "";
+
+                  if (raw.includes(",")) {
+                    const array = raw
+                      .split(",")
+                      .map((t) => t.trim())
+                      .filter((t) => t.length > 0);
+                    setTags(array);
+                  }
+
+                  const lastTag = raw.split(",").pop()?.trim() || "";
                   if (lastTag.length > 0) {
                     const filtered = allTags.filter((t) =>
                       t.toLowerCase().includes(lastTag.toLowerCase()),
@@ -177,9 +180,33 @@ export default function PromptModal({
                     setSelectedSuggestion((prev: number) =>
                       prev > 0 ? prev - 1 : -1,
                     );
-                  } else if (e.key === "Enter" && selectedSuggestion >= 0) {
+                  } else if (e.key === "Enter") {
                     e.preventDefault();
-                    addSuggestion(selectedSuggestion);
+
+                    if (
+                      selectedSuggestion >= 0 &&
+                      selectedSuggestion < suggestions.length
+                    ) {
+                      addSuggestion(selectedSuggestion);
+                      return;
+                    }
+
+                    const raw = tagsInput.trim();
+                    if (raw) {
+                      const cleanTags = raw
+                        .split(",")
+                        .map((t) => t.trim())
+                        .filter((t) => t.length > 0);
+
+                      if (cleanTags.length > 0) {
+                        const allTags = [...tags, ...cleanTags];
+                        const uniqueTags = Array.from(new Set(allTags));
+                        setTags(uniqueTags);
+                        setTagsInput(uniqueTags.join(", "));
+                        setShowSuggestions(false);
+                        setSelectedSuggestion(-1);
+                      }
+                    }
                   } else if (e.key === "Escape") {
                     setShowSuggestions(false);
                     setSelectedSuggestion(-1);
@@ -251,7 +278,6 @@ export default function PromptModal({
               )}
             </div>
           </div>
-
           {/* Contenido del Prompt */}
           <div>
             <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1.5">

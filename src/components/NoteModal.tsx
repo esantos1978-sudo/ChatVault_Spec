@@ -264,7 +264,7 @@ export default function NoteModal({
                     setAiModel("otro");
                   }
                 }}
-                className="w-full rounded-xl border-0 bg-zinc-100/80 dark:bg-zinc-800/80 px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-blue-500/50 dark:focus:ring-blue-400/50 transition-all duration-200"
+                className="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-200 appearance-none cursor-pointer"
               >
                 <option value="ChatGPT-4o">💬 ChatGPT-4o</option>
                 <option value="ChatGPT-4o-mini">💬 ChatGPT-4o-mini</option>
@@ -341,6 +341,8 @@ export default function NoteModal({
                     }
                   }}
                   onKeyDown={(e) => {
+                    console.log("🔑 Tecla presionada:", e.key);
+
                     if (e.key === "ArrowDown") {
                       e.preventDefault();
                       setSelectedSuggestion((prev: number) =>
@@ -351,9 +353,47 @@ export default function NoteModal({
                       setSelectedSuggestion((prev: number) =>
                         prev > 0 ? prev - 1 : -1,
                       );
-                    } else if (e.key === "Enter" && selectedSuggestion >= 0) {
+                    } else if (e.key === "Enter") {
                       e.preventDefault();
-                      addSuggestion(selectedSuggestion);
+                      console.log("📦 Enter detectado - tagsInput:", tagsInput);
+
+                      // Si hay sugerencia seleccionada, la usamos
+                      if (
+                        selectedSuggestion >= 0 &&
+                        selectedSuggestion < suggestions.length
+                      ) {
+                        console.log("✅ Usando sugerencia seleccionada");
+                        addSuggestion(selectedSuggestion);
+                        return;
+                      }
+
+                      // Si no, añadir el texto actual como etiqueta
+                      const raw = tagsInput.trim();
+                      console.log("📝 Texto raw:", raw);
+
+                      if (raw) {
+                        // Limpiar el texto: eliminar comas y espacios
+                        const cleanTags = raw
+                          .split(",")
+                          .map((t) => t.trim())
+                          .filter((t) => t.length > 0);
+
+                        console.log("🏷️ Etiquetas a añadir:", cleanTags);
+
+                        if (cleanTags.length > 0) {
+                          // Combinar con las etiquetas existentes
+                          const allTags = [...tags, ...cleanTags];
+                          // Eliminar duplicados
+                          const uniqueTags = Array.from(new Set(allTags));
+                          setTags(uniqueTags);
+                          setTagsInput(uniqueTags.join(", "));
+                          setShowSuggestions(false);
+                          setSelectedSuggestion(-1);
+                          console.log("✅ Etiquetas actualizadas:", uniqueTags);
+                        }
+                      } else {
+                        console.log("⚠️ No hay texto para añadir");
+                      }
                     } else if (e.key === "Escape") {
                       setShowSuggestions(false);
                       setSelectedSuggestion(-1);
@@ -393,7 +433,7 @@ export default function NoteModal({
                           {suggestion}
                           <span className="text-[10px] text-zinc-400 ml-auto">
                             {allTags.filter((t) => t === suggestion).length}{" "}
-                            notas
+                            usos
                           </span>
                         </span>
                       </button>
@@ -436,7 +476,7 @@ export default function NoteModal({
             <select
               value={selectedPromptId || ""}
               onChange={(e) => setSelectedPromptId(e.target.value || null)}
-              className="w-full rounded-xl border-0 bg-zinc-100/80 dark:bg-zinc-800/80 px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-blue-500/50 dark:focus:ring-blue-400/50 transition-all duration-200"
+              className="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-200 appearance-none cursor-pointer"
             >
               <option value="">Ninguno</option>
               {prompts.map((p) => (

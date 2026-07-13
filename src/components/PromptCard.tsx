@@ -79,7 +79,7 @@ export function PromptCard({
 
   return (
     <div
-      className="group bg-surface-container border border-primary/40 rounded-2xl p-6 hover:border-primary/70 hover:bg-primary/10 hover:shadow-xl hover:shadow-primary/20 hover:-translate-y-1 transition-all duration-300 flex flex-col h-full relative overflow-hidden cursor-pointer"
+      className="group bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 border-l-4 border-l-primary hover:shadow-lg hover:-translate-y-1 transition-all duration-300 p-5 flex flex-col h-full relative overflow-hidden cursor-pointer"
       onClick={() => onEdit(prompt)}
     >
       {/* Cabecera: Badge + Favoritos + Eliminar */}
@@ -134,10 +134,9 @@ export function PromptCard({
       </div>
 
       {/* Título */}
-      <h3 className="text-base font-bold text-primary mb-2 group-hover:text-primary/80 transition-colors line-clamp-1">
+      <h3 className="text-base font-bold text-amber-700 dark:text-amber-400 mb-2 group-hover:text-amber-600 dark:group-hover:text-amber-300 transition-colors line-clamp-1">
         {prompt.title}
       </h3>
-
       {/* Contenido */}
       <p className="font-body-sm text-on-surface-variant/80 flex-grow mb-4 line-clamp-3 text-sm leading-relaxed">
         {prompt.content}

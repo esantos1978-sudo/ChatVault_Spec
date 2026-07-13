@@ -6,7 +6,7 @@
 ![Supabase](https://img.shields.io/badge/Supabase-2.0-green?style=flat-square&logo=supabase)
 ![Vercel](https://img.shields.io/badge/Vercel-Deployed-black?style=flat-square&logo=vercel)
 
-**Your data, refined & resilient.** Kimberlite (anteriormente ChatVault) es una aplicación web moderna para organizar conversaciones con IA, gestionar prompts reutilizables y comparar modelos de lenguaje. Construida con Next.js 16, TypeScript, Tailwind CSS v4 y Supabase, ofrece una experiencia premium con autenticación segura, CRUD completo de notas y prompts, scraping inteligente de URLs, carga de archivos (PDF, TXT, MD) con extracción automática de texto, sistema de etiquetas independientes por sección, filtros avanzados, una **Arena de LLMs** para comparar respuestas, **sistema de favoritos** ⭐, enlace entre notas y prompts, y un diseño oscuro optimizado con la paleta de violetas característica de Kimberlite.
+**Your data, refined & resilient.** Kimberlite (anteriormente ChatVault) es una aplicación web moderna para organizar conversaciones con IA, gestionar prompts reutilizables y comparar modelos de lenguaje. Construida con Next.js 16, TypeScript, Tailwind CSS v4 y Supabase, ofrece una experiencia premium con autenticación segura, CRUD completo de notas y prompts, scraping inteligente de URLs, carga de archivos (PDF, TXT, MD) con extracción automática de texto, sistema de etiquetas independientes por sección, filtros avanzados, una **Arena de LLMs** para comparar respuestas, **sistema de favoritos** ⭐, enlace entre notas y prompts, y un diseño oscuro optimizado con paleta equilibrada de violetas, azules y terracota.
 
 ---
 
@@ -29,24 +29,27 @@
 
 Kimberlite presenta una identidad visual premium con una paleta de violetas característica:
 
-| Elemento                | Detalle                                                              |
-| ----------------------- | -------------------------------------------------------------------- |
-| **Colores principales** | Violetas `#8b5cf6` a `#7c3aed`                                       |
-| **Degradado V2**        | `kimberlite-gradient` en botones principales (`#8b5cf6` → `#d946ef`) |
-| **Iconos**              | Material Symbols (Google Fonts) en lugar de emojis                   |
-| **Tarjetas**            | Diseño premium con borde violeta sutil y hover con fondo violeta     |
-| **Logo**                | Centrado y más grande en el sidebar, con fondo transparente          |
-| **Modo oscuro**         | Optimizado y coherente en toda la aplicación                         |
+| Elemento                | Detalle                                                                                          |
+| ----------------------- | ------------------------------------------------------------------------------------------------ |
+| **Colores principales** | Violetas `#8b5cf6` a `#7c3aed`                                                                   |
+| **Degradado V2**        | `kimberlite-gradient` en botones principales (`#8b5cf6` → `#d946ef`)                             |
+| **Iconos**              | Material Symbols (Google Fonts) en lugar de emojis                                               |
+| **Tarjetas**            | Diseño premium con borde lateral violeta (`border-l-4 border-primary`) y hover con fondo violeta |
+| **Logo**                | Centrado y más grande en el sidebar, con fondo transparente                                      |
+| **Modo oscuro**         | Optimizado y coherente en toda la aplicación                                                     |
 
 ### ✨ Novedades de diseño
 
 - **Landing page mejorada:** Hero con logo grande, eslogan "The rock where diamonds are", subtítulo y botones CTA. Sección "Enterprise Grade" con features destacadas. Footer limpio y profesional.
 - **Login minimalista:** Logo grande y centrado, sin títulos ni badges innecesarios. Botón con degradado Kimberlite V2.
 - **Degradado Kimberlite V2:** Nuevo degradado violeta-rosa (`#8b5cf6` → `#d946ef`) en todos los botones principales.
-- **Títulos de notas en violeta:** Los títulos de las tarjetas ahora usan el color primario de Kimberlite para mejorar la jerarquía visual.
+- **Títulos en terracota:** Los títulos de las tarjetas ahora usan un tono terracota (`text-amber-700 dark:text-amber-400`) para mejorar la jerarquía visual y evitar la saturación de violeta.
 - **Logo sin fondo:** Logo con fondo transparente en toda la app.
 - **Sidebar** con Material Symbols (`neurology`, `sell`, `calendar_month`, `folder`, `analytics`, `star`, `logout`) y logo centrado de mayor tamaño con fondo transparente.
-- **Tarjetas de notas, prompts y arena** con diseño premium, borde violeta (`border-primary/40`), hover con fondo violeta (`hover:bg-primary/10`) y sombras premium.
+- **Filtros en azul:** Los filtros del sidebar (Modelos IA, Etiquetas, Por Fecha, Categorías) ahora usan azul en lugar de violeta, creando una paleta más equilibrada.
+- **Tarjetas con borde lateral violeta:** Nuevo estilo con borde lateral en color primario (`border-l-4 border-primary`) en todas las tarjetas (Notas, Prompts y Arena). Más moderno y distintivo.
+- **Selectores personalizados:** Los selectores de los modales tienen un estilo personalizado con flecha SVG y mejor contraste en modo oscuro.
+- **Etiquetas con Enter:** Ahora se pueden añadir etiquetas presionando Enter en el campo de etiquetas, además de la coma. Funciona tanto en notas como en prompts.
 - **Modo oscuro** optimizado y coherente en toda la aplicación.
 - **Scrollbar personalizado** en toda la aplicación con diseño thin y colores adaptados al modo oscuro.
 
@@ -78,7 +81,9 @@ Kimberlite presenta una identidad visual premium con una paleta de violetas cara
 - **Editar** cualquier nota directamente desde la tarjeta con un clic.
 - **Eliminar** notas con confirmación previa y feedback visual mediante toast.
 - **Tres métodos de entrada:** texto manual, scraping de URLs o carga de archivos (PDF, TXT, MD).
-- **Títulos en violeta:** los títulos de las tarjetas usan el color primario de Kimberlite para mejorar la jerarquía visual.
+- **Títulos en terracota:** los títulos de las tarjetas usan un tono terracota (`text-amber-700 dark:text-amber-400`) para mejorar la jerarquía visual y evitar la saturación de violeta.
+- **Etiquetas con Enter:** se pueden añadir etiquetas presionando Enter, además de la coma.
+- **Borde lateral violeta:** las tarjetas tienen un borde lateral izquierdo en color primario (`border-l-4 border-primary`) que las hace más modernas y distintivas.
 
 ### 🌐 Scraping inteligente de URLs
 
@@ -159,6 +164,7 @@ Kimberlite presenta una identidad visual premium con una paleta de violetas cara
 - **Rango de fechas personalizado:** calendario con selector "Desde" y "Hasta" para filtrar por cualquier período.
 - **Filtro por categorías** en la sección de prompts (imagen, texto, código, video, MCP, otro).
 - **Combinación de filtros:** todos los filtros se pueden usar simultáneamente.
+- **Filtros en azul:** Los filtros del sidebar (Modelos IA, Etiquetas, Por Fecha, Categorías) ahora usan azul en lugar de violeta, creando una paleta más equilibrada.
 - **Sidebar reordenado:** Modelos de IA → Etiquetas → Fechas, para una navegación más intuitiva.
 
 ### ⌨️ Atajo de teclado (⌘K)
@@ -436,18 +442,22 @@ Todas las funcionalidades principales están **operativas y probadas**. La aplic
 
 ### Novedades de esta sesión
 
+- ✅ **Diseño de tarjetas:** Nuevo estilo con borde lateral en color primario (violeta) en todas las tarjetas (Notas, Prompts y Arena). Más moderno y distintivo.
+- ✅ **Colores de títulos:** Los títulos de las tarjetas ahora usan un tono terracota (`text-amber-700 dark:text-amber-400`) para mejorar la jerarquía visual y evitar la saturación de violeta.
+- ✅ **Colores en el sidebar:** Los filtros (Modelos IA, Etiquetas, Por Fecha, Categorías) ahora usan azul en lugar de violeta, creando una paleta más equilibrada.
+- ✅ **Etiquetas con Enter:** Ahora se pueden añadir etiquetas presionando Enter en el campo de etiquetas, además de la coma. Funciona tanto en notas como en prompts.
+- ✅ **Selectores mejorados:** Los selectores de los modales ahora tienen un estilo personalizado con flecha SVG y mejor contraste en modo oscuro.
 - ✅ **Landing page mejorada:** Hero con logo grande, eslogan "The rock where diamonds are", subtítulo y botones CTA. Sección "Enterprise Grade" con features destacadas. Footer limpio y profesional.
 - ✅ **Login minimalista:** Logo grande y centrado, sin títulos ni badges innecesarios. Botón con degradado Kimberlite V2.
 - ✅ **Recuperación de contraseña:** Implementada con Supabase. Flujo completo: "Forgot?" → email → reset-password.
 - ✅ **Degradado Kimberlite V2:** Nuevo degradado violeta-rosa (`#8b5cf6` → `#d946ef`) en todos los botones principales.
-- ✅ **Títulos de notas en violeta:** Los títulos de las tarjetas ahora usan el color primario de Kimberlite para mejorar la jerarquía visual.
 - ✅ **Logo sin fondo:** Logo con fondo transparente en toda la app.
 - ✅ **Sidebar con Material Symbols** y logo centrado de mayor tamaño con fondo transparente.
-- ✅ **Tarjetas de notas, prompts y arena** con diseño premium y paleta de violetas característica.
 - ✅ **Modo oscuro optimizado** y coherente en toda la aplicación.
 - ✅ **Scrollbar personalizado** en toda la aplicación con diseño thin y colores adaptados al modo oscuro.
 - ✅ **Atajo de teclado ⌘K** para búsqueda rápida de notas y prompts.
 - ✅ **Callback OAuth** implementado en `/auth/callback/route.ts` para autenticación con proveedores externos.
+- ✅ **Google OAuth configurado** (pendiente de URL definitiva).
 
 ---
 
