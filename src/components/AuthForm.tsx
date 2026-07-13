@@ -14,6 +14,7 @@ export default function AuthForm({ onAuth }: AuthFormProps) {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // ==================== LOGIN / REGISTRO ====================
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -42,6 +43,7 @@ export default function AuthForm({ onAuth }: AuthFormProps) {
       setLoading(false);
     }
   };
+
   // ==================== RECUPERACIÓN DE CONTRASEÑA ====================
   const handleForgotPassword = async () => {
     if (!email) {
@@ -60,11 +62,22 @@ export default function AuthForm({ onAuth }: AuthFormProps) {
     }
   };
 
-  // Funciones OAuth (placeholder)
+  // ==================== OAuth GOOGLE ====================
   const handleGoogleLogin = async () => {
-    toast("Google login coming soon!");
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
+      if (error) throw error;
+    } catch (error: any) {
+      toast.error(error.message);
+    }
   };
 
+  // ==================== OAuth GITHUB (placeholder) ====================
   const handleGitHubLogin = async () => {
     toast("GitHub login coming soon!");
   };
@@ -79,23 +92,15 @@ export default function AuthForm({ onAuth }: AuthFormProps) {
       <div className="absolute -bottom-48 -right-48 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[120px]" />
 
       <div className="w-full max-w-md relative z-10">
-        {/* Logo y título */}
-        <div className="w-full max-w-md relative z-10">
-          <div className="text-center mb-10">
-            <div className="flex items-center justify-center">
-              <img
-                src="/images/kimberlite-logo.png"
-                alt="Kimberlite"
-                className="h-20 w-auto md:h-24"
-              />
-            </div>
+        {/* Logo - Protagonista absoluto */}
+        <div className="text-center mb-10">
+          <div className="flex items-center justify-center">
+            <img
+              src="/images/kimberlite-logo.png"
+              alt="Kimberlite"
+              className="h-20 w-auto md:h-24"
+            />
           </div>
-
-          {/* Formulario */}
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {/* ... */}
-          </form>
-          {/* ... */}
         </div>
 
         {/* Formulario */}
@@ -172,7 +177,7 @@ export default function AuthForm({ onAuth }: AuthFormProps) {
         </div>
 
         {/* Social login */}
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3">
           <button
             type="button"
             onClick={handleGoogleLogin}
@@ -196,17 +201,7 @@ export default function AuthForm({ onAuth }: AuthFormProps) {
                 fill="#EA4335"
               />
             </svg>
-            Google
-          </button>
-          <button
-            type="button"
-            onClick={handleGitHubLogin}
-            className="flex items-center justify-center gap-2 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-4 py-2.5 text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 hover:border-primary/30 transition-all duration-200"
-          >
-            <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.468-2.38 1.235-3.22-.123-.3-.535-1.52.117-3.16 0 0 1.008-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.29-1.552 3.297-1.23 3.297-1.23.653 1.64.24 2.86.118 3.16.768.84 1.233 1.91 1.233 3.22 0 4.61-2.804 5.62-5.476 5.92.43.37.824 1.102.824 2.22 0 1.602-.015 2.894-.015 3.287 0 .322.216.694.825.577C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" />
-            </svg>
-            GitHub
+            Continue with Google
           </button>
         </div>
 
