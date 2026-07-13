@@ -52,6 +52,7 @@ export default function Dashboard({ user }: { user: any }) {
     "notes",
   );
   const [showFavorites, setShowFavorites] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // ==================== ESTADOS PARA NOTAS ====================
   const [notes, setNotes] = useState<Note[]>([]);
@@ -662,14 +663,30 @@ export default function Dashboard({ user }: { user: any }) {
   return (
     <div className="flex h-screen w-screen bg-zinc-100 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-50 overflow-hidden">
       {/* ================= SIDEBAR ================= */}
-      <aside className="w-64 border-r border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-800 dark:bg-zinc-900/60 flex flex-col gap-4 select-none h-full overflow-y-auto">
-        {/* LOGO */}
-        <div className="flex justify-center py-2">
-          <img
-            src="/images/kimberlite-logo.png"
-            alt="Kimberlite"
-            className="h-12 w-auto"
-          />
+      <aside
+        className={`fixed md:relative top-0 left-0 z-50 w-64 h-full border-r border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-800 dark:bg-zinc-900/60 flex flex-col gap-4 select-none overflow-y-auto transition-transform duration-300 ${
+          sidebarOpen ? "translate-x-0" : "-translate-x-full"
+        } md:translate-x-0`}
+      >
+        {/* 🔒 LOGO con botón cerrar */}
+        <div className="flex items-center justify-between px-2">
+          <div className="flex items-center gap-2">
+            <img
+              src="/images/kimberlite-logo.png"
+              alt="Kimberlite"
+              className="h-8 w-auto"
+            />
+            <h1 className="text-lg font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
+              Kimberlite
+            </h1>
+          </div>
+          {/* Botón cerrar sidebar (solo móviles) */}
+          <button
+            onClick={() => setSidebarOpen(false)}
+            className="md:hidden p-1 text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 transition-colors"
+          >
+            <span className="material-symbols-outlined text-[20px]">close</span>
+          </button>
         </div>
 
         {/* TABS: Notas / Prompts / Arena */}
@@ -1138,10 +1155,18 @@ export default function Dashboard({ user }: { user: any }) {
 
       {/* ================= CONTENIDO PRINCIPAL ================= */}
       <main className="flex-1 flex flex-col overflow-hidden bg-white dark:bg-zinc-950 pt-20">
-        {/* ================= HEADER ================= */}
-        <header className="h-20 fixed top-0 right-0 left-[256px] z-10 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-md border-b border-zinc-200/50 dark:border-zinc-800/50 flex items-center justify-between px-8">
+        <header className="h-20 fixed top-0 right-0 left-0 md:left-[256px] z-10 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-md border-b border-zinc-200/50 dark:border-zinc-800/50 flex items-center justify-between px-4 md:px-8">
+          {/* Botón de menú (solo en móviles) */}
+          <button
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="md:hidden p-2 text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 transition-colors"
+            aria-label="Abrir menú"
+          >
+            <span className="material-symbols-outlined text-[24px]">menu</span>
+          </button>
+
           {/* Búsqueda */}
-          <div className="flex-1 max-w-2xl">
+          <div className="flex-1 max-w-2xl ml-2 md:ml-0">
             <div className="relative group">
               <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 group-focus-within:text-primary transition-colors">
                 search
@@ -1168,32 +1193,43 @@ export default function Dashboard({ user }: { user: any }) {
           </div>
 
           {/* Botones de acción */}
-          <div className="flex items-center gap-6">
-            <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 md:gap-6">
+            <div className="flex items-center gap-1 md:gap-2">
               <button className="p-2 text-zinc-400 hover:text-primary hover:bg-primary/10 rounded-full transition-all">
-                <span className="material-symbols-outlined">notifications</span>
+                <span className="material-symbols-outlined text-[20px] md:text-[24px]">
+                  notifications
+                </span>
               </button>
               <button className="p-2 text-zinc-400 hover:text-primary hover:bg-primary/10 rounded-full transition-all">
-                <span className="material-symbols-outlined">help</span>
+                <span className="material-symbols-outlined text-[20px] md:text-[24px]">
+                  help
+                </span>
               </button>
             </div>
 
-            <div className="h-8 w-px bg-zinc-200 dark:bg-zinc-800" />
+            <div className="h-8 w-px bg-zinc-200 dark:bg-zinc-800 hidden md:block" />
 
-            {/* Botón Nueva nota / Nuevo prompt / Nueva comparación */}
+            {/* Botón Nueva nota */}
             <button
               onClick={() => {
                 if (activeTab === "notes") openNoteModal();
                 else if (activeTab === "prompts") openPromptModal();
                 else setArenaModalOpen(true);
               }}
-              className="flex items-center gap-2 gemstone-gradient text-white px-4 py-2.5 rounded-xl font-bold shadow-lg shadow-primary/25 hover:shadow-primary/40 hover:scale-[1.02] active:scale-[0.98] transition-all"
+              className="flex items-center gap-2 gemstone-gradient text-white px-3 py-2 md:px-5 md:py-2.5 rounded-xl font-bold shadow-lg shadow-primary/25 hover:shadow-primary/40 hover:scale-[1.02] active:scale-[0.98] transition-all text-sm md:text-base"
             >
-              <span className="material-symbols-outlined text-[20px]">add</span>
-              <span className="text-sm font-semibold">
+              <span className="material-symbols-outlined text-[18px] md:text-[20px]">
+                add
+              </span>
+              <span className="hidden sm:inline">
                 {activeTab === "notes" && "Nota"}
                 {activeTab === "prompts" && "Prompt"}
                 {activeTab === "arena" && "Batalla"}
+              </span>
+              <span className="sm:hidden">
+                {activeTab === "notes" && "+"}
+                {activeTab === "prompts" && "+"}
+                {activeTab === "arena" && "+"}
               </span>
             </button>
           </div>
