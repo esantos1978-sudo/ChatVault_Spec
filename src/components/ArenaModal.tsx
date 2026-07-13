@@ -114,7 +114,7 @@ export default function ArenaModal({
           {/* Prompt */}
           <div>
             <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1.5">
-              📝 Prompt a probar
+              PROMPT SELECCIONADO
             </label>
             <textarea
               rows={3}
@@ -128,7 +128,7 @@ export default function ArenaModal({
           {/* Modelo 1 */}
           <div>
             <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1.5">
-              🤖 Modelo 1
+              MODELO 1
             </label>
             <select
               value={model1}
@@ -139,7 +139,7 @@ export default function ArenaModal({
                   setCustomModel1("");
                 }
               }}
-              className="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-200 appearance-none cursor-pointer"
+              className="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-200 cursor-pointer"
             >
               <option value="ChatGPT-4o">💬 ChatGPT-4o</option>
               <option value="ChatGPT-4o-mini">💬 ChatGPT-4o-mini</option>
@@ -185,15 +185,15 @@ export default function ArenaModal({
                   }
                 }}
                 placeholder="Escribe el nombre del modelo y presiona Enter..."
-                className="mt-2 w-full rounded-xl border-0 bg-zinc-100/80 dark:bg-zinc-800/80 px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-blue-500/50 dark:focus:ring-blue-400/50 transition-all duration-200"
-              />
+                className="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-200 cursor-pointer"
+              ></input>
             )}
           </div>
 
           {/* Respuesta Modelo 1 */}
           <div>
             <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1.5">
-              📄 Contenido
+              CONTENIDO
             </label>
             <textarea
               rows={4}
@@ -207,7 +207,7 @@ export default function ArenaModal({
           {/* Modelo 2 */}
           <div>
             <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1.5">
-              🤖 Modelo 2
+              MODELO 2
             </label>
             <select
               value={model2}
@@ -218,7 +218,7 @@ export default function ArenaModal({
                   setCustomModel2("");
                 }
               }}
-              className="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-200 appearance-none cursor-pointer"
+              className="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-200 cursor-pointer"
             >
               <option value="ChatGPT-4o">💬 ChatGPT-4o</option>
               <option value="ChatGPT-4o-mini">💬 ChatGPT-4o-mini</option>
@@ -272,7 +272,7 @@ export default function ArenaModal({
           {/* Respuesta Modelo 2 */}
           <div>
             <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1.5">
-              📄 Contenido
+              CONTENIDO
             </label>
             <textarea
               rows={4}
@@ -286,7 +286,7 @@ export default function ArenaModal({
           {/* Votación */}
           <div>
             <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1.5">
-              🏆 ¿Qué modelo dio la mejor respuesta?
+              MEJOR RESPUESTA
             </label>
             <div className="flex gap-3">
               <button

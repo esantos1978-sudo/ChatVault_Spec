@@ -252,7 +252,7 @@ export default function NoteModal({
             {/* MODELO IA */}
             <div>
               <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1.5">
-                🤖 Modelo IA
+                MODELO IA
               </label>
               <select
                 value={aiModel === "otro" ? "otro" : aiModel}
@@ -264,8 +264,9 @@ export default function NoteModal({
                     setAiModel("otro");
                   }
                 }}
-                className="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-200 appearance-none cursor-pointer"
+                className="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-200 cursor-pointer"
               >
+                {" "}
                 <option value="ChatGPT-4o">💬 ChatGPT-4o</option>
                 <option value="ChatGPT-4o-mini">💬 ChatGPT-4o-mini</option>
                 <option value="ChatGPT-o1">🧠 ChatGPT-o1</option>
@@ -314,7 +315,7 @@ export default function NoteModal({
             {/* ETIQUETAS */}
             <div>
               <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1.5">
-                🏷️ Etiquetas
+                ETIQUETAS
               </label>
               <div className="relative">
                 <input
@@ -471,12 +472,12 @@ export default function NoteModal({
           {/* 🔗 SELECTOR DE PROMPT ASOCIADO */}
           <div>
             <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1.5">
-              🔗 Prompt asociado (opcional)
+              PROMPT ASOCIADO (opcional)
             </label>
             <select
               value={selectedPromptId || ""}
               onChange={(e) => setSelectedPromptId(e.target.value || null)}
-              className="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-200 appearance-none cursor-pointer"
+              className="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-200 cursor-pointer"
             >
               <option value="">Ninguno</option>
               {prompts.map((p) => (
@@ -492,7 +493,7 @@ export default function NoteModal({
             <div className="space-y-4">
               <div>
                 <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1.5">
-                  📌 Título
+                  TITULO
                 </label>
                 <input
                   type="text"
@@ -504,7 +505,7 @@ export default function NoteModal({
               </div>
               <div>
                 <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1.5">
-                  💬 Contenido del Chat
+                  CONTENIDO DEL CHAT
                 </label>
                 <textarea
                   rows={6}
@@ -527,7 +528,7 @@ export default function NoteModal({
               </div>
               <div>
                 <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1.5">
-                  📌 Título personalizado
+                  TITULO PERSONALIZADO
                 </label>
                 <input
                   type="text"
@@ -539,7 +540,7 @@ export default function NoteModal({
               </div>
               <div>
                 <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1.5">
-                  🔗 URL del Chat
+                  URL DEL CHAT
                 </label>
                 <input
                   type="url"
@@ -557,7 +558,7 @@ export default function NoteModal({
               {/* 📌 CAMPO DE TÍTULO */}
               <div>
                 <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1.5">
-                  📌 Título
+                  TITULO
                 </label>
                 <input
                   type="text"
@@ -632,7 +633,7 @@ export default function NoteModal({
           {/* RESUMEN */}
           <div>
             <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1.5">
-              📋 Resumen del hilo
+              RESUMEN DEL HILO
             </label>
             <textarea
               rows={3}

@@ -27,12 +27,10 @@ interface PromptModalProps {
 }
 
 const CATEGORIES = [
-  { value: "imagen", label: "🖼️ Imagen" },
-  { value: "texto", label: "📝 Texto" },
-  { value: "codigo", label: "💻 Código" },
-  { value: "video", label: "🎬 Video" },
-  { value: "mcp", label: "🔌 MCP" },
-  { value: "otro", label: "📂 Otro" },
+  { value: "imagen", label: "Imagen" },
+  { value: "texto", label: "Texto" },
+  { value: "codigo", label: "Código" },
+  { value: "video", label: "Video" },
 ];
 
 export default function PromptModal({
@@ -72,9 +70,7 @@ export default function PromptModal({
         <div className="flex items-center justify-between mb-6 pb-4 border-b border-zinc-200/50 dark:border-zinc-800/50">
           <div>
             <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50 tracking-tight">
-              {editingId
-                ? "✏️ Editar prompt"
-                : "📚 Guardar prompt reutilizable"}
+              {editingId ? "✏️ Editar prompt" : "📚 Nuevo Prompt"}
             </h2>
             <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-0.5">
               {editingId
@@ -108,7 +104,7 @@ export default function PromptModal({
           {/* Título */}
           <div>
             <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1.5">
-              📌 Titulo
+              TITULO
             </label>
             <input
               type="text"
@@ -122,12 +118,12 @@ export default function PromptModal({
           {/* Categoría */}
           <div>
             <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1.5">
-              📂 CATEGORIA
+              CATEGORIA
             </label>
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              className="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-200 appearance-none cursor-pointer"
+              className="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-200 cursor-pointer"
             >
               {CATEGORIES.map((cat) => (
                 <option key={cat.value} value={cat.value}>
@@ -140,7 +136,7 @@ export default function PromptModal({
           {/* ETIQUETAS */}
           <div>
             <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1.5">
-              🏷️ Etiquetas
+              ETIQUETAS
             </label>
             <div className="relative">
               <input
@@ -281,7 +277,7 @@ export default function PromptModal({
           {/* Contenido del Prompt */}
           <div>
             <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1.5">
-              📝 Prompt
+              PROMPT
             </label>
             <textarea
               rows={6}
