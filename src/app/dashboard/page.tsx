@@ -72,7 +72,6 @@ export default function Dashboard({ user }: { user: any }) {
   );
   const [noteTitle, setNoteTitle] = useState("");
   const [noteContent, setNoteContent] = useState("");
-  const [noteSummary, setNoteSummary] = useState("");
   const [noteTags, setNoteTags] = useState<string[]>([]);
   const [noteTagsInput, setNoteTagsInput] = useState("");
   const [noteSuggestions, setNoteSuggestions] = useState<string[]>([]);
@@ -191,7 +190,6 @@ export default function Dashboard({ user }: { user: any }) {
   function resetNoteForm() {
     setNoteTitle("");
     setNoteContent("");
-    setNoteSummary("");
     setNoteTags([]);
     setNoteTagsInput("");
     setNoteSourceUrl("");
@@ -207,7 +205,6 @@ export default function Dashboard({ user }: { user: any }) {
       setEditingNoteId(note.id);
       setNoteTitle(note.title);
       setNoteContent(note.content);
-      setNoteSummary(note.summary || "");
       setNoteTags(note.tags || []);
       setNoteTagsInput((note.tags || []).join(", "));
       setNoteAiModel(note.ai_model || "DeepSeek-R1");
@@ -429,7 +426,6 @@ export default function Dashboard({ user }: { user: any }) {
       const noteData = {
         title: noteTitle.trim(),
         content: finalContent, // 👈 AHORA USA EL CONTENIDO CORRECTO
-        summary: noteSummary.trim() || null,
         tags: noteTags.length > 0 ? noteTags : null,
         ai_model: noteAiModel,
         source_type: noteSourceType,
@@ -1141,8 +1137,7 @@ export default function Dashboard({ user }: { user: any }) {
                         Cada conversación importante merece conservarse
                       </h3>
                       <p className="text-sm text-zinc-500 mt-2 leading-relaxed">
-                        Guarda las respuestas que realmente aportan valor y
-                        conviértelas en conocimiento reutilizable.
+                        El conocimiento solo tiene valor si puedes encontrarlo.
                       </p>
                     </div>
 
@@ -1427,8 +1422,6 @@ export default function Dashboard({ user }: { user: any }) {
         setTitle={setNoteTitle}
         content={noteContent}
         setContent={setNoteContent}
-        summary={noteSummary}
-        setSummary={setNoteSummary}
         tags={noteTags}
         tagsInput={noteTagsInput}
         setTagsInput={setNoteTagsInput}
