@@ -1230,8 +1230,8 @@ export default function Dashboard({ user }: { user: any }) {
                   ))}
                 </div>
               ) : filteredPrompts.length === 0 ? (
-                <div className="flex flex-col items-center justify-center rounded-2xl border border-zinc-800/20 bg-zinc-900/20 px-8 py-16">
-                  <div className="max-w-md text-center space-y-6">
+                <div className="flex flex-col items-center justify-center rounded-2xl border border-zinc-800/20 bg-zinc-900/20 px-8 py-10 -mt-8">
+                  <div className="max-w-lg text-center space-y-6">
                     {/* Icono */}
                     <div className="mx-auto w-14 h-14 rounded-2xl bg-zinc-800/40 flex items-center justify-center">
                       <span className="material-symbols-outlined text-[28px] text-zinc-400">
@@ -1251,6 +1251,11 @@ export default function Dashboard({ user }: { user: any }) {
                       </p>
                     </div>
 
+                    {/* Frase de marca */}
+                    <p className="text-sm italic text-zinc-400 leading-relaxed">
+                      Un buen prompt no se escribe dos veces.
+                    </p>
+
                     {/* Botón */}
                     <button
                       onClick={() => openPromptModal()}
@@ -1264,7 +1269,7 @@ export default function Dashboard({ user }: { user: any }) {
 
                     {/* Tarjeta de ejemplo no interactiva */}
                     <div className="mt-10 opacity-80 pointer-events-none select-none">
-                      <div className="rounded-2xl border border-zinc-800/40 bg-zinc-900/60 p-5 text-left">
+                      <div className="rounded-2xl border border-zinc-800/40 bg-zinc-900/60 p-6 text-left">
                         <div className="flex items-start justify-between mb-3">
                           <div className="flex gap-2">
                             <span className="inline-flex items-center gap-1 rounded-md bg-emerald-500/10 px-2 py-0.5 text-[10px] font-medium text-emerald-400 border border-emerald-500/20">
@@ -1284,7 +1289,7 @@ export default function Dashboard({ user }: { user: any }) {
                         </p>
                       </div>
                       <p className="text-[10px] text-zinc-600 mt-3 text-center">
-                        Así se verán tus prompts cuando empieces a guardarlos
+                        Tus mejores prompts vivirán aquí.
                       </p>
                     </div>
                   </div>
