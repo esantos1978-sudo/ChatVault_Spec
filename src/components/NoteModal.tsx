@@ -369,16 +369,16 @@ export default function NoteModal({
       }}
     >
       <div
-        className="w-full max-w-4xl rounded-xl bg-zinc-900 shadow-premium border border-zinc-800/40 my-8 max-h-[90vh] overflow-y-auto animate-zoom-in"
+        className="w-full max-w-3xl rounded-xl bg-zinc-900 shadow-premium border border-zinc-800/40 my-8 max-h-[90vh] overflow-y-auto animate-zoom-in"
         onClick={(e) => e.stopPropagation()}
       >
         {/* HEADER */}
-        <div className="px-6 pt-6 pb-4 border-b border-zinc-800/30 flex items-start justify-between">
+        <div className="px-5 pt-5 pb-3 border-b border-zinc-800/30 flex items-start justify-between">
           <div>
-            <h2 className="text-xl font-semibold tracking-tight text-zinc-50">
+            <h2 className="text-lg font-semibold tracking-tight text-zinc-50">
               {editingNoteId ? "Editar Nota" : "Guardar conversación"}
             </h2>
-            <p className="text-xs text-zinc-500 mt-1">
+            <p className="text-xs text-zinc-500 mt-0.5">
               {editingNoteId
                 ? "Modifica los datos de esta conversación"
                 : "Archiva tus chats con IA de forma organizada"}
@@ -386,7 +386,7 @@ export default function NoteModal({
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg hover:bg-zinc-800/40 transition-all duration-200 group"
+            className="p-1 rounded-lg hover:bg-zinc-800/40 transition-all duration-200 group"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -394,7 +394,7 @@ export default function NoteModal({
               viewBox="0 0 24 24"
               strokeWidth={2}
               stroke="currentColor"
-              className="w-5 h-5 text-zinc-400 group-hover:text-zinc-100 transition-colors"
+              className="w-4 h-4 text-zinc-400 group-hover:text-zinc-100 transition-colors"
             >
               <path
                 strokeLinecap="round"
@@ -406,7 +406,7 @@ export default function NoteModal({
         </div>
 
         {/* CONTENIDO DEL MODAL */}
-        <div className="px-6 py-7 space-y-7">
+        <div className="px-5 py-5 space-y-5">
           {/* PESTAÑAS (tabs horizontales tipo Linear) */}
           <div className="flex gap-6 border-b border-zinc-800/30">
             <button
@@ -752,7 +752,7 @@ export default function NoteModal({
         </div>
 
         {/* FOOTER */}
-        <div className="px-6 pb-6 pt-5 border-t border-zinc-800/30 flex items-center justify-end gap-3">
+        <div className="px-5 pb-5 pt-4 border-t border-zinc-800/30 flex items-center justify-end gap-3">
           <button
             type="button"
             onClick={onClose}

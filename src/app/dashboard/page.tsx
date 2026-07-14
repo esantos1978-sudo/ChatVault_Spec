@@ -668,18 +668,13 @@ export default function Dashboard({ user }: { user: any }) {
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         } md:translate-x-0`}
       >
-        {/* LOGO */}
-        <div className="pt-6 pb-5 px-3">
-          <div className="flex items-center gap-2.5">
-            <img
-              src="/images/kimberlite-logo.png"
-              alt="Kimberlite"
-              className="h-7 w-auto"
-            />
-            <span className="text-sm font-semibold tracking-tight text-zinc-100">
-              Kimberlite
-            </span>
-          </div>
+        {/* LOGO - CENTRADO Y MÁS GRANDE */}
+        <div className="flex justify-center pt-6 pb-5 px-3">
+          <img
+            src="/images/kimberlite-logo.png"
+            alt="Kimberlite"
+            className="h-18 w-auto"
+          />
         </div>
 
         {/* NAVEGACIÓN PRINCIPAL */}
@@ -968,30 +963,26 @@ export default function Dashboard({ user }: { user: any }) {
             <div className="divider mx-3 my-2" />
             <div className="sidebar-section-label">Categorías</div>
             <div className="flex flex-col px-2 gap-0.5">
-              {["imagen", "texto", "codigo", "video", "mcp", "otro"].map(
-                (cat) => {
-                  const count = prompts.filter(
-                    (p) => p.category === cat,
-                  ).length;
-                  return (
-                    <button
-                      key={cat}
-                      onClick={() =>
-                        setSelectedPromptCategory(
-                          selectedPromptCategory === cat ? null : cat,
-                        )
-                      }
-                      className={`sidebar-item ${selectedPromptCategory === cat ? "active" : ""}`}
-                    >
-                      <span className="material-symbols-outlined text-[18px]">
-                        folder
-                      </span>
-                      <span className="capitalize">{cat}</span>
-                      <span className="count">{count}</span>
-                    </button>
-                  );
-                },
-              )}
+              {["imagen", "texto", "codigo", "video"].map((cat) => {
+                const count = prompts.filter((p) => p.category === cat).length;
+                return (
+                  <button
+                    key={cat}
+                    onClick={() =>
+                      setSelectedPromptCategory(
+                        selectedPromptCategory === cat ? null : cat,
+                      )
+                    }
+                    className={`sidebar-item ${selectedPromptCategory === cat ? "active" : ""}`}
+                  >
+                    <span className="material-symbols-outlined text-[18px]">
+                      folder
+                    </span>
+                    <span className="capitalize">{cat}</span>
+                    <span className="count">{count}</span>
+                  </button>
+                );
+              })}
             </div>
           </>
         )}
