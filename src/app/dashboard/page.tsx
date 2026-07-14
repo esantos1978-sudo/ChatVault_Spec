@@ -929,7 +929,7 @@ export default function Dashboard({ user }: { user: any }) {
                       setStartDate(e.target.value);
                       setDateFilter("all");
                     }}
-                    className="w-full text-[11px] rounded-lg border border-zinc-800 bg-zinc-900 px-2 py-1.5 text-zinc-300 focus:outline-none focus:border-zinc-600 focus:ring-1 focus:ring-zinc-500/30 transition-all"
+                    className="w-full text-[11px] rounded-lg border border-zinc-800 bg-zinc-950 px-2 py-1.5 text-zinc-300 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/20 transition-all duration-180"
                   />
                 </div>
                 <div>
@@ -943,7 +943,7 @@ export default function Dashboard({ user }: { user: any }) {
                       setEndDate(e.target.value);
                       setDateFilter("all");
                     }}
-                    className="w-full text-[11px] rounded-lg border border-zinc-800 bg-zinc-900 px-2 py-1.5 text-zinc-300 focus:outline-none focus:border-zinc-600 focus:ring-1 focus:ring-zinc-500/30 transition-all"
+                    className="w-full text-[11px] rounded-lg border border-zinc-800 bg-zinc-950 px-2 py-1.5 text-zinc-300 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/20 transition-all duration-180"
                   />
                 </div>
               </div>
@@ -1041,7 +1041,7 @@ export default function Dashboard({ user }: { user: any }) {
                     setPromptSearchQuery(e.target.value);
                   else setArenaSearchQuery(e.target.value);
                 }}
-                className="w-full bg-white dark:bg-zinc-900/80 border border-zinc-200/50 dark:border-zinc-800/40 rounded-xl py-2.5 pl-10 pr-4 text-sm text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-zinc-400 dark:focus:border-zinc-600 focus:ring-1 focus:ring-zinc-400/20 dark:focus:ring-zinc-600/20 transition-all duration-180"
+                className="w-full h-[44px] rounded-lg border border-zinc-800 bg-zinc-950 px-3 pl-10 text-sm text-zinc-100 placeholder:text-zinc-600 hover:border-zinc-700 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/20 transition-all duration-180"
               />
             </div>
           </div>
@@ -1088,13 +1088,17 @@ export default function Dashboard({ user }: { user: any }) {
         </header>
 
         {error && (
-          <div className="mx-6 mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600 dark:border-red-900 dark:bg-red-950/30 dark:text-red-400">
-            ❌ {error}
+          <div className="mx-6 mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600 dark:border-red-900 dark:bg-red-950/30 dark:text-red-400 flex items-center gap-2">
+            <span className="material-symbols-outlined text-[16px]">error</span>
+            {error}
           </div>
         )}
         {success && (
-          <div className="mx-6 mt-4 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-600 dark:border-green-900 dark:bg-green-950/30 dark:text-green-400">
-            ✅ {success}
+          <div className="mx-6 mt-4 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-600 dark:border-green-900 dark:bg-green-950/30 dark:text-green-400 flex items-center gap-2">
+            <span className="material-symbols-outlined text-[16px]">
+              check_circle
+            </span>
+            {success}
           </div>
         )}
 
@@ -1127,12 +1131,14 @@ export default function Dashboard({ user }: { user: any }) {
                   ))}
                 </div>
               ) : filteredNotes.length === 0 ? (
-                <div className="flex h-64 flex-col items-center justify-center rounded-2xl border-2 border-dashed border-zinc-300 dark:border-zinc-700 bg-white/50 dark:bg-zinc-900/30">
-                  <span className="text-4xl mb-4">📭</span>
-                  <p className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
+                <div className="flex h-64 flex-col items-center justify-center rounded-2xl border border-zinc-800/20 bg-zinc-900/20">
+                  <span className="material-symbols-outlined text-[32px] text-zinc-700 mb-4">
+                    inbox
+                  </span>
+                  <p className="text-sm font-medium text-zinc-500">
                     No hay notas
                   </p>
-                  <p className="text-xs text-zinc-400 dark:text-zinc-500 mt-1">
+                  <p className="text-xs text-zinc-600 mt-1">
                     Crea tu primera nota o ajusta los filtros
                   </p>
                 </div>
@@ -1182,12 +1188,14 @@ export default function Dashboard({ user }: { user: any }) {
                   ))}
                 </div>
               ) : filteredPrompts.length === 0 ? (
-                <div className="flex h-64 flex-col items-center justify-center rounded-2xl border-2 border-dashed border-zinc-300 dark:border-zinc-700 bg-white/50 dark:bg-zinc-900/30">
-                  <span className="text-4xl mb-4">📚</span>
-                  <p className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
+                <div className="flex h-64 flex-col items-center justify-center rounded-2xl border border-zinc-800/20 bg-zinc-900/20">
+                  <span className="material-symbols-outlined text-[32px] text-zinc-700 mb-4">
+                    library_books
+                  </span>
+                  <p className="text-sm font-medium text-zinc-500">
                     No hay prompts
                   </p>
-                  <p className="text-xs text-zinc-400 dark:text-zinc-500 mt-1">
+                  <p className="text-xs text-zinc-600 mt-1">
                     Guarda tu primer prompt reutilizable
                   </p>
                 </div>
@@ -1231,12 +1239,14 @@ export default function Dashboard({ user }: { user: any }) {
                   ))}
                 </div>
               ) : filteredArenaComparisons.length === 0 ? (
-                <div className="flex h-64 flex-col items-center justify-center rounded-2xl border-2 border-dashed border-zinc-300 dark:border-zinc-700 bg-white/50 dark:bg-zinc-900/30">
-                  <span className="text-4xl mb-4">🥊</span>
-                  <p className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
+                <div className="flex h-64 flex-col items-center justify-center rounded-2xl border border-zinc-800/20 bg-zinc-900/20">
+                  <span className="material-symbols-outlined text-[32px] text-zinc-700 mb-4">
+                    swords
+                  </span>
+                  <p className="text-sm font-medium text-zinc-500">
                     No hay comparaciones
                   </p>
-                  <p className="text-xs text-zinc-400 dark:text-zinc-500 mt-1">
+                  <p className="text-xs text-zinc-600 mt-1">
                     Crea tu primera comparación en la Arena
                   </p>
                 </div>

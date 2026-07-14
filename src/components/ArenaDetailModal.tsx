@@ -31,27 +31,29 @@ export function ArenaDetailModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-fade-in"
-      style={{ backgroundColor: "rgba(15, 23, 42, 0.7)" }}
-      onClick={onClose}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto"
+      style={{ backgroundColor: "rgba(9, 9, 11, 0.6)" }}
+      onClick={(e) => {
+        if (e.target === e.currentTarget) {
+          onClose();
+        }
+      }}
     >
       <div
-        className="w-full max-w-6xl max-h-[90vh] overflow-y-auto rounded-2xl bg-white/95 dark:bg-zinc-900/95 backdrop-blur-xl shadow-2xl border border-white/20 dark:border-zinc-800/50 p-6 md:p-8 animate-zoom-in"
+        className="w-full max-w-6xl max-h-[90vh] overflow-y-auto rounded-xl bg-zinc-900 shadow-premium border border-zinc-800/40 my-8 animate-zoom-in"
         onClick={(e) => e.stopPropagation()}
       >
         {/* HEADER */}
-        <div className="flex items-center justify-between mb-6 pb-4 border-b border-zinc-200/50 dark:border-zinc-800/50">
+        <div className="px-6 pt-6 pb-4 border-b border-zinc-800/30 flex items-start justify-between">
           <div>
-            <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-50 tracking-tight flex items-center gap-2">
-              🥊 Comparación detallada
+            <h2 className="text-xl font-semibold tracking-tight text-zinc-50">
+              Comparación detallada
             </h2>
-            <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-0.5 line-clamp-2">
-              Prompt: {prompt}
-            </p>
+            <p className="text-xs text-zinc-500 mt-1 line-clamp-2">{prompt}</p>
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors duration-200 group"
+            className="p-1.5 rounded-lg hover:bg-zinc-800/40 transition-all duration-200 group"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -59,7 +61,7 @@ export function ArenaDetailModal({
               viewBox="0 0 24 24"
               strokeWidth={2}
               stroke="currentColor"
-              className="w-5 h-5 text-zinc-500 group-hover:text-zinc-900 dark:text-zinc-400 dark:group-hover:text-zinc-100 transition-colors"
+              className="w-5 h-5 text-zinc-400 group-hover:text-zinc-100 transition-colors"
             >
               <path
                 strokeLinecap="round"
@@ -70,62 +72,77 @@ export function ArenaDetailModal({
           </button>
         </div>
 
-        {/* CONTENIDO: Dos columnas */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* MODELO 1 */}
-          <div
-            className={`rounded-xl border p-5 transition-all ${
-              isWinner1
-                ? "bg-emerald-50 dark:bg-emerald-950/30 border-emerald-300 dark:border-emerald-700/50 shadow-md shadow-emerald-500/10"
-                : "bg-blue-50/50 dark:bg-blue-950/20 border-blue-200/50 dark:border-blue-800/30"
-            }`}
-          >
-            <div className="flex items-center gap-2 mb-3">
-              <span className="text-sm font-bold text-blue-600 dark:text-blue-400">
-                {responses.model1 || "Modelo 1"}
-              </span>
-              {isWinner1 && (
-                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-300 text-xs font-medium border border-emerald-200/50 dark:border-emerald-800/30">
-                  🏆 Ganador
-                </span>
-              )}
-            </div>
-            <div className="prose prose-sm dark:prose-invert max-w-none">
-              <p className="text-sm text-zinc-700 dark:text-zinc-300 whitespace-pre-wrap leading-relaxed">
-                {responses.response1 || "Respuesta vacía"}
-              </p>
+        {/* CONTENIDO */}
+        <div className="px-6 py-7 space-y-6">
+          {/* Prompt */}
+          <div>
+            <span className="text-[10px] font-medium text-zinc-600 uppercase tracking-wider mb-2 block">
+              Prompt
+            </span>
+            <div className="rounded-lg border border-zinc-800 bg-zinc-950 px-4 py-3.5 text-sm text-zinc-100 leading-relaxed">
+              {prompt}
             </div>
           </div>
 
-          {/* MODELO 2 */}
-          <div
-            className={`rounded-xl border p-5 transition-all ${
-              isWinner2
-                ? "bg-emerald-50 dark:bg-emerald-950/30 border-emerald-300 dark:border-emerald-700/50 shadow-md shadow-emerald-500/10"
-                : "bg-purple-50/50 dark:bg-purple-950/20 border-purple-200/50 dark:border-purple-800/30"
-            }`}
-          >
-            <div className="flex items-center gap-2 mb-3">
-              <span className="text-sm font-bold text-purple-600 dark:text-purple-400">
-                {responses.model2 || "Modelo 2"}
-              </span>
-              {isWinner2 && (
-                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-300 text-xs font-medium border border-emerald-200/50 dark:border-emerald-800/30">
-                  🏆 Ganador
+          {/* Respuestas */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Modelo 1 */}
+            <div
+              className={`rounded-xl border p-4 transition-all ${
+                isWinner1
+                  ? "bg-emerald-950/10 border-emerald-800/40"
+                  : "bg-zinc-900 border-zinc-800"
+              }`}
+            >
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-xs font-medium text-zinc-400">
+                  {responses.model1 || "Modelo 1"}
                 </span>
-              )}
+                {isWinner1 && (
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-950/40 border border-emerald-800/30 text-emerald-400 text-[10px] font-medium">
+                    <span className="material-symbols-outlined text-[12px]">
+                      emoji_events
+                    </span>
+                    Ganador
+                  </span>
+                )}
+              </div>
+              <div className="text-sm text-zinc-300 whitespace-pre-wrap leading-relaxed">
+                {responses.response1 || "Respuesta vacía"}
+              </div>
             </div>
-            <div className="prose prose-sm dark:prose-invert max-w-none">
-              <p className="text-sm text-zinc-700 dark:text-zinc-300 whitespace-pre-wrap leading-relaxed">
+
+            {/* Modelo 2 */}
+            <div
+              className={`rounded-xl border p-4 transition-all ${
+                isWinner2
+                  ? "bg-emerald-950/10 border-emerald-800/40"
+                  : "bg-zinc-900 border-zinc-800"
+              }`}
+            >
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-xs font-medium text-zinc-400">
+                  {responses.model2 || "Modelo 2"}
+                </span>
+                {isWinner2 && (
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-950/40 border border-emerald-800/30 text-emerald-400 text-[10px] font-medium">
+                    <span className="material-symbols-outlined text-[12px]">
+                      emoji_events
+                    </span>
+                    Ganador
+                  </span>
+                )}
+              </div>
+              <div className="text-sm text-zinc-300 whitespace-pre-wrap leading-relaxed">
                 {responses.response2 || "Respuesta vacía"}
-              </p>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* PIE */}
-        <div className="mt-6 pt-4 border-t border-zinc-200/50 dark:border-zinc-800/50 flex items-center justify-between text-xs text-zinc-400">
-          <span>
+        {/* FOOTER */}
+        <div className="px-6 pb-6 pt-5 border-t border-zinc-800/30 flex items-center justify-between">
+          <span className="text-[10px] text-zinc-700">
             Comparación creada el{" "}
             {new Date(comparison.created_at).toLocaleDateString("es-ES", {
               year: "numeric",
@@ -137,7 +154,7 @@ export function ArenaDetailModal({
           </span>
           <button
             onClick={onClose}
-            className="px-4 py-2 rounded-lg bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 text-sm font-medium hover:bg-zinc-300 dark:hover:bg-zinc-700 transition-colors"
+            className="text-sm font-medium text-zinc-500 hover:text-zinc-400 transition-colors duration-200"
           >
             Cerrar
           </button>

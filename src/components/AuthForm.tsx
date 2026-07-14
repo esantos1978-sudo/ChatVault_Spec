@@ -8,6 +8,9 @@ interface AuthFormProps {
   onAuth: () => void;
 }
 
+const inputClass =
+  "w-full h-[44px] rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-600 hover:border-zinc-700 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/20 transition-all duration-180";
+
 export default function AuthForm({ onAuth }: AuthFormProps) {
   const [mode, setMode] = useState<"login" | "register">("login");
   const [email, setEmail] = useState("");
@@ -83,16 +86,13 @@ export default function AuthForm({ onAuth }: AuthFormProps) {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-zinc-50 to-white dark:from-zinc-950 dark:to-zinc-900 p-4 relative overflow-hidden">
-      {/* Patrón de fondo estilo Vault */}
-      <div className="absolute inset-0 vault-pattern z-0" />
-
+    <div className="min-h-screen flex items-center justify-center bg-zinc-950 p-4 relative overflow-hidden">
       {/* Blobs decorativos */}
-      <div className="absolute -top-48 -left-48 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[120px]" />
-      <div className="absolute -bottom-48 -right-48 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[120px]" />
+      <div className="absolute -top-48 -left-48 w-[600px] h-[600px] bg-violet-500/5 rounded-full blur-[120px]" />
+      <div className="absolute -bottom-48 -right-48 w-[600px] h-[600px] bg-violet-500/5 rounded-full blur-[120px]" />
 
       <div className="w-full max-w-md relative z-10">
-        {/* Logo - Protagonista absoluto */}
+        {/* Logo */}
         <div className="text-center mb-10">
           <div className="flex items-center justify-center">
             <img
@@ -106,7 +106,7 @@ export default function AuthForm({ onAuth }: AuthFormProps) {
         {/* Formulario */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
+            <label className="block text-xs font-medium text-zinc-500 mb-1.5">
               Email Address
             </label>
             <input
@@ -114,14 +114,14 @@ export default function AuthForm({ onAuth }: AuthFormProps) {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="name@company.com"
-              className="w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-4 py-3 text-sm text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all duration-200"
+              className={inputClass}
               required
             />
           </div>
 
           <div>
-            <div className="flex justify-between items-center mb-1">
-              <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+            <div className="flex justify-between items-center mb-1.5">
+              <label className="block text-xs font-medium text-zinc-500">
                 Password
               </label>
               {mode === "login" && (
@@ -130,7 +130,7 @@ export default function AuthForm({ onAuth }: AuthFormProps) {
                     e.preventDefault();
                     handleForgotPassword();
                   }}
-                  className="text-sm font-medium text-primary hover:text-primary/80 transition-colors cursor-pointer"
+                  className="text-xs font-medium text-violet-500 hover:text-violet-400 transition-colors cursor-pointer"
                 >
                   Forgot?
                 </a>
@@ -141,7 +141,7 @@ export default function AuthForm({ onAuth }: AuthFormProps) {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
-              className="w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-4 py-3 text-sm text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all duration-200"
+              className={inputClass}
               required
             />
           </div>
@@ -149,7 +149,7 @@ export default function AuthForm({ onAuth }: AuthFormProps) {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3.5 text-sm font-semibold text-white gemstone-gradient rounded-xl shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full h-[44px] text-sm font-semibold text-white gemstone-gradient rounded-lg shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? (
               <div className="flex items-center justify-center gap-2">
@@ -167,10 +167,10 @@ export default function AuthForm({ onAuth }: AuthFormProps) {
         {/* Separador */}
         <div className="relative my-6">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-zinc-200 dark:border-zinc-700" />
+            <div className="w-full border-t border-zinc-800" />
           </div>
           <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-white dark:bg-zinc-900 px-3 text-zinc-500 dark:text-zinc-400">
+            <span className="bg-zinc-950 px-3 text-zinc-500">
               or access via
             </span>
           </div>
@@ -181,7 +181,7 @@ export default function AuthForm({ onAuth }: AuthFormProps) {
           <button
             type="button"
             onClick={handleGoogleLogin}
-            className="flex items-center justify-center gap-2 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-4 py-2.5 text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 hover:border-primary/30 transition-all duration-200"
+            className="flex items-center justify-center gap-2 rounded-lg border border-zinc-800 bg-zinc-950 px-4 h-[44px] text-sm font-medium text-zinc-300 hover:bg-zinc-900 hover:border-zinc-700 transition-all duration-180"
           >
             <svg className="h-5 w-5" viewBox="0 0 24 24">
               <path
@@ -206,14 +206,14 @@ export default function AuthForm({ onAuth }: AuthFormProps) {
         </div>
 
         {/* Cambiar modo */}
-        <p className="mt-6 text-center text-sm text-zinc-600 dark:text-zinc-400">
+        <p className="mt-6 text-center text-sm text-zinc-500">
           {mode === "login" ? (
             <>
               New to Kimberlite?{" "}
               <button
                 type="button"
                 onClick={() => setMode("register")}
-                className="font-semibold text-primary hover:text-primary/80 transition-colors"
+                className="font-semibold text-violet-500 hover:text-violet-400 transition-colors"
               >
                 Create account
               </button>
@@ -224,7 +224,7 @@ export default function AuthForm({ onAuth }: AuthFormProps) {
               <button
                 type="button"
                 onClick={() => setMode("login")}
-                className="font-semibold text-primary hover:text-primary/80 transition-colors"
+                className="font-semibold text-violet-500 hover:text-violet-400 transition-colors"
               >
                 Log in
               </button>
