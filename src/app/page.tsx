@@ -16,7 +16,7 @@ function LandingPage({ onGetStarted }: { onGetStarted: () => void }) {
             <img
               src="/images/kimberlite-logo.png"
               alt="Kimberlite"
-              className="h-9 w-auto"
+              className="h-12 w-auto"
             />
           </div>
           <button
