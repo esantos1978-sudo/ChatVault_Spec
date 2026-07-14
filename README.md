@@ -458,6 +458,11 @@ Todas las funcionalidades principales están **operativas y probadas**. La aplic
 
 ### Novedades de esta sesión
 
+- ✅ **Inputs unificados:** Todos los inputs del proyecto (AuthForm, header search, date pickers, sidebar) comparten el mismo estándar: `h-[44px] rounded-lg bg-zinc-950 border-zinc-800 focus:border-violet-500 focus:ring-1 focus:ring-violet-500/20 transition-all duration-180`.
+- ✅ **Empty states rediseñados:** Reemplazados emojis (📭📚🥊) por Material Symbols profesionales (`inbox`, `library_books`, `swords`) en `text-[32px] text-zinc-700`. Eliminados bordes `dashed` por `border border-zinc-800/20`.
+- ✅ **Error/Success banners:** Reemplazados emojis ❌✅ por Material Symbols (`error`, `check_circle`) con diseño consistente.
+- ✅ **ArenaDetailModal rediseñado:** Ahora usa el mismo sistema visual que NoteModal/PromptModal: `bg-zinc-900 shadow-premium border-zinc-800/40 rounded-xl`, sin colores distintos por modelo, badge de ganador con icono `emoji_events`.
+- ✅ **globals.css limpiado:** Eliminadas clases duplicadas (`.card-dark`, `.input-dark`, `.auth-card`, `.scrollbar-thin` duplicado, `.scroll-tags`).
 - ✅ **Subida de archivos completamente funcional:** PDF, TXT y MD con extracción automática de texto. El contenido extraído se guarda correctamente en la nota.
 - ✅ **Sidebar responsive:** El sidebar se oculta en móviles con un menú hamburguesa. En pantallas grandes (`md:`) siempre está visible.
 - ✅ **Header adaptativo:** El header se adapta a móviles con botón de menú y botón "Nueva nota" más compacto.
