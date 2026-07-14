@@ -1126,16 +1126,63 @@ export default function Dashboard({ user }: { user: any }) {
                   ))}
                 </div>
               ) : filteredNotes.length === 0 ? (
-                <div className="flex h-64 flex-col items-center justify-center rounded-2xl border border-zinc-800/20 bg-zinc-900/20">
-                  <span className="material-symbols-outlined text-[32px] text-zinc-700 mb-4">
-                    inbox
-                  </span>
-                  <p className="text-sm font-medium text-zinc-500">
-                    No hay notas
-                  </p>
-                  <p className="text-xs text-zinc-600 mt-1">
-                    Crea tu primera nota o ajusta los filtros
-                  </p>
+                <div className="flex flex-col items-center justify-center rounded-2xl border border-zinc-800/20 bg-zinc-900/20 px-8 py-16">
+                  <div className="max-w-md text-center space-y-6">
+                    {/* Icono */}
+                    <div className="mx-auto w-14 h-14 rounded-2xl bg-zinc-800/40 flex items-center justify-center">
+                      <span className="material-symbols-outlined text-[28px] text-zinc-400">
+                        diamond
+                      </span>
+                    </div>
+
+                    {/* Título */}
+                    <div>
+                      <h3 className="text-lg font-semibold text-zinc-100">
+                        Cada conversación importante merece conservarse
+                      </h3>
+                      <p className="text-sm text-zinc-500 mt-2 leading-relaxed">
+                        Guarda las respuestas que realmente aportan valor y
+                        conviértelas en conocimiento reutilizable.
+                      </p>
+                    </div>
+
+                    {/* Botón */}
+                    <button
+                      onClick={() => openNoteModal()}
+                      className="inline-flex items-center gap-2 gemstone-gradient text-white px-5 py-2.5 rounded-xl font-semibold shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 hover:brightness-110 active:brightness-95 transition-all duration-180 text-sm"
+                    >
+                      <span className="material-symbols-outlined text-[16px]">
+                        add
+                      </span>
+                      Guardar mi primera Nota
+                    </button>
+
+                    {/* Tarjeta de ejemplo no interactiva */}
+                    <div className="mt-10 opacity-80 pointer-events-none select-none">
+                      <div className="rounded-2xl border border-zinc-800/40 bg-zinc-900/60 p-5 text-left">
+                        <div className="flex items-start justify-between mb-3">
+                          <div className="flex gap-2">
+                            <span className="inline-flex items-center gap-1 rounded-md bg-violet-500/10 px-2 py-0.5 text-[10px] font-medium text-violet-400 border border-violet-500/20">
+                              ChatGPT-4o
+                            </span>
+                            <span className="inline-flex items-center gap-1 rounded-md bg-zinc-800/60 px-2 py-0.5 text-[10px] font-medium text-zinc-400 border border-zinc-700/50">
+                              #arquitectura
+                            </span>
+                          </div>
+                        </div>
+                        <h4 className="text-sm font-semibold text-amber-600 dark:text-amber-400 mb-2">
+                          Diseño de sistema escalable
+                        </h4>
+                        <p className="text-xs text-zinc-500 leading-relaxed line-clamp-2">
+                          Para diseñar un sistema escalable, empieza por
+                          identificar los cuellos de botella...
+                        </p>
+                      </div>
+                      <p className="text-[10px] text-zinc-600 mt-3 text-center">
+                        Así se verán tus notas cuando empieces a guardarlas
+                      </p>
+                    </div>
+                  </div>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
@@ -1183,16 +1230,64 @@ export default function Dashboard({ user }: { user: any }) {
                   ))}
                 </div>
               ) : filteredPrompts.length === 0 ? (
-                <div className="flex h-64 flex-col items-center justify-center rounded-2xl border border-zinc-800/20 bg-zinc-900/20">
-                  <span className="material-symbols-outlined text-[32px] text-zinc-700 mb-4">
-                    library_books
-                  </span>
-                  <p className="text-sm font-medium text-zinc-500">
-                    No hay prompts
-                  </p>
-                  <p className="text-xs text-zinc-600 mt-1">
-                    Guarda tu primer prompt reutilizable
-                  </p>
+                <div className="flex flex-col items-center justify-center rounded-2xl border border-zinc-800/20 bg-zinc-900/20 px-8 py-16">
+                  <div className="max-w-md text-center space-y-6">
+                    {/* Icono */}
+                    <div className="mx-auto w-14 h-14 rounded-2xl bg-zinc-800/40 flex items-center justify-center">
+                      <span className="material-symbols-outlined text-[28px] text-zinc-400">
+                        bolt
+                      </span>
+                    </div>
+
+                    {/* Título */}
+                    <div>
+                      <h3 className="text-lg font-semibold text-zinc-100">
+                        Tu biblioteca de prompts empieza aquí
+                      </h3>
+                      <p className="text-sm text-zinc-500 mt-2 leading-relaxed">
+                        Los mejores resultados empiezan con un buen prompt.
+                        Guárdalos aquí para reutilizarlos siempre que los
+                        necesites.
+                      </p>
+                    </div>
+
+                    {/* Botón */}
+                    <button
+                      onClick={() => openPromptModal()}
+                      className="inline-flex items-center gap-2 gemstone-gradient text-white px-5 py-2.5 rounded-xl font-semibold shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 hover:brightness-110 active:brightness-95 transition-all duration-180 text-sm"
+                    >
+                      <span className="material-symbols-outlined text-[16px]">
+                        add
+                      </span>
+                      Crear mi primer Prompt
+                    </button>
+
+                    {/* Tarjeta de ejemplo no interactiva */}
+                    <div className="mt-10 opacity-80 pointer-events-none select-none">
+                      <div className="rounded-2xl border border-zinc-800/40 bg-zinc-900/60 p-5 text-left">
+                        <div className="flex items-start justify-between mb-3">
+                          <div className="flex gap-2">
+                            <span className="inline-flex items-center gap-1 rounded-md bg-emerald-500/10 px-2 py-0.5 text-[10px] font-medium text-emerald-400 border border-emerald-500/20">
+                              texto
+                            </span>
+                            <span className="inline-flex items-center gap-1 rounded-md bg-zinc-800/60 px-2 py-0.5 text-[10px] font-medium text-zinc-400 border border-zinc-700/50">
+                              #copywriting
+                            </span>
+                          </div>
+                        </div>
+                        <h4 className="text-sm font-semibold text-amber-600 dark:text-amber-400 mb-2">
+                          Generador de copy para landing
+                        </h4>
+                        <p className="text-xs text-zinc-500 leading-relaxed line-clamp-2">
+                          Eres un experto en copywriting. Genera 5 variaciones
+                          de titular para una landing page de...
+                        </p>
+                      </div>
+                      <p className="text-[10px] text-zinc-600 mt-3 text-center">
+                        Así se verán tus prompts cuando empieces a guardarlos
+                      </p>
+                    </div>
+                  </div>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -1234,16 +1329,71 @@ export default function Dashboard({ user }: { user: any }) {
                   ))}
                 </div>
               ) : filteredArenaComparisons.length === 0 ? (
-                <div className="flex h-64 flex-col items-center justify-center rounded-2xl border border-zinc-800/20 bg-zinc-900/20">
-                  <span className="material-symbols-outlined text-[32px] text-zinc-700 mb-4">
-                    swords
-                  </span>
-                  <p className="text-sm font-medium text-zinc-500">
-                    No hay comparaciones
-                  </p>
-                  <p className="text-xs text-zinc-600 mt-1">
-                    Crea tu primera comparación en la Arena
-                  </p>
+                <div className="flex flex-col items-center justify-center rounded-2xl border border-zinc-800/20 bg-zinc-900/20 px-8 py-16">
+                  <div className="max-w-md text-center space-y-6">
+                    {/* Icono */}
+                    <div className="mx-auto w-14 h-14 rounded-2xl bg-zinc-800/40 flex items-center justify-center">
+                      <span className="material-symbols-outlined text-[28px] text-zinc-400">
+                        swords
+                      </span>
+                    </div>
+
+                    {/* Título */}
+                    <div>
+                      <h3 className="text-lg font-semibold text-zinc-100">
+                        Descubre qué modelo responde mejor
+                      </h3>
+                      <p className="text-sm text-zinc-500 mt-2 leading-relaxed">
+                        Compara distintos modelos utilizando el mismo prompt y
+                        descubre cuál ofrece el mejor resultado.
+                      </p>
+                    </div>
+
+                    {/* Botón */}
+                    <button
+                      onClick={() => setArenaModalOpen(true)}
+                      className="inline-flex items-center gap-2 gemstone-gradient text-white px-5 py-2.5 rounded-xl font-semibold shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 hover:brightness-110 active:brightness-95 transition-all duration-180 text-sm"
+                    >
+                      <span className="material-symbols-outlined text-[16px]">
+                        add
+                      </span>
+                      Crear mi primera Comparación
+                    </button>
+
+                    {/* Tarjeta de ejemplo no interactiva */}
+                    <div className="mt-10 opacity-80 pointer-events-none select-none">
+                      <div className="rounded-2xl border border-zinc-800/40 bg-zinc-900/60 p-5 text-left">
+                        <div className="grid grid-cols-2 gap-3 mb-3">
+                          <div className="rounded-xl bg-zinc-800/40 p-3">
+                            <span className="text-[10px] font-medium text-zinc-500 uppercase tracking-wider">
+                              Modelo A
+                            </span>
+                            <p className="text-xs text-zinc-400 mt-1 font-medium">
+                              Claude 3.5 Sonnet
+                            </p>
+                          </div>
+                          <div className="rounded-xl bg-zinc-800/40 p-3">
+                            <span className="text-[10px] font-medium text-zinc-500 uppercase tracking-wider">
+                              Modelo B
+                            </span>
+                            <p className="text-xs text-zinc-400 mt-1 font-medium">
+                              ChatGPT-4o
+                            </p>
+                          </div>
+                        </div>
+                        <h4 className="text-sm font-semibold text-amber-600 dark:text-amber-400 mb-2">
+                          Explica recursión en Python
+                        </h4>
+                        <p className="text-xs text-zinc-500 leading-relaxed line-clamp-2">
+                          Comparando respuestas entre Claude y ChatGPT sobre el
+                          mismo prompt...
+                        </p>
+                      </div>
+                      <p className="text-[10px] text-zinc-600 mt-3 text-center">
+                        Así se verán tus comparaciones cuando empieces a usarlas
+                      </p>
+                    </div>
+                  </div>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
