@@ -16,14 +16,14 @@ function LandingPage({ onGetStarted }: { onGetStarted: () => void }) {
             <img
               src="/images/kimberlite-logo.png"
               alt="Kimberlite"
-              className="h-8 w-auto"
+              className="h-9 w-auto"
             />
           </div>
           <button
             onClick={onGetStarted}
             className="px-4 py-1.5 text-sm font-medium text-white gemstone-gradient rounded-lg transition-all duration-200 hover:brightness-110 active:brightness-95"
           >
-            Get Started
+            Acceder
           </button>
         </div>
       </header>
@@ -32,19 +32,20 @@ function LandingPage({ onGetStarted }: { onGetStarted: () => void }) {
       <section className="min-h-screen flex items-center px-4 sm:px-6 lg:px-8 pt-14">
         <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center py-24 lg:py-32">
           {/* Texto */}
-          <div className="space-y-6 animate-fade-in-up">
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-zinc-800 bg-zinc-900/80 px-3 py-1 text-xs font-medium text-zinc-300">
+          <div className="flex flex-col gap-8 animate-fade-in-up">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-zinc-800 bg-zinc-900/80 px-3 py-1 text-xs font-medium text-zinc-300 self-start">
               <span className="w-1.5 h-1.5 rounded-full bg-violet-500" />
-              Workspace for AI conversations
+              Organiza el conocimiento que generas con IA
             </span>
 
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-semibold tracking-tight leading-[1.1] text-zinc-50">
-              Organiza todas tus conversaciones con IA en un solo lugar.
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-semibold tracking-tight leading-[1.1] text-zinc-50 max-w-3xl">
+              Nunca vuelvas a perder una gran respuesta de la IA.
             </h1>
 
-            <p className="text-lg md:text-xl text-zinc-500 leading-relaxed max-w-lg">
-              Guarda, clasifica, reutiliza y encuentra cualquier conversación en
-              segundos.
+            <p className="text-lg md:text-xl text-zinc-300 leading-relaxed max-w-md">
+              Convierte cada interacción con la IA en conocimiento que nunca
+              volverás a perder. Guarda, organiza y reutiliza conversaciones,
+              prompts y comparaciones entre modelos desde un único lugar.
             </p>
 
             <div className="flex items-center gap-3 pt-2">
@@ -52,7 +53,7 @@ function LandingPage({ onGetStarted }: { onGetStarted: () => void }) {
                 onClick={onGetStarted}
                 className="px-6 py-3 text-sm font-semibold text-white gemstone-gradient rounded-lg shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 hover:brightness-110 active:brightness-95 transition-all duration-200"
               >
-                Empezar gratis
+                Comenzar gratis
               </button>
               <button
                 onClick={() => {
@@ -63,13 +64,47 @@ function LandingPage({ onGetStarted }: { onGetStarted: () => void }) {
                 }}
                 className="px-6 py-3 text-sm font-semibold rounded-lg border border-zinc-800 text-zinc-400 hover:text-zinc-300 hover:border-zinc-700 transition-all duration-200"
               >
-                Ver demo
+                Ver cómo funciona
               </button>
+            </div>
+
+            {/* Micro beneficios */}
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-2 pt-2">
+              {[
+                "Conversaciones",
+                "Prompts",
+                "Comparativas IA",
+                "Todo organizado",
+              ].map((item) => (
+                <span
+                  key={item}
+                  className="inline-flex items-center gap-1.5 text-xs text-zinc-500"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={2}
+                    stroke="currentColor"
+                    className="w-3.5 h-3.5 text-emerald-500"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M4.5 12.75l6 6 9-13.5"
+                    />
+                  </svg>
+                  {item}
+                </span>
+              ))}
             </div>
           </div>
 
           {/* Preview del Dashboard */}
-          <div className="hidden lg:block animate-fade-in-up">
+          <div
+            className="hidden lg:block animate-fade-in-up"
+            style={{ animationDelay: "150ms" }}
+          >
             <div className="rounded-xl bg-zinc-900 border border-zinc-800/40 shadow-premium aspect-[4/3] overflow-hidden relative">
               {/* Placeholder del dashboard */}
               <div className="absolute inset-0 p-4 flex flex-col gap-3">
@@ -118,104 +153,47 @@ function LandingPage({ onGetStarted }: { onGetStarted: () => void }) {
       </section>
 
       {/* BENEFICIOS */}
-      <section className="py-24 lg:py-32 px-4 sm:px-6 lg:px-8">
+      <section className="pt-20 pb-36 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
+          <div className="text-sm uppercase tracking-wider text-zinc-500 font-medium mb-8">
+            Todo lo que necesitas para trabajar con IA.
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {[
               {
-                icon: (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.5}
-                    stroke="currentColor"
-                    className="w-5 h-5 text-zinc-400"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15a2.25 2.25 0 012.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z"
-                    />
-                  </svg>
-                ),
+                icon: "description",
                 title: "Organiza conversaciones",
                 description:
-                  "Guarda y clasifica todos tus chats con IA. Cada conversación importante siempre accesible.",
+                  "Guarda todo lo importante y recupéralo en segundos.",
               },
               {
-                icon: (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.5}
-                    stroke="currentColor"
-                    className="w-5 h-5 text-zinc-400"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
-                    />
-                  </svg>
-                ),
+                icon: "search",
                 title: "Encuentra cualquier idea",
-                description:
-                  "Búsqueda instantánea por título, contenido, resumen o etiquetas. Encuentra lo que necesitas al instante.",
+                description: "Busca por título, contenido o etiquetas.",
               },
               {
-                icon: (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.5}
-                    stroke="currentColor"
-                    className="w-5 h-5 text-zinc-400"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5m.75-9l3-3 2.148 2.148A12.061 12.061 0 0116.5 7.605"
-                    />
-                  </svg>
-                ),
+                icon: "compare_arrows",
                 title: "Compara modelos",
-                description:
-                  "Prueba diferentes modelos lado a lado. Elige el mejor para cada tarea con datos objetivos.",
+                description: "Decide con datos cuál responde mejor.",
               },
               {
-                icon: (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.5}
-                    stroke="currentColor"
-                    className="w-5 h-5 text-zinc-400"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z"
-                    />
-                  </svg>
-                ),
+                icon: "auto_awesome",
                 title: "Reutiliza prompts",
                 description:
-                  "Tu biblioteca de prompts siempre lista. Un clic para usar tus mejores instrucciones una y otra vez.",
+                  "Tu mejor biblioteca de prompts siempre disponible.",
               },
             ].map((feature, index) => (
               <div
                 key={index}
-                className="rounded-lg bg-zinc-900 border border-zinc-800/40 p-5 hover:bg-zinc-900/80 hover:border-zinc-700/50 transition-all duration-200"
+                className="rounded-xl bg-zinc-900 border border-zinc-800/40 p-8 hover:bg-zinc-900/80 hover:border-zinc-700/50 transition-all duration-200 flex flex-col"
               >
-                <div className="mb-3">{feature.icon}</div>
-                <h3 className="text-sm font-semibold text-zinc-100">
+                <span className="material-symbols-outlined text-[24px] text-violet-400 mb-4">
+                  {feature.icon}
+                </span>
+                <h3 className="text-sm font-semibold text-zinc-100 mb-2">
                   {feature.title}
                 </h3>
-                <p className="text-xs text-zinc-500 mt-1 leading-relaxed">
+                <p className="text-xs text-zinc-500 leading-relaxed">
                   {feature.description}
                 </p>
               </div>
