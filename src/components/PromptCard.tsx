@@ -44,10 +44,46 @@ export function PromptCard({
     >
       {/* Badge de categoría */}
       <div className="mb-5">
-        <span className="inline-flex items-center gap-1 pl-0 pr-1 py-[1px] rounded-md bg-zinc-800/30 text-zinc-500 text-[9px] font-medium">
-          <span className="w-[3px] h-[3px] rounded-full bg-zinc-500" />
-          {prompt.category}
-        </span>
+        {(() => {
+          const categoryConfig: Record<
+            string,
+            { style: string; label: string }
+          > = {
+            texto: {
+              style:
+                "bg-blue-950/20 border-blue-800/20 text-blue-300 hover:bg-blue-950/30",
+              label: "Texto",
+            },
+            imagen: {
+              style:
+                "bg-fuchsia-950/20 border-fuchsia-800/20 text-fuchsia-300 hover:bg-fuchsia-950/30",
+              label: "Imagen",
+            },
+            video: {
+              style:
+                "bg-rose-950/20 border-rose-800/20 text-rose-300 hover:bg-rose-950/30",
+              label: "Video",
+            },
+            codigo: {
+              style:
+                "bg-emerald-950/20 border-emerald-800/20 text-emerald-300 hover:bg-emerald-950/30",
+              label: "Código",
+            },
+          };
+          const key = prompt.category.toLowerCase();
+          const config = categoryConfig[key] || {
+            style:
+              "bg-zinc-800/30 border-zinc-700/30 text-zinc-400 hover:bg-zinc-800/40",
+            label: prompt.category,
+          };
+          return (
+            <span
+              className={`inline-flex items-center rounded-md px-2.5 py-1 text-[11px] font-medium border transition-all duration-180 ${config.style}`}
+            >
+              {config.label}
+            </span>
+          );
+        })()}
       </div>
 
       {/* Título */}
