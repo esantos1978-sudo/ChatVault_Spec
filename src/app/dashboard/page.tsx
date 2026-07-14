@@ -664,341 +664,262 @@ export default function Dashboard({ user }: { user: any }) {
     <div className="flex h-screen w-screen bg-zinc-100 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-50 overflow-hidden">
       {/* ================= SIDEBAR ================= */}
       <aside
-        className={`fixed md:relative top-0 left-0 z-50 w-64 h-full border-r border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-800 dark:bg-zinc-900/60 flex flex-col gap-4 select-none overflow-y-auto transition-transform duration-300 ${
+        className={`fixed md:relative top-0 left-0 z-50 w-60 h-full bg-zinc-950 border-r border-zinc-800/40 flex flex-col select-none overflow-y-auto transition-transform duration-300 ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         } md:translate-x-0`}
       >
-        {/* 🔒 LOGO con botón cerrar */}
-        <div className="flex items-center justify-between px-2">
-          <div className="flex items-center gap-2">
+        {/* LOGO */}
+        <div className="pt-6 pb-5 px-3">
+          <div className="flex items-center gap-2.5">
             <img
               src="/images/kimberlite-logo.png"
               alt="Kimberlite"
-              className="h-8 w-auto"
+              className="h-7 w-auto"
             />
-            <h1 className="text-lg font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
+            <span className="text-sm font-semibold tracking-tight text-zinc-100">
               Kimberlite
-            </h1>
+            </span>
           </div>
-          {/* Botón cerrar sidebar (solo móviles) */}
-          <button
-            onClick={() => setSidebarOpen(false)}
-            className="md:hidden p-1 text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 transition-colors"
-          >
-            <span className="material-symbols-outlined text-[20px]">close</span>
-          </button>
         </div>
 
-        {/* TABS: Notas / Prompts / Arena */}
-        <div className="flex rounded-lg bg-zinc-200/50 dark:bg-zinc-800/50 p-1">
+        {/* NAVEGACIÓN PRINCIPAL */}
+        <nav className="flex flex-col px-2 gap-0.5">
           <button
             onClick={() => setActiveTab("notes")}
-            className={`flex-1 rounded-md px-3 py-1.5 text-xs font-medium transition-all ${
-              activeTab === "notes"
-                ? "bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 shadow-sm"
-                : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-300"
-            }`}
+            className={`sidebar-item ${activeTab === "notes" ? "active" : ""}`}
           >
-            📝 Notas
+            <span className="material-symbols-outlined text-[18px]">
+              description
+            </span>
+            <span>Notas</span>
+            <span className="count">{notes.length}</span>
           </button>
           <button
             onClick={() => setActiveTab("prompts")}
-            className={`flex-1 rounded-md px-3 py-1.5 text-xs font-medium transition-all ${
-              activeTab === "prompts"
-                ? "bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 shadow-sm"
-                : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-300"
-            }`}
+            className={`sidebar-item ${activeTab === "prompts" ? "active" : ""}`}
           >
-            📚 Prompts
+            <span className="material-symbols-outlined text-[18px]">bolt</span>
+            <span>Prompts</span>
+            <span className="count">{prompts.length}</span>
           </button>
           <button
             onClick={() => setActiveTab("arena")}
-            className={`flex-1 rounded-md px-3 py-1.5 text-xs font-medium transition-all ${
-              activeTab === "arena"
-                ? "bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 shadow-sm"
-                : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-300"
-            }`}
+            className={`sidebar-item ${activeTab === "arena" ? "active" : ""}`}
           >
-            ⚔️ Batalla
+            <span className="material-symbols-outlined text-[18px]">
+              swords
+            </span>
+            <span>Arena</span>
+            <span className="count">{arenaComparisons.length}</span>
+          </button>
+        </nav>
+
+        <div className="divider mx-3 my-2" />
+
+        {/* FILTROS */}
+        <div className="flex flex-col px-2 gap-0.5">
+          {/* FAVORITOS */}
+          <button
+            onClick={() => setShowFavorites(!showFavorites)}
+            className={`sidebar-item ${showFavorites ? "active" : ""}`}
+          >
+            <span
+              className="material-symbols-outlined text-[18px]"
+              style={{
+                fontVariationSettings: showFavorites ? "'FILL' 1" : "'FILL' 0",
+              }}
+            >
+              star
+            </span>
+            <span>Favoritos</span>
+          </button>
+
+          {/* RESET FILTROS */}
+          <button
+            onClick={() => {
+              setSelectedTag(null);
+              setSelectedAiModel(null);
+              setSelectedPromptCategory(null);
+              setDateFilter("all");
+              setStartDate("");
+              setEndDate("");
+              setSearchQuery("");
+              setPromptSearchQuery("");
+              setArenaSearchQuery("");
+              setShowFavorites(false);
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }}
+            className="sidebar-item"
+          >
+            <span className="material-symbols-outlined text-[18px]">
+              refresh
+            </span>
+            <span>Mostrar todo</span>
           </button>
         </div>
 
-        {/* 🔄 BOTÓN DE RESETEO DE FILTROS */}
-        <button
-          onClick={() => {
-            setSelectedTag(null);
-            setSelectedAiModel(null);
-            setSelectedPromptCategory(null);
-            setDateFilter("all");
-            setStartDate("");
-            setEndDate("");
-            setSearchQuery("");
-            setPromptSearchQuery("");
-            setArenaSearchQuery("");
-            setShowFavorites(false);
-            window.scrollTo({ top: 0, behavior: "smooth" });
-          }}
-          className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800/50 transition-colors border border-dashed border-zinc-300 dark:border-zinc-700"
-        >
-          <span className="material-symbols-outlined text-[18px]">
-            grid_view
-          </span>
-          Mostrar todo
-          <span className="ml-auto text-[10px] text-zinc-400">
-            (resetear filtros)
-          </span>
-        </button>
-
-        {/* Línea separadora */}
-        <div className="border-t border-zinc-200/50 dark:border-zinc-800/50" />
-
-        {/* FILTRO DE FAVORITOS */}
-        <button
-          onClick={() => setShowFavorites(!showFavorites)}
-          className={`flex w-full items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
-            showFavorites
-              ? "bg-yellow-50 text-yellow-700 dark:bg-yellow-950/30 dark:text-yellow-400"
-              : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800/50"
-          }`}
-        >
-          <span
-            className="material-symbols-outlined text-[18px] text-yellow-400"
-            style={{ fontVariationSettings: "'FILL' 1" }}
-          >
-            star
-          </span>
-          {showFavorites ? "Mostrando favoritos" : "Ver favoritos"}
-        </button>
-
-        {/* 1. FILTRO POR IA (PRIMERO) */}
+        {/* MODELOS DE IA */}
         {activeTab === "notes" && allAiModels.length > 0 && (
-          <div className="space-y-1">
-            <p className="px-2 text-[11px] font-bold text-blue-500 dark:text-blue-400 uppercase tracking-[0.15em] flex items-center gap-2">
-              <span className="material-symbols-outlined text-[14px] text-blue-500 dark:text-blue-400">
-                neurology
-              </span>
-              Modelos de IA
-            </p>
-            <div className="max-h-32 overflow-y-auto pr-1 space-y-0.5 scrollbar-thin">
+          <>
+            <div className="divider mx-3 my-2" />
+            <div className="sidebar-section-label">Modelos de IA</div>
+            <div className="flex flex-col px-2 gap-0.5 max-h-32 overflow-y-auto">
               {allAiModels.map((model) => (
                 <button
                   key={model}
                   onClick={() =>
                     setSelectedAiModel(selectedAiModel === model ? null : model)
                   }
-                  className={`flex w-full items-center justify-between rounded-lg px-3 py-1.5 text-sm font-medium capitalize transition-colors ${
-                    selectedAiModel === model
-                      ? "bg-blue-50 text-blue-600 dark:bg-blue-950/30 dark:text-blue-400"
-                      : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800/50"
-                  }`}
+                  className={`sidebar-item ${selectedAiModel === model ? "active" : ""}`}
                 >
-                  <span>{model}</span>
-                  <span className="text-xs bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded-full text-zinc-400">
+                  <span className="material-symbols-outlined text-[18px]">
+                    neurology
+                  </span>
+                  <span className="truncate">{model}</span>
+                  <span className="count">
                     {notes.filter((n) => n.ai_model === model).length}
                   </span>
                 </button>
               ))}
             </div>
-          </div>
+          </>
         )}
-        {/* 2. ETIQUETAS POR SECCIÓN (Independientes) */}
-        <div className="space-y-1 flex-none">
-          <p className="px-2 text-[11px] font-bold text-blue-500 dark:text-blue-400 uppercase tracking-[0.15em] flex items-center gap-2">
-            <span className="material-symbols-outlined text-[14px] text-blue-500 dark:text-blue-400">
-              sell
+
+        {/* ETIQUETAS */}
+        <div className="divider mx-3 my-2" />
+        <div className="sidebar-section-label">
+          Etiquetas
+          {activeTab === "notes"
+            ? " — Notas"
+            : activeTab === "prompts"
+              ? " — Prompts"
+              : ""}
+        </div>
+        <div className="flex flex-col px-2 gap-0.5 max-h-32 overflow-y-auto">
+          {activeTab === "notes" && (
+            <>
+              {noteTagsFromNotes.length === 0 ? (
+                <span className="px-3 py-2 text-xs text-zinc-600 italic">
+                  Sin etiquetas
+                </span>
+              ) : (
+                noteTagsFromNotes.map((t) => (
+                  <div key={t} className="group flex items-center">
+                    <button
+                      onClick={() =>
+                        setSelectedTag(selectedTag === t ? null : t)
+                      }
+                      className={`sidebar-item flex-1 ${selectedTag === t ? "active" : ""}`}
+                    >
+                      <span className="material-symbols-outlined text-[18px]">
+                        sell
+                      </span>
+                      <span>{t}</span>
+                      <span className="count">
+                        {notes.filter((n) => (n.tags || []).includes(t)).length}
+                      </span>
+                    </button>
+                    <button
+                      onClick={() => handleDeleteTag(t)}
+                      className="opacity-0 group-hover:opacity-100 p-1 mr-1 text-zinc-600 hover:text-red-400 transition-all"
+                    >
+                      <span className="material-symbols-outlined text-[14px]">
+                        close
+                      </span>
+                    </button>
+                  </div>
+                ))
+              )}
+            </>
+          )}
+
+          {activeTab === "prompts" && (
+            <>
+              {promptTagsFromPrompts.length === 0 ? (
+                <span className="px-3 py-2 text-xs text-zinc-600 italic">
+                  Sin etiquetas
+                </span>
+              ) : (
+                promptTagsFromPrompts.map((t) => (
+                  <div key={t} className="group flex items-center">
+                    <button
+                      onClick={() =>
+                        setSelectedTag(selectedTag === t ? null : t)
+                      }
+                      className={`sidebar-item flex-1 ${selectedTag === t ? "active" : ""}`}
+                    >
+                      <span className="material-symbols-outlined text-[18px]">
+                        sell
+                      </span>
+                      <span>{t}</span>
+                      <span className="count">
+                        {
+                          prompts.filter((p) => (p.tags || []).includes(t))
+                            .length
+                        }
+                      </span>
+                    </button>
+                    <button
+                      onClick={() => handleDeleteTag(t)}
+                      className="opacity-0 group-hover:opacity-100 p-1 mr-1 text-zinc-600 hover:text-red-400 transition-all"
+                    >
+                      <span className="material-symbols-outlined text-[14px]">
+                        close
+                      </span>
+                    </button>
+                  </div>
+                ))
+              )}
+            </>
+          )}
+
+          {activeTab === "arena" && (
+            <span className="px-3 py-2 text-xs text-zinc-600 italic">
+              Próximamente
             </span>
-            Etiquetas{" "}
-            {activeTab === "notes"
-              ? "(Notas)"
-              : activeTab === "prompts"
-                ? "(Prompts)"
-                : ""}
-          </p>
-          <div className="max-h-32 overflow-y-auto pr-1 space-y-1 scrollbar-thin">
-            {activeTab === "notes" && (
-              <>
-                {noteTagsFromNotes.length === 0 ? (
-                  <p className="px-2 text-xs text-zinc-400 italic">
-                    No hay etiquetas en notas
-                  </p>
-                ) : (
-                  noteTagsFromNotes.map((t) => (
-                    <div
-                      key={t}
-                      className="group flex w-full items-center justify-between rounded-lg px-3 py-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-800/50 transition-colors"
-                    >
-                      <button
-                        onClick={() =>
-                          setSelectedTag(selectedTag === t ? null : t)
-                        }
-                        className={`flex-1 text-left text-sm font-medium capitalize transition-colors ${
-                          selectedTag === t
-                            ? "text-blue-600 dark:text-blue-400"
-                            : "text-zinc-600 dark:text-zinc-400"
-                        }`}
-                      >
-                        <span className="opacity-60">#</span> {t}
-                      </button>
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded-full text-zinc-400">
-                          {
-                            notes.filter((n) => (n.tags || []).includes(t))
-                              .length
-                          }
-                        </span>
-                        <button
-                          onClick={() => handleDeleteTag(t)}
-                          className="opacity-0 group-hover:opacity-100 transition-opacity text-red-400 hover:text-red-600 dark:hover:text-red-400 p-1 rounded hover:bg-red-50 dark:hover:bg-red-950/20"
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            strokeWidth={1.5}
-                            stroke="currentColor"
-                            className="w-3.5 h-3.5"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M6 18L18 6M6 6l12 12"
-                            />
-                          </svg>
-                        </button>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </>
-            )}
-
-            {activeTab === "prompts" && (
-              <>
-                {promptTagsFromPrompts.length === 0 ? (
-                  <p className="px-2 text-xs text-zinc-400 italic">
-                    No hay etiquetas en prompts
-                  </p>
-                ) : (
-                  promptTagsFromPrompts.map((t) => (
-                    <div
-                      key={t}
-                      className="group flex w-full items-center justify-between rounded-lg px-3 py-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-800/50 transition-colors"
-                    >
-                      <button
-                        onClick={() =>
-                          setSelectedTag(selectedTag === t ? null : t)
-                        }
-                        className={`flex-1 text-left text-sm font-medium capitalize transition-colors ${
-                          selectedTag === t
-                            ? "text-blue-600 dark:text-blue-400"
-                            : "text-zinc-600 dark:text-zinc-400"
-                        }`}
-                      >
-                        <span className="opacity-60">#</span> {t}
-                      </button>
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded-full text-zinc-400">
-                          {
-                            prompts.filter((p) => (p.tags || []).includes(t))
-                              .length
-                          }
-                        </span>
-                        <button
-                          onClick={() => handleDeleteTag(t)}
-                          className="opacity-0 group-hover:opacity-100 transition-opacity text-red-400 hover:text-red-600 dark:hover:text-red-400 p-1 rounded hover:bg-red-50 dark:hover:bg-red-950/20"
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            strokeWidth={1.5}
-                            stroke="currentColor"
-                            className="w-3.5 h-3.5"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M6 18L18 6M6 6l12 12"
-                            />
-                          </svg>
-                        </button>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </>
-            )}
-
-            {activeTab === "arena" && (
-              <p className="px-2 text-xs text-zinc-400 italic">
-                Las etiquetas de la Arena estarán disponibles pronto
-              </p>
-            )}
-          </div>
+          )}
         </div>
 
-        {/* 3. FILTROS POR FECHA (TERCERO) */}
+        {/* FILTROS POR FECHA */}
         {activeTab === "notes" && (
-          <div className="space-y-1 pt-2 border-t border-zinc-100 dark:border-zinc-800/50">
-            <p className="px-2 text-[11px] font-bold text-blue-500 dark:text-blue-400 uppercase tracking-[0.15em] flex items-center gap-2">
-              <span className="material-symbols-outlined text-[14px] text-blue-500 dark:text-blue-400">
-                calendar_month
-              </span>
-              Por Fecha
-            </p>
-            <div className="space-y-1">
-              <button
-                onClick={() => {
-                  setDateFilter("today");
-                  setStartDate("");
-                  setEndDate("");
-                }}
-                className={`flex w-full items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
-                  dateFilter === "today"
-                    ? "bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400"
-                    : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800/50"
-                }`}
-              >
-                ☀️ Hoy
-              </button>
-              <button
-                onClick={() => {
-                  setDateFilter("week");
-                  setStartDate("");
-                  setEndDate("");
-                }}
-                className={`flex w-full items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
-                  dateFilter === "week"
-                    ? "bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400"
-                    : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800/50"
-                }`}
-              >
-                📅 Últimos 7 días
-              </button>
-              <button
-                onClick={() => {
-                  setDateFilter("month");
-                  setStartDate("");
-                  setEndDate("");
-                }}
-                className={`flex w-full items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
-                  dateFilter === "month"
-                    ? "bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400"
-                    : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800/50"
-                }`}
-              >
-                🗓️ Últimos 30 días
-              </button>
+          <>
+            <div className="divider mx-3 my-2" />
+            <div className="sidebar-section-label">Por fecha</div>
+            <div className="flex flex-col px-2 gap-0.5">
+              {[
+                { key: "today", label: "Hoy", icon: "today" },
+                { key: "week", label: "Últimos 7 días", icon: "date_range" },
+                {
+                  key: "month",
+                  label: "Últimos 30 días",
+                  icon: "calendar_month",
+                },
+              ].map(({ key, label, icon }) => (
+                <button
+                  key={key}
+                  onClick={() => {
+                    setDateFilter(key as "today" | "week" | "month");
+                    setStartDate("");
+                    setEndDate("");
+                  }}
+                  className={`sidebar-item ${dateFilter === key ? "active" : ""}`}
+                >
+                  <span className="material-symbols-outlined text-[18px]">
+                    {icon}
+                  </span>
+                  <span>{label}</span>
+                </button>
+              ))}
             </div>
 
             {/* RANGO PERSONALIZADO */}
-            <div className="pt-2 mt-1 border-t border-zinc-100 dark:border-zinc-800/40 space-y-1.5">
-              <p className="px-2 text-[10px] font-bold text-zinc-400 uppercase tracking-wider">
+            <div className="px-3 pt-2 mt-1 space-y-1.5">
+              <span className="text-[10px] font-medium text-zinc-600 uppercase tracking-wider">
                 Rango personalizado
-              </p>
-              <div className="grid grid-cols-2 gap-1.5 px-2">
+              </span>
+              <div className="grid grid-cols-2 gap-1.5">
                 <div>
-                  <label className="text-[9px] text-zinc-400 block mb-0.5">
+                  <label className="text-[10px] text-zinc-600 block mb-0.5">
                     Desde
                   </label>
                   <input
@@ -1008,11 +929,11 @@ export default function Dashboard({ user }: { user: any }) {
                       setStartDate(e.target.value);
                       setDateFilter("all");
                     }}
-                    className="w-full text-[10px] rounded border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 p-1 text-zinc-600 dark:text-zinc-300 focus:outline-none"
+                    className="w-full text-[11px] rounded-lg border border-zinc-800 bg-zinc-900 px-2 py-1.5 text-zinc-300 focus:outline-none focus:border-zinc-600 focus:ring-1 focus:ring-zinc-500/30 transition-all"
                   />
                 </div>
                 <div>
-                  <label className="text-[9px] text-zinc-400 block mb-0.5">
+                  <label className="text-[10px] text-zinc-600 block mb-0.5">
                     Hasta
                   </label>
                   <input
@@ -1022,7 +943,7 @@ export default function Dashboard({ user }: { user: any }) {
                       setEndDate(e.target.value);
                       setDateFilter("all");
                     }}
-                    className="w-full text-[10px] rounded border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 p-1 text-zinc-600 dark:text-zinc-300 focus:outline-none"
+                    className="w-full text-[11px] rounded-lg border border-zinc-800 bg-zinc-900 px-2 py-1.5 text-zinc-300 focus:outline-none focus:border-zinc-600 focus:ring-1 focus:ring-zinc-500/30 transition-all"
                   />
                 </div>
               </div>
@@ -1032,24 +953,21 @@ export default function Dashboard({ user }: { user: any }) {
                     setStartDate("");
                     setEndDate("");
                   }}
-                  className="w-full px-2 text-left text-[10px] text-red-500 hover:text-red-600 font-medium transition-colors mt-1"
+                  className="w-full text-left text-[10px] text-zinc-600 hover:text-zinc-400 font-medium transition-colors"
                 >
-                  ❌ Limpiar calendario
+                  Limpiar fechas
                 </button>
               )}
             </div>
-          </div>
+          </>
         )}
-        {/* CATEGORÍAS (Solo visibles en la tab de Prompts) */}
+
+        {/* CATEGORÍAS (Prompts) */}
         {activeTab === "prompts" && (
-          <div className="space-y-1 pt-2 border-t border-zinc-100 dark:border-zinc-800/50">
-            <p className="px-2 text-[11px] font-bold text-blue-500 dark:text-blue-400 uppercase tracking-[0.15em] flex items-center gap-2">
-              <span className="material-symbols-outlined text-[14px] text-blue-500 dark:text-blue-400">
-                folder
-              </span>
-              Categorías
-            </p>
-            <div className="space-y-0.5">
+          <>
+            <div className="divider mx-3 my-2" />
+            <div className="sidebar-section-label">Categorías</div>
+            <div className="flex flex-col px-2 gap-0.5">
               {["imagen", "texto", "codigo", "video", "mcp", "otro"].map(
                 (cat) => {
                   const count = prompts.filter(
@@ -1063,112 +981,48 @@ export default function Dashboard({ user }: { user: any }) {
                           selectedPromptCategory === cat ? null : cat,
                         )
                       }
-                      className={`flex w-full items-center justify-between rounded-lg px-3 py-1.5 text-sm font-medium capitalize transition-colors ${
-                        selectedPromptCategory === cat
-                          ? "bg-blue-50 text-blue-600 dark:bg-blue-950/30 dark:text-blue-400"
-                          : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800/50"
-                      }`}
+                      className={`sidebar-item ${selectedPromptCategory === cat ? "active" : ""}`}
                     >
-                      <span>{cat}</span>
-                      <span className="text-xs bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded-full text-zinc-400">
-                        {count}
+                      <span className="material-symbols-outlined text-[18px]">
+                        folder
                       </span>
+                      <span className="capitalize">{cat}</span>
+                      <span className="count">{count}</span>
                     </button>
                   );
                 },
               )}
             </div>
-          </div>
+          </>
         )}
 
-        {/* 📊 ESTADÍSTICAS */}
-        <div className="mt-2 pt-2 border-t border-zinc-100 dark:border-zinc-800/50">
-          <p className="px-2 text-[11px] font-bold text-zinc-400 uppercase tracking-[0.15em] flex items-center gap-2">
-            <span className="material-symbols-outlined text-[14px]">
-              analytics
-            </span>
-            Resumen
-          </p>
-          <div className="space-y-1 px-2 text-xs text-zinc-600 dark:text-zinc-400">
-            <div className="flex items-center justify-between">
-              <span className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-[18px] text-primary">
-                  description
-                </span>
-                Notas
-              </span>
-              <span className="font-medium text-primary">{notes.length}</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-[18px] text-secondary">
-                  bolt
-                </span>
-                Prompts
-              </span>
-              <span className="font-medium text-secondary">
-                {prompts.length}
-              </span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-[18px] text-tertiary">
-                  swords
-                </span>
-                Comparaciones
-              </span>
-              <span className="font-medium text-tertiary">
-                {arenaComparisons.length}
-              </span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="flex items-center gap-2">
-                <span
-                  className="material-symbols-outlined text-[18px] text-yellow-400"
-                  style={{ fontVariationSettings: "'FILL' 1" }}
-                >
-                  star
-                </span>
-                Favoritas
-              </span>
-              <span className="font-medium text-yellow-400">
-                {notes.filter((n) => n.is_favorite).length +
-                  prompts.filter((p) => p.is_favorite).length}
-              </span>
-            </div>
-          </div>
-        </div>
-
         {/* CERRAR SESIÓN */}
-        <div className="mt-auto pt-4 border-t border-zinc-200 dark:border-zinc-800">
-          <button
-            onClick={handleLogout}
-            className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/20 transition-colors"
-          >
+        <div className="mt-auto px-2 pt-2 pb-4">
+          <button onClick={handleLogout} className="sidebar-item">
             <span className="material-symbols-outlined text-[18px]">
               logout
             </span>
-            Cerrar sesión
+            <span>Cerrar sesión</span>
           </button>
         </div>
       </aside>
 
       {/* ================= CONTENIDO PRINCIPAL ================= */}
-      <main className="flex-1 flex flex-col overflow-hidden bg-white dark:bg-zinc-950 pt-20">
-        <header className="h-20 fixed top-0 right-0 left-0 md:left-[256px] z-10 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-md border-b border-zinc-200/50 dark:border-zinc-800/50 flex items-center justify-between px-4 md:px-8">
+      <main className="flex-1 flex flex-col overflow-hidden bg-white dark:bg-zinc-950 pt-16">
+        <header className="h-16 fixed top-0 right-0 left-0 md:left-[240px] z-10 bg-zinc-50/80 dark:bg-zinc-950/80 backdrop-blur-md border-b border-zinc-200/30 dark:border-zinc-800/30 flex items-center justify-between px-5 md:px-8">
           {/* Botón de menú (solo en móviles) */}
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="md:hidden p-2 text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 transition-colors"
+            className="md:hidden p-1.5 text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/40 rounded-lg transition-all duration-180"
             aria-label="Abrir menú"
           >
-            <span className="material-symbols-outlined text-[24px]">menu</span>
+            <span className="material-symbols-outlined text-[20px]">menu</span>
           </button>
 
           {/* Búsqueda */}
-          <div className="flex-1 max-w-2xl ml-2 md:ml-0">
+          <div className="flex-1 max-w-xl ml-3 md:ml-0">
             <div className="relative group">
-              <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 group-focus-within:text-primary transition-colors">
+              <span className="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500 group-focus-within:text-zinc-400 transition-colors duration-180 text-[18px]">
                 search
               </span>
               <input
@@ -1187,27 +1041,27 @@ export default function Dashboard({ user }: { user: any }) {
                     setPromptSearchQuery(e.target.value);
                   else setArenaSearchQuery(e.target.value);
                 }}
-                className="w-full bg-zinc-100 dark:bg-zinc-900 border-0 rounded-2xl py-3 pl-12 pr-4 text-sm text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:ring-2 focus:ring-primary/30 transition-all"
+                className="w-full bg-white dark:bg-zinc-900/80 border border-zinc-200/50 dark:border-zinc-800/40 rounded-xl py-2.5 pl-10 pr-4 text-sm text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-zinc-400 dark:focus:border-zinc-600 focus:ring-1 focus:ring-zinc-400/20 dark:focus:ring-zinc-600/20 transition-all duration-180"
               />
             </div>
           </div>
 
           {/* Botones de acción */}
-          <div className="flex items-center gap-2 md:gap-6">
-            <div className="flex items-center gap-1 md:gap-2">
-              <button className="p-2 text-zinc-400 hover:text-primary hover:bg-primary/10 rounded-full transition-all">
-                <span className="material-symbols-outlined text-[20px] md:text-[24px]">
+          <div className="flex items-center gap-3 md:gap-5">
+            <div className="flex items-center gap-1">
+              <button className="p-1.5 text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/40 rounded-lg transition-all duration-180">
+                <span className="material-symbols-outlined text-[18px]">
                   notifications
                 </span>
               </button>
-              <button className="p-2 text-zinc-400 hover:text-primary hover:bg-primary/10 rounded-full transition-all">
-                <span className="material-symbols-outlined text-[20px] md:text-[24px]">
+              <button className="p-1.5 text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/40 rounded-lg transition-all duration-180">
+                <span className="material-symbols-outlined text-[18px]">
                   help
                 </span>
               </button>
             </div>
 
-            <div className="h-8 w-px bg-zinc-200 dark:bg-zinc-800 hidden md:block" />
+            <div className="h-6 w-px bg-zinc-200/50 dark:bg-zinc-800/40 hidden md:block" />
 
             {/* Botón Nueva nota */}
             <button
@@ -1216,11 +1070,9 @@ export default function Dashboard({ user }: { user: any }) {
                 else if (activeTab === "prompts") openPromptModal();
                 else setArenaModalOpen(true);
               }}
-              className="flex items-center gap-2 gemstone-gradient text-white px-3 py-2 md:px-5 md:py-2.5 rounded-xl font-bold shadow-lg shadow-primary/25 hover:shadow-primary/40 hover:scale-[1.02] active:scale-[0.98] transition-all text-sm md:text-base"
+              className="flex items-center gap-1.5 gemstone-gradient text-white px-3 py-2 md:px-4 md:py-2 rounded-xl font-semibold shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 hover:brightness-110 active:brightness-95 transition-all duration-180 text-sm"
             >
-              <span className="material-symbols-outlined text-[18px] md:text-[20px]">
-                add
-              </span>
+              <span className="material-symbols-outlined text-[16px]">add</span>
               <span className="hidden sm:inline">
                 {activeTab === "notes" && "Nota"}
                 {activeTab === "prompts" && "Prompt"}

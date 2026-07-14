@@ -345,3 +345,61 @@ body {
 .dark .bg-primary\/10 {
   background-color: rgba(167, 139, 250, 0.1);
 }
+
+/* ==================== SIDEBAR COMPONENTS ==================== */
+
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #a1a1aa;
+  transition: all 180ms ease-out;
+  cursor: pointer;
+  text-align: left;
+}
+
+.sidebar-item:hover {
+  background-color: rgba(39, 39, 42, 0.3);
+  color: #e4e4e7;
+}
+
+.sidebar-item.active {
+  background-color: rgba(39, 39, 42, 0.6);
+  color: #f4f4f5;
+}
+
+.sidebar-item .count {
+  margin-left: auto;
+  font-size: 10px;
+  color: #52525b;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.sidebar-item:hover .count {
+  color: #71717a;
+}
+
+.sidebar-item.active .count {
+  color: #71717a;
+}
+
+.sidebar-section-label {
+  padding: 0 12px;
+  margin-bottom: 6px;
+  font-size: 10px;
+  font-weight: 500;
+  color: #71717a;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.divider {
+  height: 1px;
+  background-color: rgba(39, 39, 42, 0.4);
+}
