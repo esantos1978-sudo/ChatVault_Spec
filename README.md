@@ -6,7 +6,7 @@
 ![Supabase](https://img.shields.io/badge/Supabase-2.0-green?style=flat-square&logo=supabase)
 ![Vercel](https://img.shields.io/badge/Vercel-Deployed-black?style=flat-square&logo=vercel)
 
-**Your data, refined & resilient.** Kimberlite (anteriormente ChatVault) es una aplicación web moderna para organizar conversaciones con IA, gestionar prompts reutilizables y comparar modelos de lenguaje. Construida con Next.js 16, TypeScript, Tailwind CSS v4 y Supabase, ofrece una experiencia premium con autenticación segura, CRUD completo de notas y prompts, scraping inteligente de URLs, **carga de archivos (PDF, TXT, MD) con extracción automática de texto completamente funcional**, sistema de etiquetas independientes por sección, filtros avanzados, una **Arena de LLMs** para comparar respuestas, **sistema de favoritos** ⭐, enlace entre notas y prompts, **botón "Copiar MD" en todas las tarjetas**, **sidebar responsive** con menú hamburguesa en móviles, **selector de prompts en la Arena** para cargar prompts guardados automáticamente, y un diseño oscuro optimizado con paleta equilibrada de violetas, azules y terracota.
+**Your data, refined & resilient.** Kimberlite (anteriormente ChatVault) es una aplicación web moderna para organizar conversaciones con IA, gestionar prompts reutilizables y comparar modelos de lenguaje. Construida con Next.js 16, TypeScript, Tailwind CSS v4 y Supabase, ofrece una experiencia premium con autenticación segura, CRUD completo de notas y prompts, scraping inteligente de URLs, **carga de archivos (PDF, TXT, MD) con extracción automática de texto completamente funcional**, sistema de etiquetas independientes por sección, filtros avanzados, una **Arena de LLMs** para comparar respuestas, **sistema de favoritos** ⭐, enlace entre notas y prompts, **botón "Copiar MD" en todas las tarjetas**, **sidebar responsive** con menú hamburguesa en móviles, **selector de prompts en la Arena** para cargar prompts guardados automáticamente, **onboarding guiado** con empty states que enseñan el producto, y un diseño oscuro optimizado con paleta equilibrada de violetas, azules y terracota.
 
 ---
 
@@ -487,6 +487,7 @@ Todas las funcionalidades principales están **operativas y probadas**. La aplic
 - ✅ **Pestaña por defecto:** El dashboard abre directamente en **Prompts** (antes abría en Notas), reflejando que el prompt es el origen del conocimiento.
 - ✅ **Selector de prompts en la Arena:** Nuevo selector en `ArenaModal.tsx` que permite cargar un prompt guardado directamente en el campo "Prompt a comparar", usando el mismo `PopoverSelect` que en `NoteModal.tsx`. Al seleccionar un prompt, su contenido se carga automáticamente.
 - ✅ **Prompt asociado en ArenaDetailModal:** Renombrado el campo "Prompt" a "Prompt asociado" en el modal de detalle de la Arena para mantener consistencia con el modal de notas.
+- ✅ **Onboarding guiado con empty states:** Los estados vacíos ahora son experiencias de onboarding que enseñan el producto. Cada sección (Prompts, Notas, Arena) incluye: icono Material Symbol, título descriptivo, texto de beneficio, botón CTA con degradado Kimberlite y una tarjeta de ejemplo no interactiva al 80% de opacidad que muestra cómo se verá el contenido real. Inspirado en Notion, Linear y Raycast.
 
 ---
 
