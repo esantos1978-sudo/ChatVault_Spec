@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import toast from "react-hot-toast";
 
 interface ArenaCardProps {
@@ -27,20 +26,14 @@ export function ArenaCard({
   onExpand,
   index = 0,
 }: ArenaCardProps) {
-  const [expanded, setExpanded] = useState(false);
   const { prompt, responses, winner } = comparison;
 
-  const winnerLabel =
+  const winnerModel =
     winner === "model1"
       ? responses.model1
       : winner === "model2"
         ? responses.model2
         : null;
-
-  const toggleExpand = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setExpanded(!expanded);
-  };
 
   const truncate = (text: string, maxLength: number = 120) => {
     if (!text) return "Respuesta vacía";
@@ -48,115 +41,101 @@ export function ArenaCard({
     return text.substring(0, maxLength) + "...";
   };
 
-  const isWinner1 = winner === "model1";
-  const isWinner2 = winner === "model2";
-
   return (
     <div
-      className="group bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 border-l-4 border-l-primary hover:shadow-lg hover:-translate-y-1 transition-all duration-300 p-5 flex flex-col h-full relative overflow-hidden cursor-pointer"
+      className="group bg-zinc-900/70 rounded-2xl border border-zinc-800/40 hover:bg-zinc-800/30 hover:border-zinc-700/40 hover:-translate-y-[1px] transition-all duration-180 ease-out p-6 flex flex-col h-full relative cursor-pointer"
       onClick={() => onExpand(comparison)}
     >
-      {/* Badge de ganador */}
-      {winner && winnerLabel && (
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-400 text-[10px] font-bold border border-emerald-500/30 mb-4">
+      {/* Cinta de ganador */}
+      {winner && winnerModel && (
+        <div className="w-full h-7 bg-emerald-950/40 border-b border-emerald-800/30 text-emerald-400 text-[11px] font-medium flex items-center gap-1.5 px-4 -mt-6 -mx-6 mb-5 rounded-t-2xl shrink-0">
           <span className="material-symbols-outlined text-[14px]">
             emoji_events
           </span>
-          Ganador: {winnerLabel}
+          Ganador · {winnerModel}
         </div>
       )}
 
       {/* Prompt */}
-      <h3 className="text-base font-bold text-amber-700 dark:text-amber-400 mb-2 group-hover:text-amber-600 dark:group-hover:text-amber-300 transition-colors line-clamp-2">
+      <h3 className="text-[17px] font-semibold text-zinc-100 leading-tight mb-5 line-clamp-2">
         {prompt}
       </h3>
 
+      {/* Separador */}
+      <div className="flex items-center gap-3 mb-4">
+        <div className="h-px flex-1 bg-zinc-800/30" />
+        <span className="text-[9px] font-medium text-zinc-600 uppercase tracking-wider">
+          Respuestas
+        </span>
+        <div className="h-px flex-1 bg-zinc-800/30" />
+      </div>
+
       {/* Comparación en dos columnas */}
-      <div className="grid grid-cols-2 gap-3 flex-grow mb-4">
-        <div
-          className={`p-3 rounded-xl border ${
-            isWinner1
-              ? "bg-emerald-500/5 border-emerald-500/30"
-              : "bg-surface-container-high/50 border-outline-variant/30"
-          }`}
-        >
-          <div className="flex items-center gap-2 mb-1">
-            <span className="text-[10px] font-bold text-primary/80">
-              🤖 {responses.model1 || "Modelo 1"}
+      <div className="grid grid-cols-2 gap-3 flex-grow mb-5">
+        {/* Modelo 1 */}
+        <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-3 hover:bg-zinc-800/20 transition-all duration-180 flex flex-col">
+          <div className="flex items-center gap-1.5 mb-2">
+            <span className="text-[10px] font-medium text-zinc-500">
+              {responses.model1 || "Modelo 1"}
             </span>
-            {isWinner1 && (
-              <span className="text-[10px] text-emerald-400">🏆</span>
-            )}
           </div>
-          <p className="text-xs text-on-surface-variant/70 line-clamp-3 leading-relaxed">
-            {expanded ? responses.response1 : truncate(responses.response1, 80)}
+          <p className="text-xs text-zinc-500/80 leading-relaxed line-clamp-4 flex-grow">
+            {truncate(responses.response1, 100)}
           </p>
         </div>
 
-        <div
-          className={`p-3 rounded-xl border ${
-            isWinner2
-              ? "bg-emerald-500/5 border-emerald-500/30"
-              : "bg-surface-container-high/50 border-outline-variant/30"
-          }`}
-        >
-          <div className="flex items-center gap-2 mb-1">
-            <span className="text-[10px] font-bold text-primary/80">
-              🤖 {responses.model2 || "Modelo 2"}
+        {/* Modelo 2 */}
+        <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-3 hover:bg-zinc-800/20 transition-all duration-180 flex flex-col">
+          <div className="flex items-center gap-1.5 mb-2">
+            <span className="text-[10px] font-medium text-zinc-500">
+              {responses.model2 || "Modelo 2"}
             </span>
-            {isWinner2 && (
-              <span className="text-[10px] text-emerald-400">🏆</span>
-            )}
           </div>
-          <p className="text-xs text-on-surface-variant/70 line-clamp-3 leading-relaxed">
-            {expanded ? responses.response2 : truncate(responses.response2, 80)}
+          <p className="text-xs text-zinc-500/80 leading-relaxed line-clamp-4 flex-grow">
+            {truncate(responses.response2, 100)}
           </p>
         </div>
       </div>
 
-      {/* Pie de tarjeta */}
-      <div className="flex items-center justify-between pt-3 border-t border-primary/15">
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1.5 text-on-surface-variant/50">
-            <span className="material-symbols-outlined text-[14px]">
-              calendar_today
-            </span>
-            <span className="font-label-sm text-[11px]">
-              {new Date(comparison.created_at).toLocaleDateString("es-ES", {
-                year: "numeric",
-                month: "short",
-                day: "numeric",
-              })}
-            </span>
-          </div>
+      {/* Footer */}
+      <div className="flex items-center justify-between pt-4 border-t border-zinc-800/30">
+        {/* Fecha a la izquierda */}
+        <span className="text-[10px] text-zinc-700">
+          {new Date(comparison.created_at).toLocaleDateString("es-ES", {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+          })}
+        </span>
+
+        {/* Acciones a la derecha */}
+        <div className="flex items-center gap-0 shrink-0">
+          {/* Copiar MD */}
           <button
             onClick={(e) => {
               e.stopPropagation();
               const markdown = `# Comparación: ${comparison.prompt}\n\n## ${comparison.responses.model1}\n${comparison.responses.response1}\n\n## ${comparison.responses.model2}\n${comparison.responses.response2}\n\n**Ganador:** ${comparison.winner === "model1" ? comparison.responses.model1 : comparison.winner === "model2" ? comparison.responses.model2 : "No definido"}\n\n---\n*Copiado desde Kimberlite*`;
               navigator.clipboard.writeText(markdown);
-              toast.success("📋 Comparación copiada en Markdown");
+              toast.success("Comparación copiada en Markdown");
             }}
-            className="text-zinc-400 hover:text-primary transition-colors text-[11px]"
+            className="p-[3px] rounded-lg text-zinc-600 hover:text-zinc-300 hover:bg-zinc-800/60 transition-all duration-180"
+            title="Copiar en Markdown"
           >
-            Copiar MD
+            <span className="material-symbols-outlined text-[16px]">
+              content_copy
+            </span>
           </button>
-        </div>
 
-        <div className="flex items-center gap-2">
-          <button
-            onClick={toggleExpand}
-            className="px-3 py-1 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 text-[10px] font-bold transition-colors"
-          >
-            {expanded ? "Ver menos" : "Ver más"}
-          </button>
+          {/* Eliminar */}
           <button
             onClick={(e) => {
               e.stopPropagation();
               onDelete(comparison.id);
             }}
-            className="p-1.5 rounded-lg text-on-surface-variant/50 hover:text-red-400 hover:bg-red-500/10 transition-colors"
+            className="p-[3px] rounded-lg text-zinc-600 hover:text-red-400 hover:bg-zinc-800/60 transition-all duration-180"
+            title="Eliminar comparación"
           >
-            <span className="material-symbols-outlined text-[18px]">
+            <span className="material-symbols-outlined text-[16px]">
               delete
             </span>
           </button>
