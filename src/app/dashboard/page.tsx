@@ -48,8 +48,8 @@ interface Prompt {
 
 export default function Dashboard({ user }: { user: any }) {
   // ==================== ESTADOS GENERALES ====================
-  const [activeTab, setActiveTab] = useState<"notes" | "prompts" | "arena">(
-    "notes",
+  const [activeTab, setActiveTab] = useState<"prompts" | "notes" | "arena">(
+    "prompts",
   );
   const [showFavorites, setShowFavorites] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -110,6 +110,7 @@ export default function Dashboard({ user }: { user: any }) {
   const promptOptions = prompts.map((p) => ({
     id: p.id,
     title: p.title,
+    content: p.content,
   }));
 
   // ==================== ESTADOS PARA LA ARENA ====================
@@ -120,6 +121,9 @@ export default function Dashboard({ user }: { user: any }) {
   const [arenaSearchQuery, setArenaSearchQuery] = useState("");
   const [arenaDetailModalOpen, setArenaDetailModalOpen] = useState(false);
   const [selectedComparison, setSelectedComparison] = useState<any>(null);
+  const [arenaSelectedPromptId, setArenaSelectedPromptId] = useState<
+    string | null
+  >(null);
 
   // ==================== ESTADOS COMUNES ====================
   const [error, setError] = useState<string | null>(null);
@@ -680,6 +684,14 @@ export default function Dashboard({ user }: { user: any }) {
         {/* NAVEGACIÓN PRINCIPAL */}
         <nav className="flex flex-col px-2 gap-0.5">
           <button
+            onClick={() => setActiveTab("prompts")}
+            className={`sidebar-item ${activeTab === "prompts" ? "active" : ""}`}
+          >
+            <span className="material-symbols-outlined text-[18px]">bolt</span>
+            <span>Prompts</span>
+            <span className="count">{prompts.length}</span>
+          </button>
+          <button
             onClick={() => setActiveTab("notes")}
             className={`sidebar-item ${activeTab === "notes" ? "active" : ""}`}
           >
@@ -688,14 +700,6 @@ export default function Dashboard({ user }: { user: any }) {
             </span>
             <span>Notas</span>
             <span className="count">{notes.length}</span>
-          </button>
-          <button
-            onClick={() => setActiveTab("prompts")}
-            className={`sidebar-item ${activeTab === "prompts" ? "active" : ""}`}
-          >
-            <span className="material-symbols-outlined text-[18px]">bolt</span>
-            <span>Prompts</span>
-            <span className="count">{prompts.length}</span>
           </button>
           <button
             onClick={() => setActiveTab("arena")}
@@ -1330,6 +1334,9 @@ export default function Dashboard({ user }: { user: any }) {
         onClose={() => setArenaModalOpen(false)}
         onSubmit={handleArenaSubmit}
         saving={arenaSaving}
+        prompts={promptOptions}
+        selectedPromptId={arenaSelectedPromptId}
+        setSelectedPromptId={setArenaSelectedPromptId}
       />
       {/* ✅ MODAL DE COMPARACIÓN DETALLADA (NUEVO) */}
       <ArenaDetailModal

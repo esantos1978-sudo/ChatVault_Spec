@@ -73,10 +73,10 @@ export function ArenaDetailModal({
 
         {/* CONTENIDO */}
         <div className="px-5 py-5 space-y-6">
-          {/* Prompt */}
+          {/* Prompt asociado */}
           <div>
             <span className="text-[10px] font-medium text-zinc-600 uppercase tracking-wider mb-2 block">
-              Prompt
+              Prompt asociado
             </span>
             <div className="rounded-lg border border-zinc-800 bg-zinc-950 px-4 py-3.5 text-sm text-zinc-100 leading-relaxed">
               {prompt}

@@ -16,6 +16,9 @@ interface ArenaModalProps {
     winner: string | null;
   }) => void;
   saving: boolean;
+  prompts: { id: string; title: string; content: string }[];
+  selectedPromptId: string | null;
+  setSelectedPromptId: (id: string | null) => void;
 }
 
 const AI_MODELS = [
@@ -209,6 +212,9 @@ export default function ArenaModal({
   onClose,
   onSubmit,
   saving,
+  prompts,
+  selectedPromptId,
+  setSelectedPromptId,
 }: ArenaModalProps) {
   const [prompt, setPrompt] = useState("");
   const [model1, setModel1] = useState("");
@@ -300,7 +306,32 @@ export default function ArenaModal({
 
         {/* CONTENIDO */}
         <div className="px-6 py-7 space-y-8">
-          {/* ===== ① PROMPT ===== */}
+          {/* ===== ① SELECTOR DE PROMPT GUARDADO ===== */}
+          <div>
+            <label className={labelClass}>
+              Cargar prompt guardado (opcional)
+            </label>
+            <PopoverSelect
+              value={selectedPromptId || ""}
+              onChange={(val) => {
+                setSelectedPromptId(val || null);
+                if (val) {
+                  const selected = prompts.find((p) => p.id === val);
+                  if (selected) setPrompt(selected.content);
+                } else {
+                  setPrompt("");
+                }
+              }}
+              options={[
+                { value: "", label: "Ninguno" },
+                ...prompts.map((p) => ({ value: p.id, label: p.title })),
+              ]}
+              placeholder="Seleccionar prompt..."
+              searchPlaceholder="Buscar prompt..."
+            />
+          </div>
+
+          {/* ===== ② PROMPT ===== */}
           <div>
             <label className={labelClass}>Prompt a comparar</label>
             <textarea
@@ -314,7 +345,7 @@ export default function ArenaModal({
             />
           </div>
 
-          {/* ===== ② MODELOS ===== */}
+          {/* ===== ③ MODELOS ===== */}
           <div>
             <label className={labelClass}>Modelos</label>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -380,7 +411,7 @@ export default function ArenaModal({
             </div>
           </div>
 
-          {/* ===== ③ RESPUESTAS ===== */}
+          {/* ===== ④ RESPUESTAS ===== */}
           <div>
             <label className={labelClass}>Respuestas</label>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -415,7 +446,7 @@ export default function ArenaModal({
             </div>
           </div>
 
-          {/* ===== ④ GANADOR ===== */}
+          {/* ===== ⑤ GANADOR ===== */}
           <div>
             <label className={labelClass}>Selecciona el ganador</label>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
