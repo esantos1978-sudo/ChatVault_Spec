@@ -12,6 +12,7 @@ import PromptModal from "@/components/PromptModal";
 import { ArenaCard } from "@/components/ArenaCard";
 import ArenaModal from "@/components/ArenaModal";
 import { ArenaDetailModal } from "@/components/ArenaDetailModal";
+import PromptDetailModal from "@/components/PromptDetailModal";
 
 // ✅ Ahora NoteModal tiene export default, así que es más simple
 const NoteModal = dynamic(() => import("@/components/NoteModal"), {
@@ -123,6 +124,11 @@ export default function Dashboard({ user }: { user: any }) {
   const [arenaSelectedPromptId, setArenaSelectedPromptId] = useState<
     string | null
   >(null);
+
+  // ==================== ESTADOS PARA PROMPT DETAIL MODAL ====================
+  const [promptDetailModalOpen, setPromptDetailModalOpen] = useState(false);
+  const [selectedPromptForDetail, setSelectedPromptForDetail] =
+    useState<Prompt | null>(null);
 
   // ==================== ESTADOS COMUNES ====================
   const [error, setError] = useState<string | null>(null);
@@ -324,6 +330,7 @@ export default function Dashboard({ user }: { user: any }) {
       const { error } = await supabase.from("arena_comparisons").insert([
         {
           prompt: data.prompt,
+          prompt_id: data.prompt_id || null,
           responses: data.responses,
           winner: data.winner,
           user_id: user.id,
@@ -1316,6 +1323,10 @@ export default function Dashboard({ user }: { user: any }) {
                       onToggleFavorite={(id, isFavorite) =>
                         toggleFavorite(id, "prompts", isFavorite)
                       }
+                      onViewDetails={(p) => {
+                        setSelectedPromptForDetail(p);
+                        setPromptDetailModalOpen(true);
+                      }}
                       index={index}
                     />
                   ))}
@@ -1506,6 +1517,13 @@ export default function Dashboard({ user }: { user: any }) {
         isOpen={arenaDetailModalOpen}
         onClose={() => setArenaDetailModalOpen(false)}
         comparison={selectedComparison}
+      />
+
+      {/* ✅ MODAL DE DETALLE DE PROMPT */}
+      <PromptDetailModal
+        isOpen={promptDetailModalOpen}
+        onClose={() => setPromptDetailModalOpen(false)}
+        prompt={selectedPromptForDetail}
       />
     </div>
   );

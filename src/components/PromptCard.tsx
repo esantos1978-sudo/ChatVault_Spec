@@ -18,6 +18,7 @@ interface PromptCardProps {
   onDelete: (id: string) => void;
   onCopy: (prompt: any) => void;
   onToggleFavorite: (id: string, isFavorite: boolean) => void;
+  onViewDetails?: (prompt: any) => void;
   index?: number;
 }
 
@@ -27,6 +28,7 @@ export function PromptCard({
   onDelete,
   onCopy,
   onToggleFavorite,
+  onViewDetails,
   index = 0,
 }: PromptCardProps) {
   const [copied, setCopied] = useState(false);
@@ -135,6 +137,22 @@ export function PromptCard({
               day: "numeric",
             })}
           </span>
+
+          {/* Ver detalles */}
+          {onViewDetails && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onViewDetails(prompt);
+              }}
+              className="p-[3px] rounded-lg text-zinc-600 hover:text-sky-400 hover:bg-zinc-800/60 transition-all duration-180"
+              title="Ver detalles y relaciones"
+            >
+              <span className="material-symbols-outlined text-[16px]">
+                visibility
+              </span>
+            </button>
+          )}
 
           {/* Copiar */}
           <button

@@ -7,6 +7,7 @@ interface ArenaModalProps {
   onClose: () => void;
   onSubmit: (data: {
     prompt: string;
+    prompt_id: string | null;
     responses: {
       model1: string;
       response1: string;
@@ -238,6 +239,7 @@ export default function ArenaModal({
 
     onSubmit({
       prompt: prompt.trim(),
+      prompt_id: selectedPromptId,
       responses: {
         model1: model1.trim() || "Modelo 1",
         response1: response1.trim(),
