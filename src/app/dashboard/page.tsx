@@ -987,9 +987,24 @@ export default function Dashboard({ user }: { user: any }) {
           </>
         )}
 
-        {/* CERRAR SESIÓN */}
-        <div className="mt-auto px-2 pt-2 pb-4">
-          <button onClick={handleLogout} className="sidebar-item">
+        {/* ==================== CUENTA ==================== */}
+        <div className="mt-auto px-2 pt-4">
+          <div className="sidebar-section-label">Cuenta</div>
+
+          <a
+            href="/settings"
+            className="sidebar-item text-zinc-500 hover:text-zinc-400"
+          >
+            <span className="material-symbols-outlined text-[18px]">
+              settings
+            </span>
+            <span>Configuración</span>
+          </a>
+
+          <button
+            onClick={handleLogout}
+            className="sidebar-item text-zinc-500 hover:text-zinc-400"
+          >
             <span className="material-symbols-outlined text-[18px]">
               logout
             </span>
