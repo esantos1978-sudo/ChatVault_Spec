@@ -6,7 +6,7 @@
 ![Supabase](https://img.shields.io/badge/Supabase-2.0-green?style=flat-square&logo=supabase)
 ![Vercel](https://img.shields.io/badge/Vercel-Deployed-black?style=flat-square&logo=vercel)
 
-**Your data, refined & resilient.** Kimberlite (anteriormente ChatVault) es una aplicación web moderna para organizar conversaciones con IA, gestionar prompts reutilizables y comparar modelos de lenguaje. Construida con Next.js 16, TypeScript, Tailwind CSS v4 y Supabase, ofrece una experiencia premium con autenticación segura, CRUD completo de notas y prompts, scraping inteligente de URLs, **carga de archivos (PDF, TXT, MD) con extracción automática de texto completamente funcional**, sistema de etiquetas independientes por sección, filtros avanzados, una **Arena de LLMs** para comparar respuestas, **sistema de favoritos** ⭐, enlace entre notas y prompts, **botón "Copiar MD" en todas las tarjetas**, **sidebar responsive** con menú hamburguesa en móviles, **selector de prompts en la Arena** para cargar prompts guardados automáticamente, **onboarding guiado** con empty states que enseñan el producto, y un diseño oscuro optimizado con paleta equilibrada de violetas, azules y terracota.
+**Your data, refined & resilient.** Kimberlite (anteriormente ChatVault) es una aplicación web moderna para organizar conversaciones con IA, gestionar prompts reutilizables y comparar modelos de lenguaje. Construida con Next.js 16, TypeScript, Tailwind CSS v4 y Supabase, ofrece una experiencia premium con autenticación segura, CRUD completo de notas y prompts, scraping inteligente de URLs, **carga de archivos (PDF, TXT, MD) con extracción automática de texto completamente funcional**, sistema de etiquetas independientes por sección, filtros avanzados, una **Arena de LLMs** para comparar respuestas, **sistema de favoritos** ⭐, enlace entre notas y prompts, **botón "Copiar MD" en todas las tarjetas**, **sidebar responsive** con menú hamburguesa en móviles, **selector de prompts en la Arena** para cargar prompts guardados automáticamente, **onboarding guiado** con empty states que enseñan el producto, **pantalla de Configuración** con gestión de cuenta, seguridad y preferencias, **PromptDetailModal** con relaciones bidireccionales entre prompts, notas y arena, **relaciones formales con foreign keys y triggers de validación**, y un diseño oscuro optimizado con paleta equilibrada de violetas, azules y terracota.
 
 ---
 
@@ -209,7 +209,9 @@ Kimberlite presenta una identidad visual premium con una paleta de violetas cara
   - **`ArenaCard`**: tarjeta de comparación con dos columnas, badge del ganador y resaltado visual.
   - **`ArenaModal`**: modal de la Arena con formulario de comparación, selectores de modelo y sistema de votación.
   - **`ArenaDetailModal`**: modal expandido para ver respuestas completas lado a lado en pantalla completa.
+  - **`PromptDetailModal`**: modal de detalle de prompt con relaciones bidireccionales (notas y comparaciones asociadas), métricas de uso y navegación a elementos relacionados.
   - **`AuthForm`**: formulario de autenticación (login/registro) con diseño minimalista, logo grande y degradado Kimberlite V2.
+  - **Página de Configuración** (`/settings`): pantalla minimalista con secciones de Cuenta (nombre, email), Seguridad (cambio de contraseña), Aplicación (versión, tema/idioma próximamente) y Cerrar sesión.
 
 ---
 
@@ -275,6 +277,8 @@ Kimberlite/
 │   │   │       └── page.tsx            # Página de restablecimiento de contraseña
 │   │   ├── dashboard/
 │   │   │   └── page.tsx                # Dashboard con Notas, Prompts y Arena
+│   │   ├── settings/
+│   │   │   └── page.tsx                # Pantalla de Configuración (cuenta, seguridad, app)
 │   │   ├── layout.tsx                  # Layout raíz con fuentes Geist + Toaster + Material Symbols
 │   │   ├── page.tsx                    # Landing page + lógica de autenticación
 │   │   └── globals.css                 # Estilos globales, animaciones, scroll premium, kimberlite-gradient
@@ -286,12 +290,13 @@ Kimberlite/
 │   │   ├── NoteCard.tsx                # Tarjeta de nota con favoritos ⭐, badge de modelo y prompt
 │   │   ├── NoteModal.tsx               # Modal de notas con 3 pestañas + selector de prompts
 │   │   ├── PromptCard.tsx              # Tarjeta de prompt con favoritos ⭐ y contador
+│   │   ├── PromptDetailModal.tsx       # Modal de detalle de prompt con relaciones bidireccionales
 │   │   └── PromptModal.tsx             # Modal de creación/edición de prompts
 │   ├── lib/                            # Utilidades, helpers y lógica de negocio
 │   │   └── supabaseClient.ts           # Cliente de Supabase inicializado
 │   └── SupabaseClient.ts               # Cliente de Supabase (raíz, respaldo)
 ├── supabase/
-│   └── migrations/                     # Migraciones SQL versionadas (9 migraciones)
+│   └── migrations/                     # Migraciones SQL versionadas (10 migraciones)
 │       ├── 001_initial_notes_table.sql
 │       ├── 002_fix_rls_policies.sql
 │       ├── 003_convert_tag_to_tags_array.sql
@@ -350,17 +355,18 @@ Kimberlite/
 
 Las migraciones se ejecutan en orden secuencial para construir el esquema completo:
 
-| Orden | Archivo                             | Descripción                                    |
-| ----- | ----------------------------------- | ---------------------------------------------- |
-| 1     | `001_initial_notes_table.sql`       | Crear tabla `notes` + RLS                      |
-| 2     | `002_fix_rls_policies.sql`          | Hard Reset de políticas RLS                    |
-| 3     | `003_convert_tag_to_tags_array.sql` | Convertir columna `tag` a `tags` (TEXT[])      |
-| 4     | `004_add_columns_to_notes.sql`      | Añadir columnas a `notes`                      |
-| 5     | `005_set_default_ai_model.sql`      | Establecer DeepSeek-R1 como modelo por defecto |
-| 6     | `006_update_prompt_categories.sql`  | Actualizar categorías de prompts               |
-| 7     | `007_create_arena_comparisons.sql`  | Crear tabla `arena_comparisons`                |
-| 8     | `008_add_is_favorite_column.sql`    | Añadir columna `is_favorite` a notes y prompts |
-| 9     | `009_add_prompt_id_to_notes.sql`    | Añadir columna `prompt_id` a notes             |
+| Orden | Archivo                             | Descripción                                          |
+| ----- | ----------------------------------- | ---------------------------------------------------- |
+| 1     | `001_initial_notes_table.sql`       | Crear tabla `notes` + RLS                            |
+| 2     | `002_fix_rls_policies.sql`          | Hard Reset de políticas RLS                          |
+| 3     | `003_convert_tag_to_tags_array.sql` | Convertir columna `tag` a `tags` (TEXT[])            |
+| 4     | `004_add_columns_to_notes.sql`      | Añadir columnas a `notes`                            |
+| 5     | `005_set_default_ai_model.sql`      | Establecer DeepSeek-R1 como modelo por defecto       |
+| 6     | `006_update_prompt_categories.sql`  | Actualizar categorías de prompts                     |
+| 7     | `007_create_arena_comparisons.sql`  | Crear tabla `arena_comparisons`                      |
+| 8     | `008_add_is_favorite_column.sql`    | Añadir columna `is_favorite` a notes y prompts       |
+| 9     | `009_add_prompt_id_to_notes.sql`    | Añadir columna `prompt_id` a notes                   |
+| 10    | `00002_add_prompt_relations.sql`    | FK de notes/arena → prompts + triggers de validación |
 
 ---
 
@@ -370,20 +376,20 @@ Las migraciones se ejecutan en orden secuencial para construir el esquema comple
 
 Almacena las conversaciones y chats guardados por los usuarios.
 
-| Columna       | Tipo          | Descripción                                  |
-| ------------- | ------------- | -------------------------------------------- |
-| `id`          | `BIGINT`      | Identificador único (auto-incremental)       |
-| `created_at`  | `TIMESTAMPTZ` | Fecha de creación                            |
-| `user_id`     | `UUID`        | Referencia al usuario autenticado            |
-| `title`       | `TEXT`        | Título de la nota                            |
-| `content`     | `TEXT`        | Contenido de la conversación                 |
-| `summary`     | `TEXT`        | Resumen del hilo de la conversación          |
-| `tags`        | `TEXT[]`      | Array de etiquetas múltiples                 |
-| `ai_model`    | `TEXT`        | Modelo de IA asociado a la nota              |
-| `source_type` | `TEXT`        | Tipo de fuente (text, url, file)             |
-| `source_url`  | `TEXT`        | URL original del chat (si aplica)            |
-| `is_favorite` | `BOOLEAN`     | Indica si la nota está marcada como favorita |
-| `prompt_id`   | `BIGINT`      | Referencia al prompt asociado (FK)           |
+| Columna       | Tipo          | Descripción                                     |
+| ------------- | ------------- | ----------------------------------------------- |
+| `id`          | `BIGINT`      | Identificador único (auto-incremental)          |
+| `created_at`  | `TIMESTAMPTZ` | Fecha de creación                               |
+| `user_id`     | `UUID`        | Referencia al usuario autenticado               |
+| `title`       | `TEXT`        | Título de la nota                               |
+| `content`     | `TEXT`        | Contenido de la conversación                    |
+| `summary`     | `TEXT`        | Resumen del hilo de la conversación             |
+| `tags`        | `TEXT[]`      | Array de etiquetas múltiples                    |
+| `ai_model`    | `TEXT`        | Modelo de IA asociado a la nota                 |
+| `source_type` | `TEXT`        | Tipo de fuente (text, url, file)                |
+| `source_url`  | `TEXT`        | URL original del chat (si aplica)               |
+| `is_favorite` | `BOOLEAN`     | Indica si la nota está marcada como favorita    |
+| `prompt_id`   | `UUID`        | Referencia al prompt asociado (FK → prompts.id) |
 
 ### Tabla `prompts`
 
@@ -411,6 +417,7 @@ Almacena las comparaciones de la Arena de LLMs.
 | `created_at` | `TIMESTAMPTZ` | Fecha de creación                                         |
 | `user_id`    | `UUID`        | Referencia al usuario autenticado                         |
 | `prompt`     | `TEXT`        | Prompt utilizado en la comparación                        |
+| `prompt_id`  | `UUID`        | Referencia al prompt asociado (FK → prompts.id, nullable) |
 | `responses`  | `JSONB`       | Objeto con model1, response1, model2, response2           |
 | `winner`     | `TEXT`        | Ganador de la comparación ("model1" o "model2", nullable) |
 
@@ -488,6 +495,10 @@ Todas las funcionalidades principales están **operativas y probadas**. La aplic
 - ✅ **Selector de prompts en la Arena:** Nuevo selector en `ArenaModal.tsx` que permite cargar un prompt guardado directamente en el campo "Prompt a comparar", usando el mismo `PopoverSelect` que en `NoteModal.tsx`. Al seleccionar un prompt, su contenido se carga automáticamente.
 - ✅ **Prompt asociado en ArenaDetailModal:** Renombrado el campo "Prompt" a "Prompt asociado" en el modal de detalle de la Arena para mantener consistencia con el modal de notas.
 - ✅ **Onboarding guiado con empty states:** Los estados vacíos ahora son experiencias de onboarding que enseñan el producto. Cada sección (Prompts, Notas, Arena) incluye: icono Material Symbol, título descriptivo, texto de beneficio, botón CTA con degradado Kimberlite y una tarjeta de ejemplo no interactiva al 80% de opacidad que muestra cómo se verá el contenido real. Inspirado en Notion, Linear y Raycast.
+- ✅ **Pantalla de Configuración (`/settings`):** Nueva página minimalista con 4 secciones: Cuenta (nombre, email solo lectura, guardar cambios), Seguridad (cambio de contraseña reutilizando flujo existente), Aplicación (versión v1.0 Beta, Tema e Idioma como "Próximamente") y Cerrar sesión. Diseño consistente con el resto del producto: cards oscuras, rounded-lg, shadow-premium, spacing generoso, labels discretas, inputs unificados.
+- ✅ **PromptDetailModal:** Nuevo modal que muestra el prompt como protagonista (fondo más oscuro, borde más visible), métricas superiores (notas, comparaciones, usos), etiquetas, notas relacionadas y comparaciones relacionadas como cards navegables con icono, fecha y "Abrir →". Estado vacío de Arena con mensaje orientado al producto. Espaciado generoso entre secciones.
+- ✅ **Relaciones formales prompt → notes/arena (migración 00002):** Foreign keys idempotentes usando `pg_catalog.pg_constraint` + `pg_attribute`, limpieza de huérfanos antes de crear FKs, índices en `notes.prompt_id` y `arena_comparisons.prompt_id`, función `check_prompt_ownership()` con `SET search_path = public`, triggers en ambas tablas que validan cambios en `prompt_id` y `user_id`. Todo en una sola transacción.
+- ✅ **PromptDetailModal Beta Ready:** UX refinada con prompt como protagonista, listas relacionadas como cards navegables, estado vacío de Arena con mensaje de producto, resumen superior con métricas estilo Linear, espaciado generoso (`space-y-10`).
 
 ---
 
