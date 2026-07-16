@@ -29,31 +29,32 @@ function LandingPage({ onGetStarted }: { onGetStarted: () => void }) {
       </header>
 
       {/* HERO */}
-      <section className="min-h-screen flex items-center px-4 sm:px-6 lg:px-8 pt-14">
-        <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center py-24 lg:py-32">
+      <section className="min-h-screen flex items-center px-4 sm:px-6 lg:px-8 pt-20">
+        <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center py-24 lg:py-32">
           {/* Texto */}
-          <div className="flex flex-col gap-8 animate-fade-in-up">
+          <div className="flex flex-col gap-10 animate-fade-in-up">
             <span className="inline-flex items-center gap-1.5 rounded-full border border-zinc-800 bg-zinc-900/80 px-3 py-1 text-xs font-medium text-zinc-300 self-start">
               <span className="w-1.5 h-1.5 rounded-full bg-violet-500" />
-              Organiza el conocimiento que generas con IA
+              La memoria para tu trabajo con IA
             </span>
 
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-semibold tracking-tight leading-[1.1] text-zinc-50 max-w-3xl">
-              Nunca vuelvas a perder una gran respuesta de la IA.
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-semibold tracking-tight leading-[1.1] text-zinc-50 max-w-3xl mb-2">
+              Convierte tus conversaciones con IA en una biblioteca de
+              conocimiento.
             </h1>
 
             <p className="text-lg md:text-xl text-zinc-300 leading-relaxed max-w-md">
-              Convierte cada interacción con la IA en conocimiento que nunca
-              volverás a perder. Guarda, organiza y reutiliza conversaciones,
-              prompts y comparaciones entre modelos desde un único lugar.
+              Guarda, organiza y reutiliza todo lo que aprendes con la IA. Desde
+              tus mejores prompts hasta comparaciones entre modelos, todo queda
+              conectado para que nunca vuelvas a empezar desde cero.
             </p>
 
-            <div className="flex items-center gap-3 pt-2">
+            <div className="flex items-center gap-4 pt-4">
               <button
                 onClick={onGetStarted}
                 className="px-6 py-3 text-sm font-semibold text-white gemstone-gradient rounded-lg shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 hover:brightness-110 active:brightness-95 transition-all duration-200"
               >
-                Comenzar gratis
+                Crear mi biblioteca
               </button>
               <button
                 onClick={() => {
@@ -64,17 +65,17 @@ function LandingPage({ onGetStarted }: { onGetStarted: () => void }) {
                 }}
                 className="px-6 py-3 text-sm font-semibold rounded-lg border border-zinc-800 text-zinc-400 hover:text-zinc-300 hover:border-zinc-700 transition-all duration-200"
               >
-                Ver cómo funciona
+                ▶ Ver demo
               </button>
             </div>
 
             {/* Micro beneficios */}
-            <div className="flex flex-wrap items-center gap-x-6 gap-y-2 pt-2">
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-2 pt-4">
               {[
-                "Conversaciones",
-                "Prompts",
-                "Comparativas IA",
-                "Todo organizado",
+                "Nunca pierdas un buen prompt",
+                "Encuentra cualquier idea en segundo",
+                "Compara respuestas entre modelos",
+                "Construye tu biblioteca de conocimiento",
               ].map((item) => (
                 <span
                   key={item}
@@ -156,31 +157,35 @@ function LandingPage({ onGetStarted }: { onGetStarted: () => void }) {
       <section className="pt-20 pb-36 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="text-sm uppercase tracking-wider text-zinc-500 font-medium mb-8">
-            Todo lo que necesitas para trabajar con IA.
+            Todo lo que necesitas para trabajar mejor con IA. Kimberlite
+            organiza todo el conocimiento que generas para que puedas
+            reutilizarlo una y otra vez
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {[
               {
                 icon: "description",
-                title: "Organiza conversaciones",
+                title: "No vuelvas a perder una buena conversación.",
                 description:
-                  "Guarda todo lo importante y recupéralo en segundos.",
+                  "Convierte cualquier chat en una nota reutilizable y recupérala cuando la necesites.",
               },
               {
                 icon: "search",
-                title: "Encuentra cualquier idea",
-                description: "Busca por título, contenido o etiquetas.",
+                title: "Todo conectado en un único lugar.",
+                description:
+                  "Prompts, notas y comparaciones dejan de estar dispersos y pasan a formar parte de tu biblioteca.",
               },
               {
                 icon: "compare_arrows",
-                title: "Compara modelos",
-                description: "Decide con datos cuál responde mejor.",
+                title: "Descubre qué modelo responde mejor.",
+                description:
+                  "Enfrenta varias respuestas y conserva solo la mejor.",
               },
               {
                 icon: "auto_awesome",
-                title: "Reutiliza prompts",
+                title: "Aprovecha lo que ya has aprendido.",
                 description:
-                  "Tu mejor biblioteca de prompts siempre disponible.",
+                  "Cada conversación aumenta el valor de tu biblioteca de conocimiento.",
               },
             ].map((feature, index) => (
               <div
@@ -210,7 +215,9 @@ function LandingPage({ onGetStarted }: { onGetStarted: () => void }) {
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-zinc-50">
-              Todo tu conocimiento en un único lugar.
+              Tu segunda memoria para trabajar con IA. Encuentra cualquier
+              conversación, prompt o comparación en segundos gracias a una
+              biblioteca diseñada para reutilizar conocimiento.
             </h2>
             <p className="text-zinc-500 text-center max-w-xl mx-auto mt-3 text-base">
               Tus conversaciones, prompts y comparaciones organizadas de forma
@@ -284,21 +291,19 @@ function LandingPage({ onGetStarted }: { onGetStarted: () => void }) {
             {[
               {
                 number: "01",
-                title: "Importa conversaciones",
-                description:
-                  "Pega el contenido de tu chat, comparte un enlace o sube un archivo. Kimberlite lo organiza automáticamente.",
+                title: "Guarda un Prompt",
+                description: "Todo empieza con una buena instrucción.",
               },
               {
                 number: "02",
-                title: "Organízalas",
-                description:
-                  "Añade etiquetas, asigna un modelo y asocia prompts. Todo queda estructurado y listo para consultar.",
+                title: "Convierte la conversación en una Nota",
+                description: "Conserva lo importante y añade contexto.",
               },
               {
                 number: "03",
-                title: "Encuentra cualquier información al instante",
+                title: "Compárala en Arena",
                 description:
-                  "Búsqueda avanzada por texto, etiquetas o modelo. Tu conocimiento siempre a un clic de distancia.",
+                  "Descubre qué modelo ofrece la mejor respuesta y guarda el resultado.",
               },
             ].map((step, index) => (
               <div key={index} className="text-center">

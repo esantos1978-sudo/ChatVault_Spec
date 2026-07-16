@@ -535,7 +535,7 @@ export default function ArenaModal({
                 Guardando...
               </>
             ) : (
-              "Guardar batalla"
+              "Guardar comparación"
             )}
           </button>
         </div>

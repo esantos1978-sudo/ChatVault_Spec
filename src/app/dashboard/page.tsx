@@ -1040,7 +1040,11 @@ export default function Dashboard({ user }: { user: any }) {
               </span>
               <input
                 type="text"
-                placeholder="Buscar en notas... (⌘ K)"
+                placeholder={
+                  activeTab === "arena"
+                    ? "Buscar comparaciones... (⌘ K)"
+                    : "Buscar por título, contenido o etiquetas...... (⌘ K)"
+                }
                 value={
                   activeTab === "notes"
                     ? searchQuery
@@ -1089,7 +1093,7 @@ export default function Dashboard({ user }: { user: any }) {
               <span className="hidden sm:inline">
                 {activeTab === "notes" && "Nota"}
                 {activeTab === "prompts" && "Prompt"}
-                {activeTab === "arena" && "Batalla"}
+                {activeTab === "arena" && "Comparación"}
               </span>
               <span className="sm:hidden">
                 {activeTab === "notes" && "+"}
@@ -1196,7 +1200,7 @@ export default function Dashboard({ user }: { user: any }) {
                         </p>
                       </div>
                       <p className="text-[10px] text-zinc-600 mt-3 text-center">
-                        Así se verán tus notas cuando empieces a guardarlas
+                        Vista previa de una nota.
                       </p>
                     </div>
                   </div>
@@ -1259,7 +1263,7 @@ export default function Dashboard({ user }: { user: any }) {
                     {/* Título */}
                     <div>
                       <h3 className="text-lg font-semibold text-zinc-100">
-                        Tu biblioteca de prompts empieza aquí
+                        Empieza construyendo tu biblioteca de conocimiento.
                       </h3>
                       <p className="text-sm text-zinc-500 mt-2 leading-relaxed">
                         Los mejores resultados empiezan con un buen prompt.
@@ -1281,7 +1285,7 @@ export default function Dashboard({ user }: { user: any }) {
                       <span className="material-symbols-outlined text-[16px]">
                         add
                       </span>
-                      Crear mi primer Prompt
+                      Guardar mi primer Prompt
                     </button>
 
                     {/* Tarjeta de ejemplo no interactiva */}
@@ -1370,8 +1374,8 @@ export default function Dashboard({ user }: { user: any }) {
                         Descubre qué modelo responde mejor
                       </h3>
                       <p className="text-sm text-zinc-500 mt-2 leading-relaxed">
-                        Compara distintos modelos utilizando el mismo prompt y
-                        descubre cuál ofrece el mejor resultado.
+                        Compara la misma pregunta entre distintos modelos y
+                        guarda siempre la mejor respuesta.
                       </p>
                     </div>
 
@@ -1389,7 +1393,30 @@ export default function Dashboard({ user }: { user: any }) {
                     {/* Tarjeta de ejemplo no interactiva */}
                     <div className="mt-10 opacity-80 pointer-events-none select-none">
                       <div className="rounded-2xl border border-zinc-800/40 bg-zinc-900/60 p-5 text-left">
-                        <div className="grid grid-cols-2 gap-3 mb-3">
+                        {/* Badge ✨ Ejemplo */}
+                        <span className="inline-flex items-center gap-1 rounded-md bg-amber-500/10 px-2 py-0.5 text-[10px] font-medium text-amber-400 border border-amber-500/20 mb-4">
+                          ✨ Ejemplo
+                        </span>
+
+                        {/* Prompt */}
+                        <div className="mb-4">
+                          <span className="text-[10px] font-medium text-zinc-600 uppercase tracking-wider">
+                            Prompt
+                          </span>
+                          <p className="text-sm text-zinc-300 mt-1 font-medium">
+                            Explica recursión en Python
+                          </p>
+                        </div>
+
+                        {/* Flecha hacia abajo */}
+                        <div className="flex justify-center mb-4">
+                          <span className="material-symbols-outlined text-zinc-700 text-[18px]">
+                            arrow_downward
+                          </span>
+                        </div>
+
+                        {/* Modelos enfrentados */}
+                        <div className="grid grid-cols-2 gap-3 mb-4">
                           <div className="rounded-xl bg-zinc-800/40 p-3">
                             <span className="text-[10px] font-medium text-zinc-500 uppercase tracking-wider">
                               Modelo A
@@ -1407,16 +1434,28 @@ export default function Dashboard({ user }: { user: any }) {
                             </p>
                           </div>
                         </div>
-                        <h4 className="text-sm font-semibold text-amber-600 dark:text-amber-400 mb-2">
-                          Explica recursión en Python
-                        </h4>
-                        <p className="text-xs text-zinc-500 leading-relaxed line-clamp-2">
-                          Comparando respuestas entre Claude y ChatGPT sobre el
-                          mismo prompt...
-                        </p>
+
+                        {/* VS */}
+                        <div className="flex justify-center mb-4">
+                          <span className="text-[11px] font-semibold text-zinc-600">
+                            VS
+                          </span>
+                        </div>
+
+                        {/* Ganador */}
+                        <div className="rounded-xl bg-emerald-950/10 border border-emerald-800/30 p-3 flex items-center gap-2">
+                          <span className="material-symbols-outlined text-[16px] text-emerald-400">
+                            emoji_events
+                          </span>
+                          <span className="text-xs font-medium text-emerald-400">
+                            Mejor Respuesta · Claude 3.5 Sonnet
+                          </span>
+                        </div>
                       </div>
+
+                      {/* Microcopy */}
                       <p className="text-[10px] text-zinc-600 mt-3 text-center">
-                        Así se verán tus comparaciones cuando empieces a usarlas
+                        Nunca vuelvas a preguntarte qué modelo respondió mejor.
                       </p>
                     </div>
                   </div>
