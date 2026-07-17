@@ -110,11 +110,11 @@ export default function PromptDetailModal({
       }}
     >
       <div
-        className="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-xl bg-zinc-900 shadow-premium border border-zinc-800/40 my-8 animate-zoom-in"
+        className="w-[calc(100%-2rem)] sm:w-full max-w-3xl rounded-xl bg-zinc-900 shadow-premium border border-zinc-800/40 my-8 max-h-[90dvh] overflow-y-auto animate-zoom-in flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* HEADER */}
-        <div className="px-6 pt-6 pb-4 border-b border-zinc-800/30 flex items-start justify-between">
+        <div className="sticky top-0 z-10 bg-zinc-900 px-5 sm:px-6 pt-5 sm:pt-6 pb-4 border-b border-zinc-800/30 flex items-start justify-between">
           <div className="flex items-center gap-3">
             <span
               className={`inline-flex items-center rounded-md px-2.5 py-1 text-[11px] font-medium border ${catConfig.style}`}
@@ -147,7 +147,7 @@ export default function PromptDetailModal({
         </div>
 
         {/* CONTENIDO */}
-        <div className="px-6 py-6 space-y-10">
+        <div className="px-5 sm:px-6 py-5 sm:py-6 space-y-8 sm:space-y-10 flex-1">
           {/* ===== RESUMEN SUPERIOR (métricas) ===== */}
           <div className="flex items-center gap-5 -mt-2">
             <span className="text-[11px] text-zinc-600 font-medium">
@@ -300,7 +300,7 @@ export default function PromptDetailModal({
         </div>
 
         {/* FOOTER */}
-        <div className="px-6 pb-6 pt-5 border-t border-zinc-800/30 flex items-center justify-between">
+        <div className="sticky bottom-0 bg-zinc-900 px-5 sm:px-6 pb-5 sm:pb-6 pt-5 border-t border-zinc-800/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <span className="text-[10px] text-zinc-700">
             Creado el{" "}
             {new Date(prompt.created_at).toLocaleDateString("es-ES", {
@@ -311,7 +311,7 @@ export default function PromptDetailModal({
           </span>
           <button
             onClick={onClose}
-            className="text-sm font-medium text-zinc-500 hover:text-zinc-400 transition-colors duration-200"
+            className="w-full sm:w-auto text-sm font-medium text-zinc-500 hover:text-zinc-400 transition-colors duration-200 py-2 sm:py-0"
           >
             Cerrar
           </button>

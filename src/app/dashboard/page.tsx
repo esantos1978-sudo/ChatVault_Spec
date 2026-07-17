@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+
 import dynamic from "next/dynamic";
 import { supabase } from "@/lib/supabaseClient";
 import toast from "react-hot-toast";
@@ -54,6 +55,8 @@ export default function Dashboard({ user }: { user: any }) {
   );
   const [showFavorites, setShowFavorites] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const sidebarRef = useRef<HTMLDivElement>(null);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
 
   // ==================== ESTADOS PARA NOTAS ====================
   const [notes, setNotes] = useState<Note[]>([]);
@@ -175,6 +178,32 @@ export default function Dashboard({ user }: { user: any }) {
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, []);
+
+  // ==================== DRAWER: ESCAPE, FOCUS, BODY SCROLL ====================
+  useEffect(() => {
+    if (!sidebarOpen) return;
+
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    // Focus al drawer
+    setTimeout(() => {
+      sidebarRef.current?.focus();
+    }, 100);
+
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setSidebarOpen(false);
+        menuButtonRef.current?.focus();
+      }
+    };
+
+    document.addEventListener("keydown", handleEscape);
+    return () => {
+      document.body.style.overflow = prev;
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, [sidebarOpen]);
 
   // ==================== FUNCIONES PARA NOTAS ====================
   async function fetchNotes() {
@@ -666,12 +695,37 @@ export default function Dashboard({ user }: { user: any }) {
     setPromptSelectedSuggestion(-1);
   };
 
+  // ==================== CERRAR DRAWER AL NAVEGAR ====================
+  const navigateAndClose = (tab: "prompts" | "notes" | "arena") => {
+    setActiveTab(tab);
+    setSidebarOpen(false);
+    menuButtonRef.current?.focus();
+  };
+
   // ==================== RENDER ====================
   return (
-    <div className="flex h-screen w-screen bg-zinc-100 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-50 overflow-hidden">
+    <div className="flex min-h-dvh w-full bg-zinc-100 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-50 overflow-hidden">
+      {/* ================= OVERLAY DEL DRAWER ================= */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-black/50 md:hidden"
+          onClick={() => {
+            setSidebarOpen(false);
+            menuButtonRef.current?.focus();
+          }}
+          aria-hidden="true"
+        />
+      )}
+
       {/* ================= SIDEBAR ================= */}
       <aside
-        className={`fixed md:relative top-0 left-0 z-50 w-60 h-full bg-zinc-950 border-r border-zinc-800/40 flex flex-col select-none overflow-y-auto transition-transform duration-300 ${
+        ref={sidebarRef}
+        tabIndex={-1}
+        role="dialog"
+        aria-modal={sidebarOpen ? "true" : undefined}
+        aria-label="Menú de navegación"
+        id="sidebar-drawer"
+        className={`fixed md:relative top-0 left-0 z-50 w-[280px] md:w-60 h-full bg-zinc-950 border-r border-zinc-800/40 flex flex-col select-none overflow-y-auto transition-transform duration-300 ease-out ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         } md:translate-x-0`}
       >
@@ -687,7 +741,7 @@ export default function Dashboard({ user }: { user: any }) {
         {/* NAVEGACIÓN PRINCIPAL */}
         <nav className="flex flex-col px-2 gap-0.5">
           <button
-            onClick={() => setActiveTab("prompts")}
+            onClick={() => navigateAndClose("prompts")}
             className={`sidebar-item ${activeTab === "prompts" ? "active" : ""}`}
           >
             <span className="material-symbols-outlined text-[18px]">bolt</span>
@@ -695,7 +749,7 @@ export default function Dashboard({ user }: { user: any }) {
             <span className="count">{prompts.length}</span>
           </button>
           <button
-            onClick={() => setActiveTab("notes")}
+            onClick={() => navigateAndClose("notes")}
             className={`sidebar-item ${activeTab === "notes" ? "active" : ""}`}
           >
             <span className="material-symbols-outlined text-[18px]">
@@ -705,7 +759,7 @@ export default function Dashboard({ user }: { user: any }) {
             <span className="count">{notes.length}</span>
           </button>
           <button
-            onClick={() => setActiveTab("arena")}
+            onClick={() => navigateAndClose("arena")}
             className={`sidebar-item ${activeTab === "arena" ? "active" : ""}`}
           >
             <span className="material-symbols-outlined text-[18px]">
@@ -1021,19 +1075,22 @@ export default function Dashboard({ user }: { user: any }) {
       </aside>
 
       {/* ================= CONTENIDO PRINCIPAL ================= */}
-      <main className="flex-1 flex flex-col overflow-hidden bg-white dark:bg-zinc-950 pt-16">
-        <header className="h-16 fixed top-0 right-0 left-0 md:left-[240px] z-10 bg-zinc-50/80 dark:bg-zinc-950/80 backdrop-blur-md border-b border-zinc-200/30 dark:border-zinc-800/30 flex items-center justify-between px-5 md:px-8">
+      <main className="flex-1 flex flex-col min-w-0 overflow-hidden bg-white dark:bg-zinc-950 pt-16">
+        <header className="h-16 fixed top-0 right-0 left-0 md:left-60 z-10 bg-zinc-50/80 dark:bg-zinc-950/80 backdrop-blur-md border-b border-zinc-200/30 dark:border-zinc-800/30 flex items-center justify-between gap-2 px-4 md:px-8">
           {/* Botón de menú (solo en móviles) */}
           <button
+            ref={menuButtonRef}
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="md:hidden p-1.5 text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/40 rounded-lg transition-all duration-180"
-            aria-label="Abrir menú"
+            className="md:hidden p-1.5 text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/40 rounded-lg transition-all duration-180 shrink-0"
+            aria-label={sidebarOpen ? "Cerrar menú" : "Abrir menú"}
+            aria-expanded={sidebarOpen}
+            aria-controls="sidebar-drawer"
           >
             <span className="material-symbols-outlined text-[20px]">menu</span>
           </button>
 
           {/* Búsqueda */}
-          <div className="flex-1 max-w-xl ml-3 md:ml-0">
+          <div className="flex-1 min-w-0 max-w-xl">
             <div className="relative group">
               <span className="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500 group-focus-within:text-zinc-400 transition-colors duration-180 text-[18px]">
                 search
@@ -1042,8 +1099,10 @@ export default function Dashboard({ user }: { user: any }) {
                 type="text"
                 placeholder={
                   activeTab === "arena"
-                    ? "Buscar comparaciones... (⌘ K)"
-                    : "Buscar por título, contenido o etiquetas...... (⌘ K)"
+                    ? "Buscar comparaciones..."
+                    : activeTab === "prompts"
+                      ? "Buscar prompts..."
+                      : "Buscar notas..."
                 }
                 value={
                   activeTab === "notes"
@@ -1064,14 +1123,20 @@ export default function Dashboard({ user }: { user: any }) {
           </div>
 
           {/* Botones de acción */}
-          <div className="flex items-center gap-3 md:gap-5">
+          <div className="flex items-center gap-2 md:gap-5 shrink-0">
             <div className="flex items-center gap-1">
-              <button className="p-1.5 text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/40 rounded-lg transition-all duration-180">
+              <button
+                className="p-1.5 text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/40 rounded-lg transition-all duration-180"
+                aria-label="Notificaciones"
+              >
                 <span className="material-symbols-outlined text-[18px]">
                   notifications
                 </span>
               </button>
-              <button className="p-1.5 text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/40 rounded-lg transition-all duration-180">
+              <button
+                className="p-1.5 text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/40 rounded-lg transition-all duration-180"
+                aria-label="Ayuda"
+              >
                 <span className="material-symbols-outlined text-[18px]">
                   help
                 </span>
@@ -1120,12 +1185,12 @@ export default function Dashboard({ user }: { user: any }) {
         )}
 
         {/* CONTENIDO SEGÚN TAB */}
-        <section className="flex-1 overflow-y-auto p-6 bg-gradient-to-br from-zinc-50/50 via-white/50 to-zinc-50/30 dark:from-zinc-950 dark:via-zinc-950/95 dark:to-zinc-950">
+        <section className="flex-1 overflow-y-auto p-4 md:p-6 bg-gradient-to-br from-zinc-50/50 via-white/50 to-zinc-50/30 dark:from-zinc-950 dark:via-zinc-950/95 dark:to-zinc-950">
           {/* ==================== TAB NOTAS ==================== */}
           {activeTab === "notes" && (
             <>
               {notesLoading ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
                   {[1, 2, 3, 4, 5, 6].map((i) => (
                     <div
                       key={i}
@@ -1148,7 +1213,7 @@ export default function Dashboard({ user }: { user: any }) {
                   ))}
                 </div>
               ) : filteredNotes.length === 0 ? (
-                <div className="flex flex-col items-center justify-center rounded-2xl border border-zinc-800/20 bg-zinc-900/20 px-8 py-16">
+                <div className="flex flex-col items-center justify-center rounded-2xl border border-zinc-800/20 bg-zinc-900/20 px-4 md:px-8 py-10 md:py-16">
                   <div className="max-w-md text-center space-y-6">
                     {/* Icono */}
                     <div className="mx-auto w-14 h-14 rounded-2xl bg-zinc-800/40 flex items-center justify-center">
@@ -1251,7 +1316,7 @@ export default function Dashboard({ user }: { user: any }) {
                   ))}
                 </div>
               ) : filteredPrompts.length === 0 ? (
-                <div className="flex flex-col items-center justify-center rounded-2xl border border-zinc-800/20 bg-zinc-900/20 px-8 py-10 -mt-8">
+                <div className="flex flex-col items-center justify-center rounded-2xl border border-zinc-800/20 bg-zinc-900/20 px-4 md:px-8 py-10 md:py-16">
                   <div className="max-w-lg text-center space-y-6">
                     {/* Icono */}
                     <div className="mx-auto w-14 h-14 rounded-2xl bg-zinc-800/40 flex items-center justify-center">
@@ -1316,7 +1381,7 @@ export default function Dashboard({ user }: { user: any }) {
                   </div>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-5">
                   {filteredPrompts.map((prompt, index) => (
                     <PromptCard
                       key={prompt.id}
@@ -1359,7 +1424,7 @@ export default function Dashboard({ user }: { user: any }) {
                   ))}
                 </div>
               ) : filteredArenaComparisons.length === 0 ? (
-                <div className="flex flex-col items-center justify-center rounded-2xl border border-zinc-800/20 bg-zinc-900/20 px-8 py-16">
+                <div className="flex flex-col items-center justify-center rounded-2xl border border-zinc-800/20 bg-zinc-900/20 px-4 md:px-8 py-10 md:py-16">
                   <div className="max-w-md text-center space-y-6">
                     {/* Icono */}
                     <div className="mx-auto w-14 h-14 rounded-2xl bg-zinc-800/40 flex items-center justify-center">
@@ -1448,7 +1513,7 @@ export default function Dashboard({ user }: { user: any }) {
                             emoji_events
                           </span>
                           <span className="text-xs font-medium text-emerald-400">
-                            Mejor Respuesta · Claude 3.5 Sonnet
+                            Ganador · Claude 3.5 Sonnet
                           </span>
                         </div>
                       </div>
@@ -1461,7 +1526,7 @@ export default function Dashboard({ user }: { user: any }) {
                   </div>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   {filteredArenaComparisons.map((comparison, index) => (
                     <ArenaCard
                       key={comparison.id}

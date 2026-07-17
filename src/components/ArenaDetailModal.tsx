@@ -40,11 +40,11 @@ export function ArenaDetailModal({
       }}
     >
       <div
-        className="w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-xl bg-zinc-900 shadow-premium border border-zinc-800/40 my-8 animate-zoom-in"
+        className="w-[calc(100%-2rem)] sm:w-full max-w-4xl rounded-xl bg-zinc-900 shadow-premium border border-zinc-800/40 my-8 max-h-[90dvh] overflow-y-auto animate-zoom-in flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* HEADER */}
-        <div className="px-5 pt-5 pb-3 border-b border-zinc-800/30 flex items-start justify-between">
+        <div className="sticky top-0 z-10 bg-zinc-900 px-5 sm:px-6 pt-5 sm:pt-6 pb-4 border-b border-zinc-800/30 flex items-start justify-between">
           <div>
             <h2 className="text-lg font-semibold tracking-tight text-zinc-50">
               Comparación detallada
@@ -72,7 +72,7 @@ export function ArenaDetailModal({
         </div>
 
         {/* CONTENIDO */}
-        <div className="px-5 py-5 space-y-6">
+        <div className="px-5 sm:px-6 py-5 sm:py-6 space-y-6 sm:space-y-8 flex-1">
           {/* Prompt asociado */}
           <div>
             <span className="text-[10px] font-medium text-zinc-600 uppercase tracking-wider mb-2 block">
@@ -140,7 +140,7 @@ export function ArenaDetailModal({
         </div>
 
         {/* FOOTER */}
-        <div className="px-5 pb-5 pt-4 border-t border-zinc-800/30 flex items-center justify-between">
+        <div className="sticky bottom-0 bg-zinc-900 px-5 sm:px-6 pb-5 sm:pb-6 pt-4 border-t border-zinc-800/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <span className="text-[10px] text-zinc-700">
             Comparación creada el{" "}
             {new Date(comparison.created_at).toLocaleDateString("es-ES", {
@@ -153,7 +153,7 @@ export function ArenaDetailModal({
           </span>
           <button
             onClick={onClose}
-            className="text-sm font-medium text-zinc-500 hover:text-zinc-400 transition-colors duration-200"
+            className="w-full sm:w-auto text-sm font-medium text-zinc-500 hover:text-zinc-400 transition-colors duration-200 py-2 sm:py-0"
           >
             Cerrar
           </button>
