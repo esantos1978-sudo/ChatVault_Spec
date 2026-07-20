@@ -241,9 +241,8 @@ export default function Dashboard({ user }: { user: any }) {
       setNoteTags(note.tags || []);
       setNoteTagsInput((note.tags || []).join(", "));
       setNoteAiModel(note.ai_model || "DeepSeek-R1");
-      setNoteSourceType(
-        (note.source_type as "text" | "url" | "file") || "text",
-      );
+      // ✅ Siempre abrir en la pestaña "Pegar conversación" para ver el contenido
+      setNoteSourceType("text");
       setNoteSourceUrl(note.source_url || "");
       setSelectedPromptId(note.prompt_id || null);
     } else {
