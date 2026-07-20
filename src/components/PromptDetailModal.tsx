@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 
 interface PromptDetailModalProps {
@@ -98,6 +99,7 @@ export default function PromptDetailModal({
     label: prompt.category,
   };
 
+  const router = useRouter();
   const noteCount = relatedNotes.length;
   const comparisonCount = relatedComparisons.length;
 
@@ -127,6 +129,7 @@ export default function PromptDetailModal({
           </div>
           <button
             onClick={onClose}
+            aria-label="Cerrar modal"
             className="p-1 rounded-lg hover:bg-zinc-800/40 transition-all duration-200 group"
           >
             <svg
@@ -211,10 +214,13 @@ export default function PromptDetailModal({
             ) : (
               <div className="space-y-2">
                 {relatedNotes.map((note) => (
-                  <a
+                  <button
                     key={note.id}
-                    href={`/dashboard?tab=notes&noteId=${note.id}`}
-                    className="group flex items-center justify-between rounded-xl border border-zinc-800 bg-zinc-950/50 px-5 py-3.5 hover:bg-zinc-800/30 hover:border-zinc-700 transition-all duration-180"
+                    onClick={() => {
+                      onClose();
+                      router.push(`/dashboard?tab=notes&noteId=${note.id}`);
+                    }}
+                    className="group w-full flex items-center justify-between rounded-xl border border-zinc-800 bg-zinc-950/50 px-5 py-3.5 hover:bg-zinc-800/30 hover:border-zinc-700 transition-all duration-180 text-left"
                   >
                     <div className="flex items-center gap-3 min-w-0">
                       <span className="material-symbols-outlined text-[16px] text-zinc-600 group-hover:text-zinc-400 transition-colors shrink-0">
@@ -236,7 +242,7 @@ export default function PromptDetailModal({
                         Abrir →
                       </span>
                     </div>
-                  </a>
+                  </button>
                 ))}
               </div>
             )}
@@ -264,10 +270,15 @@ export default function PromptDetailModal({
             ) : (
               <div className="space-y-2">
                 {relatedComparisons.map((comparison) => (
-                  <a
+                  <button
                     key={comparison.id}
-                    href={`/dashboard?tab=arena&comparisonId=${comparison.id}`}
-                    className="group flex items-center justify-between rounded-xl border border-zinc-800 bg-zinc-950/50 px-5 py-3.5 hover:bg-zinc-800/30 hover:border-zinc-700 transition-all duration-180"
+                    onClick={() => {
+                      onClose();
+                      router.push(
+                        `/dashboard?tab=arena&comparisonId=${comparison.id}`,
+                      );
+                    }}
+                    className="group w-full flex items-center justify-between rounded-xl border border-zinc-800 bg-zinc-950/50 px-5 py-3.5 hover:bg-zinc-800/30 hover:border-zinc-700 transition-all duration-180 text-left"
                   >
                     <div className="flex items-center gap-3 min-w-0">
                       <span className="material-symbols-outlined text-[16px] text-zinc-600 group-hover:text-zinc-400 transition-colors shrink-0">
@@ -292,7 +303,7 @@ export default function PromptDetailModal({
                         Abrir →
                       </span>
                     </div>
-                  </a>
+                  </button>
                 ))}
               </div>
             )}

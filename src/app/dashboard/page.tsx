@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 
 import dynamic from "next/dynamic";
 import { supabase } from "@/lib/supabaseClient";
@@ -49,6 +50,7 @@ interface Prompt {
 }
 
 export default function Dashboard({ user }: { user: any }) {
+  const router = useRouter();
   // ==================== ESTADOS GENERALES ====================
   const [activeTab, setActiveTab] = useState<"prompts" | "notes" | "arena">(
     "prompts",
@@ -133,10 +135,6 @@ export default function Dashboard({ user }: { user: any }) {
   const [selectedPromptForDetail, setSelectedPromptForDetail] =
     useState<Prompt | null>(null);
 
-  // ==================== ESTADOS COMUNES ====================
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
-
   // ==================== OBTENER ETIQUETAS POR SECCIÓN ====================
   // ✅ SOLO UNA VEZ DEFINIDAS
   const noteTagsFromNotes = Array.from(
@@ -217,7 +215,7 @@ export default function Dashboard({ user }: { user: any }) {
       if (error) throw error;
       setNotes(data || []);
     } catch (err: any) {
-      console.error("Error cargando notas:", err.message);
+      toast.error("Error cargando notas: " + err.message);
     } finally {
       setNotesLoading(false);
     }
@@ -307,7 +305,7 @@ export default function Dashboard({ user }: { user: any }) {
       if (error) throw error;
       setPrompts(data || []);
     } catch (err: any) {
-      console.error("Error cargando prompts:", err.message);
+      toast.error("Error cargando prompts: " + err.message);
     } finally {
       setPromptsLoading(false);
     }
@@ -341,7 +339,7 @@ export default function Dashboard({ user }: { user: any }) {
       if (error) throw error;
       setArenaComparisons(data || []);
     } catch (err: any) {
-      console.error("Error cargando comparaciones:", err.message);
+      toast.error("Error cargando comparaciones: " + err.message);
     } finally {
       setArenaLoading(false);
     }
@@ -392,7 +390,6 @@ export default function Dashboard({ user }: { user: any }) {
     }
   };
   const openArenaDetail = (comparison: any) => {
-    console.log("🟢 openArenaDetail ejecutado");
     setSelectedComparison(comparison);
     setArenaDetailModalOpen(true);
   };
@@ -452,11 +449,6 @@ export default function Dashboard({ user }: { user: any }) {
       // ✅ SI ES UN ARCHIVO Y HAY CONTENIDO EXTRAÍDO, USARLO
       if (noteSourceType === "file" && fileContent) {
         finalContent = fileContent;
-        console.log(
-          "📄 Usando contenido del archivo:",
-          finalContent.length,
-          "caracteres",
-        );
       }
 
       const noteData = {
@@ -469,8 +461,6 @@ export default function Dashboard({ user }: { user: any }) {
         user_id: user.id,
         prompt_id: selectedPromptId,
       };
-
-      console.log("📤 Datos a guardar:", noteData);
 
       let result;
       if (editingNoteId) {
@@ -604,9 +594,8 @@ export default function Dashboard({ user }: { user: any }) {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
       toast.success("👋 Sesión cerrada correctamente");
-      window.location.href = "/";
+      router.push("/");
     } catch (error) {
-      console.error("Error al cerrar sesión:", error);
       toast.error("Error al cerrar sesión. Inténtalo de nuevo.");
     }
   };
@@ -1168,21 +1157,6 @@ export default function Dashboard({ user }: { user: any }) {
             </button>
           </div>
         </header>
-
-        {error && (
-          <div className="mx-6 mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600 dark:border-red-900 dark:bg-red-950/30 dark:text-red-400 flex items-center gap-2">
-            <span className="material-symbols-outlined text-[16px]">error</span>
-            {error}
-          </div>
-        )}
-        {success && (
-          <div className="mx-6 mt-4 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-600 dark:border-green-900 dark:bg-green-950/30 dark:text-green-400 flex items-center gap-2">
-            <span className="material-symbols-outlined text-[16px]">
-              check_circle
-            </span>
-            {success}
-          </div>
-        )}
 
         {/* CONTENIDO SEGÚN TAB */}
         <section className="flex-1 overflow-y-auto p-4 md:p-6 bg-gradient-to-br from-zinc-50/50 via-white/50 to-zinc-50/30 dark:from-zinc-950 dark:via-zinc-950/95 dark:to-zinc-950">

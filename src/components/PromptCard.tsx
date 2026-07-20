@@ -160,11 +160,15 @@ export function PromptCard({
               e.stopPropagation();
               handleCopy();
             }}
-            className="p-[3px] rounded-lg text-zinc-600 hover:text-zinc-300 hover:bg-zinc-800/60 transition-all duration-180"
-            title="Copiar prompt"
+            className={`p-[3px] rounded-lg transition-all duration-180 ${
+              copied
+                ? "text-emerald-400 bg-emerald-950/30"
+                : "text-zinc-600 hover:text-zinc-300 hover:bg-zinc-800/60"
+            }`}
+            title={copied ? "¡Copiado!" : "Copiar prompt"}
           >
             <span className="material-symbols-outlined text-[16px]">
-              content_copy
+              {copied ? "check" : "content_copy"}
             </span>
           </button>
 

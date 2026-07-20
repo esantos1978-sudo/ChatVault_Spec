@@ -43,7 +43,7 @@ export function ArenaCard({
 
   return (
     <div
-      className="group bg-zinc-900/70 rounded-2xl border border-zinc-800/40 hover:bg-zinc-800/30 hover:border-zinc-700/40 hover:-translate-y-[1px] transition-all duration-180 ease-out p-6 flex flex-col h-full relative cursor-pointer"
+      className="group bg-zinc-900/70 rounded-2xl border border-zinc-800/40 hover:bg-zinc-800/30 hover:border-zinc-700/40 hover:-translate-y-[1px] transition-all duration-180 ease-out p-6 flex flex-col h-full relative cursor-pointer overflow-hidden"
       onClick={() => onExpand(comparison)}
     >
       {/* Cinta de ganador */}

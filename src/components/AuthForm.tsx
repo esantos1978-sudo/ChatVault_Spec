@@ -29,7 +29,7 @@ export default function AuthForm({ onAuth }: AuthFormProps) {
           password,
         });
         if (error) throw error;
-        toast.success("Welcome back!");
+        toast.success("¡Bienvenido de nuevo!");
         onAuth();
       } else {
         const { error } = await supabase.auth.signUp({
@@ -37,7 +37,7 @@ export default function AuthForm({ onAuth }: AuthFormProps) {
           password,
         });
         if (error) throw error;
-        toast.success("Account created! Welcome to Kimberlite.");
+        toast.success("¡Cuenta creada! Bienvenido a Kimberlite.");
         onAuth();
       }
     } catch (error: any) {
@@ -50,7 +50,7 @@ export default function AuthForm({ onAuth }: AuthFormProps) {
   // ==================== RECUPERACIÓN DE CONTRASEÑA ====================
   const handleForgotPassword = async () => {
     if (!email) {
-      toast.error("Please enter your email address first.");
+      toast.error("Introduce tu correo electrónico primero.");
       return;
     }
 
@@ -59,7 +59,9 @@ export default function AuthForm({ onAuth }: AuthFormProps) {
         redirectTo: `${window.location.origin}/auth/callback?type=recovery`,
       });
       if (error) throw error;
-      toast.success("Password reset email sent! Check your inbox.");
+      toast.success(
+        "Correo de recuperación enviado. Revisa tu bandeja de entrada.",
+      );
     } catch (error: any) {
       toast.error(error.message);
     }
@@ -82,7 +84,7 @@ export default function AuthForm({ onAuth }: AuthFormProps) {
 
   // ==================== OAuth GITHUB (placeholder) ====================
   const handleGitHubLogin = async () => {
-    toast("GitHub login coming soon!");
+    toast("Inicio de sesión con GitHub próximamente.");
   };
 
   return (
@@ -107,13 +109,13 @@ export default function AuthForm({ onAuth }: AuthFormProps) {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-xs font-medium text-zinc-500 mb-1.5">
-              Email Address
+              Correo electrónico
             </label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="name@company.com"
+              placeholder="nombre@empresa.com"
               className={inputClass}
               required
             />
@@ -122,7 +124,7 @@ export default function AuthForm({ onAuth }: AuthFormProps) {
           <div>
             <div className="flex justify-between items-center mb-1.5">
               <label className="block text-xs font-medium text-zinc-500">
-                Password
+                Contraseña
               </label>
               {mode === "login" && (
                 <a
@@ -132,7 +134,7 @@ export default function AuthForm({ onAuth }: AuthFormProps) {
                   }}
                   className="text-xs font-medium text-violet-500 hover:text-violet-400 transition-colors cursor-pointer"
                 >
-                  Forgot?
+                  ¿Olvidaste?
                 </a>
               )}
             </div>
@@ -154,12 +156,12 @@ export default function AuthForm({ onAuth }: AuthFormProps) {
             {loading ? (
               <div className="flex items-center justify-center gap-2">
                 <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
-                {mode === "login" ? "Logging in..." : "Creating account..."}
+                {mode === "login" ? "Iniciando sesión..." : "Creando cuenta..."}
               </div>
             ) : mode === "login" ? (
-              "Enter Kimberlite"
+              "Entrar a Kimberlite"
             ) : (
-              "Create Account"
+              "Crear cuenta"
             )}
           </button>
         </form>
@@ -170,9 +172,7 @@ export default function AuthForm({ onAuth }: AuthFormProps) {
             <div className="w-full border-t border-zinc-800" />
           </div>
           <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-zinc-950 px-3 text-zinc-500">
-              or access via
-            </span>
+            <span className="bg-zinc-950 px-3 text-zinc-500">o accede con</span>
           </div>
         </div>
 
@@ -181,6 +181,7 @@ export default function AuthForm({ onAuth }: AuthFormProps) {
           <button
             type="button"
             onClick={handleGoogleLogin}
+            aria-label="Continuar con Google"
             className="flex items-center justify-center gap-2 rounded-lg border border-zinc-800 bg-zinc-950 px-4 h-[44px] text-sm font-medium text-zinc-300 hover:bg-zinc-900 hover:border-zinc-700 transition-all duration-180"
           >
             <svg className="h-5 w-5" viewBox="0 0 24 24">
@@ -201,7 +202,7 @@ export default function AuthForm({ onAuth }: AuthFormProps) {
                 fill="#EA4335"
               />
             </svg>
-            Continue with Google
+            Continuar con Google
           </button>
         </div>
 
@@ -209,24 +210,24 @@ export default function AuthForm({ onAuth }: AuthFormProps) {
         <p className="mt-6 text-center text-sm text-zinc-500">
           {mode === "login" ? (
             <>
-              New to Kimberlite?{" "}
+              ¿Nuevo en Kimberlite?{" "}
               <button
                 type="button"
                 onClick={() => setMode("register")}
                 className="font-semibold text-violet-500 hover:text-violet-400 transition-colors"
               >
-                Create account
+                Crear cuenta
               </button>
             </>
           ) : (
             <>
-              Already have an account?{" "}
+              ¿Ya tienes cuenta?{" "}
               <button
                 type="button"
                 onClick={() => setMode("login")}
                 className="font-semibold text-violet-500 hover:text-violet-400 transition-colors"
               >
-                Log in
+                Iniciar sesión
               </button>
             </>
           )}

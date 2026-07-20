@@ -463,42 +463,18 @@ Almacena las comparaciones de la Arena de LLMs.
 
 Todas las funcionalidades principales están **operativas y probadas**. La aplicación es **completamente responsive** y funciona correctamente en dispositivos móviles, tablets y escritorio.
 
-### Novedades de esta sesión
+### Novedades de esta sesión (Fase 5 — Beta QA)
 
-- ✅ **Inputs unificados:** Todos los inputs del proyecto (AuthForm, header search, date pickers, sidebar) comparten el mismo estándar: `h-[44px] rounded-lg bg-zinc-950 border-zinc-800 focus:border-violet-500 focus:ring-1 focus:ring-violet-500/20 transition-all duration-180`.
-- ✅ **Empty states rediseñados:** Reemplazados emojis (📭📚🥊) por Material Symbols profesionales (`inbox`, `library_books`, `swords`) en `text-[32px] text-zinc-700`. Eliminados bordes `dashed` por `border border-zinc-800/20`.
-- ✅ **Error/Success banners:** Reemplazados emojis ❌✅ por Material Symbols (`error`, `check_circle`) con diseño consistente.
-- ✅ **ArenaDetailModal rediseñado:** Ahora usa el mismo sistema visual que NoteModal/PromptModal: `bg-zinc-900 shadow-premium border-zinc-800/40 rounded-xl`, sin colores distintos por modelo, badge de ganador con icono `emoji_events`.
-- ✅ **globals.css limpiado:** Eliminadas clases duplicadas (`.card-dark`, `.input-dark`, `.auth-card`, `.scrollbar-thin` duplicado, `.scroll-tags`).
-- ✅ **Subida de archivos completamente funcional:** PDF, TXT y MD con extracción automática de texto. El contenido extraído se guarda correctamente en la nota.
-- ✅ **Sidebar responsive:** El sidebar se oculta en móviles con un menú hamburguesa. En pantallas grandes (`md:`) siempre está visible.
-- ✅ **Header adaptativo:** El header se adapta a móviles con botón de menú y botón "Nueva nota" más compacto.
-- ✅ **Colores de títulos:** Los títulos de las tarjetas ahora usan un tono terracota (`text-amber-700 dark:text-amber-400`) para mejorar la jerarquía visual y evitar la saturación de violeta.
-- ✅ **Etiquetas con Enter:** Se pueden añadir etiquetas presionando Enter en el campo de etiquetas (además de la coma).
-- ✅ **Copiar en Markdown:** Nuevo botón "Copiar MD" en las tarjetas de notas, prompts y arena.
-- ✅ **Diseño de tarjetas:** Nuevo estilo con borde lateral en color primario (violeta) en todas las tarjetas (Notas, Prompts y Arena). Más moderno y distintivo.
-- ✅ **Colores en el sidebar:** Los filtros (Modelos IA, Etiquetas, Por Fecha, Categorías) ahora usan azul en lugar de violeta, creando una paleta más equilibrada.
-- ✅ **Selectores mejorados:** Los selectores de los modales ahora tienen un estilo personalizado con flecha SVG y mejor contraste en modo oscuro.
-- ✅ **Landing page mejorada:** Hero con logo grande, eslogan "The rock where diamonds are", subtítulo y botones CTA. Sección "Enterprise Grade" con features destacadas. Footer limpio y profesional.
-- ✅ **Login minimalista:** Logo grande y centrado, sin títulos ni badges innecesarios. Botón con degradado Kimberlite V2.
-- ✅ **Recuperación de contraseña:** Implementada con Supabase. Flujo completo: "Forgot?" → email → reset-password.
-- ✅ **Degradado Kimberlite V2:** Nuevo degradado violeta-rosa (`#8b5cf6` → `#d946ef`) en todos los botones principales.
-- ✅ **Logo sin fondo:** Logo con fondo transparente en toda la app.
-- ✅ **Sidebar con Material Symbols** y logo centrado de mayor tamaño con fondo transparente.
-- ✅ **Modo oscuro optimizado** y coherente en toda la aplicación.
-- ✅ **Scrollbar personalizado** en toda la aplicación con diseño thin y colores adaptados al modo oscuro.
-- ✅ **Atajo de teclado ⌘K** para búsqueda rápida de notas y prompts.
-- ✅ **Callback OAuth** implementado en `/auth/callback/route.ts` para autenticación con proveedores externos.
-- ✅ **Google OAuth configurado** (pendiente de URL definitiva).
-- ✅ **Navegación reordenada:** El menú lateral ahora sigue el flujo natural del usuario: **Prompts → Notas → Arena**. Los contadores también respetan este orden.
-- ✅ **Pestaña por defecto:** El dashboard abre directamente en **Prompts** (antes abría en Notas), reflejando que el prompt es el origen del conocimiento.
-- ✅ **Selector de prompts en la Arena:** Nuevo selector en `ArenaModal.tsx` que permite cargar un prompt guardado directamente en el campo "Prompt a comparar", usando el mismo `PopoverSelect` que en `NoteModal.tsx`. Al seleccionar un prompt, su contenido se carga automáticamente.
-- ✅ **Prompt asociado en ArenaDetailModal:** Renombrado el campo "Prompt" a "Prompt asociado" en el modal de detalle de la Arena para mantener consistencia con el modal de notas.
-- ✅ **Onboarding guiado con empty states:** Los estados vacíos ahora son experiencias de onboarding que enseñan el producto. Cada sección (Prompts, Notas, Arena) incluye: icono Material Symbol, título descriptivo, texto de beneficio, botón CTA con degradado Kimberlite y una tarjeta de ejemplo no interactiva al 80% de opacidad que muestra cómo se verá el contenido real. Inspirado en Notion, Linear y Raycast.
-- ✅ **Pantalla de Configuración (`/settings`):** Nueva página minimalista con 4 secciones: Cuenta (nombre, email solo lectura, guardar cambios), Seguridad (cambio de contraseña reutilizando flujo existente), Aplicación (versión v1.0 Beta, Tema e Idioma como "Próximamente") y Cerrar sesión. Diseño consistente con el resto del producto: cards oscuras, rounded-lg, shadow-premium, spacing generoso, labels discretas, inputs unificados.
-- ✅ **PromptDetailModal:** Nuevo modal que muestra el prompt como protagonista (fondo más oscuro, borde más visible), métricas superiores (notas, comparaciones, usos), etiquetas, notas relacionadas y comparaciones relacionadas como cards navegables con icono, fecha y "Abrir →". Estado vacío de Arena con mensaje orientado al producto. Espaciado generoso entre secciones.
-- ✅ **Relaciones formales prompt → notes/arena (migración 00002):** Foreign keys idempotentes usando `pg_catalog.pg_constraint` + `pg_attribute`, limpieza de huérfanos antes de crear FKs, índices en `notes.prompt_id` y `arena_comparisons.prompt_id`, función `check_prompt_ownership()` con `SET search_path = public`, triggers en ambas tablas que validan cambios en `prompt_id` y `user_id`. Todo en una sola transacción.
-- ✅ **PromptDetailModal Beta Ready:** UX refinada con prompt como protagonista, listas relacionadas como cards navegables, estado vacío de Arena con mensaje de producto, resumen superior con métricas estilo Linear, espaciado generoso (`space-y-10`).
+- ✅ **AuthForm completamente en español:** Traducidos todos los textos (toasts, labels, placeholders, botones, modo toggle) para mantener consistencia con el resto de la aplicación. Añadido `aria-label` al botón de Google.
+- ✅ **Eliminados todos los `console.log` de producción:** Limpiados todos los logs de depuración en `NoteModal.tsx`, `dashboard/page.tsx` y `ArenaCard.tsx`. Los errores ahora se muestran al usuario mediante `toast.error()` en lugar de `console.error()`.
+- ✅ **Feedback visual al copiar prompt:** El botón de copia en `PromptCard.tsx` ahora cambia a icono `check` con fondo verde (`text-emerald-400 bg-emerald-950/30`) durante 2 segundos, proporcionando confirmación visual inmediata.
+- ✅ **Overflow corregido en ArenaCard:** La cinta de ganador con márgenes negativos ya no provoca overflow horizontal gracias a `overflow-hidden` en el contenedor.
+- ✅ **Navegación sin recarga en PromptDetailModal:** Los enlaces a notas y comparaciones relacionadas ahora usan `router.push()` en lugar de `<a href="...">`, evitando recargas completas de página.
+- ✅ **Cierre de sesión optimizado:** `handleLogout` usa `router.push("/")` en lugar de `window.location.href` para una navegación más rápida y sin recarga.
+- ✅ **Estados `error`/`success` eliminados:** Se eliminaron estados no utilizados y sus bloques JSX, ya que la aplicación usa `react-hot-toast` para todas las notificaciones.
+- ✅ **Accesibilidad mejorada:** Añadidos `aria-label` a todos los botones de cierre de modales (NoteModal, PromptDetailModal) y al botón de Google OAuth.
+- ✅ **TypeScript sin errores:** Build completado correctamente con Next.js 16.2.10.
+- ✅ **Build exitoso:** Compilación y generación de páginas estáticas completadas sin errores.
 
 ---
 

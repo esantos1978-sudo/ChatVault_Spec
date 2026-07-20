@@ -278,20 +278,11 @@ export default function NoteModal({
     const file = e.target.files?.[0];
     if (!file) return;
 
-    console.log("📄 Archivo seleccionado:", file.name);
-    console.log("📄 Tipo:", file.type);
-    console.log("📄 Tamaño:", file.size, "bytes");
-
     setFileName(file.name);
 
     // Si es TXT o MD, leer directamente
     if (file.type === "text/plain" || file.name.endsWith(".md")) {
-      console.log("📄 Leyendo TXT/MD...");
       const text = await file.text();
-      console.log(
-        "📄 Texto extraído (primeros 100 chars):",
-        text.substring(0, 100),
-      );
       setFileContent(text);
       return;
     }
@@ -305,36 +296,22 @@ export default function NoteModal({
         // ✅  CONFIGURAR EL WORKER CON VERSIÓN 3.11.174
         pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js`;
 
-        console.log("📄 Worker configurado correctamente");
-        console.log("📄 Versión de pdf.js instalada:", pdfjsLib.version);
-
-        console.log("📄 Leyendo PDF...");
         const arrayBuffer = await file.arrayBuffer();
-        console.log(
-          "📄 ArrayBuffer obtenido:",
-          arrayBuffer.byteLength,
-          "bytes",
-        );
 
         const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-        console.log("📄 PDF cargado, páginas:", pdf.numPages);
 
         let fullText = "";
         for (let i = 1; i <= pdf.numPages; i++) {
-          console.log(`📄 Procesando página ${i}...`);
           const page = await pdf.getPage(i);
           const textContent = await page.getTextContent();
           const pageText = textContent.items
             .map((item: any) => item.str)
             .join(" ");
           fullText += pageText + "\n";
-          console.log(`📄 Página ${i}: ${pageText.length} caracteres`);
         }
 
-        console.log("📄 Texto total extraído:", fullText.length, "caracteres");
         setFileContent(fullText);
       } catch (error) {
-        console.error("❌ Error al leer PDF:", error);
         // ✅ TypeScript seguro: verificar si error es una instancia de Error
         const errorMessage =
           error instanceof Error
@@ -382,6 +359,7 @@ export default function NoteModal({
           </div>
           <button
             onClick={onClose}
+            aria-label="Cerrar modal"
             className="p-1 rounded-lg hover:bg-zinc-800/40 transition-all duration-200 group"
           >
             <svg
