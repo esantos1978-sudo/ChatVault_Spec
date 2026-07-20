@@ -1,5 +1,17 @@
 @import "tailwindcss";
 
+/* ==================== PREVENCIÓN DE OVERFLOW GLOBAL ==================== */
+
+html {
+  overflow-x: hidden;
+}
+
+body {
+  overflow-x: hidden;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
 /* ==================== ANIMACIONES ==================== */
 
 @keyframes fadeInUp {

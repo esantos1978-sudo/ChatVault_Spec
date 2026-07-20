@@ -12,16 +12,17 @@ function LandingPage({ onGetStarted }: { onGetStarted: () => void }) {
       {/* HEADER */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-zinc-950/70 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 shrink-0">
             <img
               src="/images/kimberlite-logo.png"
               alt="Kimberlite"
-              className="h-12 w-auto"
+              className="h-10 sm:h-12 w-auto"
             />
           </div>
           <button
             onClick={onGetStarted}
-            className="px-4 py-1.5 text-sm font-medium text-white gemstone-gradient rounded-lg transition-all duration-200 hover:brightness-110 active:brightness-95"
+            aria-label="Acceder a Kimberlite"
+            className="px-4 py-2 text-sm font-medium text-white gemstone-gradient rounded-lg transition-all duration-200 hover:brightness-110 active:brightness-95 min-h-[44px] flex items-center"
           >
             Acceder
           </button>
@@ -30,15 +31,15 @@ function LandingPage({ onGetStarted }: { onGetStarted: () => void }) {
 
       {/* HERO */}
       <section className="min-h-screen flex items-center px-4 sm:px-6 lg:px-8 pt-20">
-        <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center py-24 lg:py-32">
+        <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center py-16 md:py-24 lg:py-32">
           {/* Texto */}
-          <div className="flex flex-col gap-10 animate-fade-in-up">
+          <div className="flex flex-col gap-8 md:gap-10 animate-fade-in-up">
             <span className="inline-flex items-center gap-1.5 rounded-full border border-zinc-800 bg-zinc-900/80 px-3 py-1 text-xs font-medium text-zinc-300 self-start">
               <span className="w-1.5 h-1.5 rounded-full bg-violet-500" />
               La memoria para tu trabajo con IA
             </span>
 
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-semibold tracking-tight leading-[1.1] text-zinc-50 max-w-3xl mb-2">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-semibold tracking-tight leading-[1.1] text-zinc-50 max-w-3xl mb-2">
               Convierte tus conversaciones con IA en una biblioteca de
               conocimiento.
             </h1>
@@ -49,10 +50,11 @@ function LandingPage({ onGetStarted }: { onGetStarted: () => void }) {
               conectado para que nunca vuelvas a empezar desde cero.
             </p>
 
-            <div className="flex items-center gap-4 pt-4">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 pt-4">
               <button
                 onClick={onGetStarted}
-                className="px-6 py-3 text-sm font-semibold text-white gemstone-gradient rounded-lg shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 hover:brightness-110 active:brightness-95 transition-all duration-200"
+                aria-label="Crear mi biblioteca de conocimiento"
+                className="px-6 py-3 text-sm font-semibold text-white gemstone-gradient rounded-lg shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 hover:brightness-110 active:brightness-95 transition-all duration-200 min-h-[44px] flex items-center justify-center"
               >
                 Crear mi biblioteca
               </button>
@@ -63,7 +65,8 @@ function LandingPage({ onGetStarted }: { onGetStarted: () => void }) {
                     demoSection.scrollIntoView({ behavior: "smooth" });
                   }
                 }}
-                className="px-6 py-3 text-sm font-semibold rounded-lg border border-zinc-800 text-zinc-400 hover:text-zinc-300 hover:border-zinc-700 transition-all duration-200"
+                aria-label="Ver demostración de Kimberlite"
+                className="px-6 py-3 text-sm font-semibold rounded-lg border border-zinc-800 text-zinc-400 hover:text-zinc-300 hover:border-zinc-700 transition-all duration-200 min-h-[44px] flex items-center justify-center"
               >
                 ▶ Ver demo
               </button>
@@ -154,7 +157,7 @@ function LandingPage({ onGetStarted }: { onGetStarted: () => void }) {
       </section>
 
       {/* BENEFICIOS */}
-      <section className="pt-20 pb-36 px-4 sm:px-6 lg:px-8">
+      <section className="py-16 md:py-20 lg:py-24 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="text-sm uppercase tracking-wider text-zinc-500 font-medium mb-8">
             Todo lo que necesitas para trabajar mejor con IA. Kimberlite
@@ -190,7 +193,7 @@ function LandingPage({ onGetStarted }: { onGetStarted: () => void }) {
             ].map((feature, index) => (
               <div
                 key={index}
-                className="rounded-xl bg-zinc-900 border border-zinc-800/40 p-8 hover:bg-zinc-900/80 hover:border-zinc-700/50 transition-all duration-200 flex flex-col"
+                className="rounded-xl bg-zinc-900 border border-zinc-800/40 p-6 sm:p-8 hover:bg-zinc-900/80 hover:border-zinc-700/50 transition-all duration-200 flex flex-col"
               >
                 <span className="material-symbols-outlined text-[24px] text-violet-400 mb-4">
                   {feature.icon}
@@ -210,16 +213,16 @@ function LandingPage({ onGetStarted }: { onGetStarted: () => void }) {
       {/* PRODUCTO */}
       <section
         id="demo-section"
-        className="py-24 lg:py-32 px-4 sm:px-6 lg:px-8"
+        className="py-16 md:py-24 lg:py-32 px-4 sm:px-6 lg:px-8"
       >
         <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-zinc-50">
+          <div className="text-center mb-8 md:mb-12">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight text-zinc-50">
               Tu segunda memoria para trabajar con IA. Encuentra cualquier
               conversación, prompt o comparación en segundos gracias a una
               biblioteca diseñada para reutilizar conocimiento.
             </h2>
-            <p className="text-zinc-500 text-center max-w-xl mx-auto mt-3 text-base">
+            <p className="text-zinc-500 text-center max-w-xl mx-auto mt-3 text-sm sm:text-base">
               Tus conversaciones, prompts y comparaciones organizadas de forma
               inteligente.
             </p>
@@ -273,9 +276,9 @@ function LandingPage({ onGetStarted }: { onGetStarted: () => void }) {
       </section>
 
       {/* CÓMO FUNCIONA */}
-      <section className="py-24 lg:py-32 px-4 sm:px-6 lg:px-8">
+      <section className="py-16 md:py-24 lg:py-32 px-4 sm:px-6 lg:px-8">
         <div className="max-w-5xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-zinc-50 text-center mb-16">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight text-zinc-50 text-center mb-12 md:mb-16">
             Cómo funciona
           </h2>
 
