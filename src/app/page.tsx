@@ -1,9 +1,18 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
 import { supabase } from "@/lib/supabaseClient";
 import AuthForm from "@/components/AuthForm";
-import Dashboard from "./dashboard/page";
+
+const Dashboard = dynamic(() => import("./dashboard/page"), {
+  ssr: false,
+  loading: () => (
+    <div className="flex min-h-screen items-center justify-center bg-zinc-950">
+      <div className="h-8 w-8 animate-spin rounded-full border-4 border-zinc-800 border-t-violet-500"></div>
+    </div>
+  ),
+});
 
 // ==================== COMPONENTE LANDING ====================
 function LandingPage({ onGetStarted }: { onGetStarted: () => void }) {

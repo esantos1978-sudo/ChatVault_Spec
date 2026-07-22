@@ -7,19 +7,32 @@ import dynamic from "next/dynamic";
 import { supabase } from "@/lib/supabaseClient";
 import toast from "react-hot-toast";
 
-// ✅ Componentes normales
+// ✅ Componentes normales (síncronos, siempre visibles)
 import { NoteCard } from "@/components/NoteCard";
 import { PromptCard } from "@/components/PromptCard";
-import PromptModal from "@/components/PromptModal";
 import { ArenaCard } from "@/components/ArenaCard";
-import ArenaModal from "@/components/ArenaModal";
-import { ArenaDetailModal } from "@/components/ArenaDetailModal";
-import PromptDetailModal from "@/components/PromptDetailModal";
 
-// ✅ Ahora NoteModal tiene export default, así que es más simple
+// ✅ Modales cargados bajo demanda (solo cuando se abren)
 const NoteModal = dynamic(() => import("@/components/NoteModal"), {
   ssr: false,
 });
+const PromptModal = dynamic(() => import("@/components/PromptModal"), {
+  ssr: false,
+});
+const ArenaModal = dynamic(() => import("@/components/ArenaModal"), {
+  ssr: false,
+});
+const ArenaDetailModal = dynamic(
+  () =>
+    import("@/components/ArenaDetailModal").then((mod) => ({
+      default: mod.ArenaDetailModal,
+    })),
+  { ssr: false },
+);
+const PromptDetailModal = dynamic(
+  () => import("@/components/PromptDetailModal"),
+  { ssr: false },
+);
 
 interface Note {
   id: string;
