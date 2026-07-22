@@ -301,8 +301,8 @@ function LandingPage({ onGetStarted }: { onGetStarted: () => void }) {
               {/* Flechas entre pasos (solo desktop) */}
               <div className="hidden md:block absolute top-12 left-[calc(16.66%+2rem)] right-[calc(16.66%+2rem)] pointer-events-none">
                 <div className="flex justify-between">
-                  <span className="text-zinc-800 text-2xl">→</span>
-                  <span className="text-zinc-800 text-2xl">→</span>
+                  <span className="text-zinc-600 text-2xl">→</span>
+                  <span className="text-zinc-600 text-2xl">→</span>
                 </div>
               </div>
 
@@ -325,7 +325,7 @@ function LandingPage({ onGetStarted }: { onGetStarted: () => void }) {
                 },
               ].map((step, index) => (
                 <div key={index} className="text-center">
-                  <div className="text-5xl font-semibold text-zinc-800">
+                  <div className="text-5xl font-semibold text-zinc-600">
                     {step.number}
                   </div>
                   <h3 className="text-lg font-semibold text-zinc-100 mt-4">
