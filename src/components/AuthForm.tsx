@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { supabase } from "@/lib/supabaseClient";
 import toast from "react-hot-toast";
 
@@ -97,9 +98,11 @@ export default function AuthForm({ onAuth }: AuthFormProps) {
         {/* Logo */}
         <div className="text-center mb-10">
           <div className="flex items-center justify-center">
-            <img
+            <Image
               src="/images/kimberlite-logo.png"
               alt="Kimberlite"
+              width={160}
+              height={96}
               className="h-20 w-auto md:h-24"
             />
           </div>
