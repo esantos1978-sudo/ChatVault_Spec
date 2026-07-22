@@ -368,6 +368,12 @@ export default function Dashboard({ user }: { user: any }) {
   });
 
   const handleArenaSubmit = async (data: any) => {
+    if (arenaSaving) return; // Prevenir doble clic
+    if (!user?.id) {
+      console.error("Usuario no autenticado");
+      toast.error("Error: sesión expirada. Por favor, inicia sesión de nuevo.");
+      return;
+    }
     try {
       setArenaSaving(true);
       const { error } = await supabase.from("arena_comparisons").insert([
@@ -448,6 +454,12 @@ export default function Dashboard({ user }: { user: any }) {
 
   // ==================== HANDLE SUBMIT NOTAS ====================
   const handleNoteSubmit = async () => {
+    if (noteSaving) return; // Prevenir doble clic
+    if (!user?.id) {
+      console.error("Usuario no autenticado");
+      toast.error("Error: sesión expirada. Por favor, inicia sesión de nuevo.");
+      return;
+    }
     if (!noteTitle.trim()) {
       toast.error("Por favor, escribe un título.");
       return;
@@ -504,6 +516,12 @@ export default function Dashboard({ user }: { user: any }) {
   };
   // ==================== HANDLE SUBMIT PROMPTS ====================
   const handlePromptSubmit = async () => {
+    if (promptSaving) return; // Prevenir doble clic
+    if (!user?.id) {
+      console.error("Usuario no autenticado");
+      toast.error("Error: sesión expirada. Por favor, inicia sesión de nuevo.");
+      return;
+    }
     if (!promptTitle.trim() || !promptContent.trim()) {
       toast.error("Por favor, completa el título y el contenido.");
       return;
@@ -587,6 +605,10 @@ export default function Dashboard({ user }: { user: any }) {
   };
 
   const handleCopyPrompt = async (prompt: Prompt) => {
+    if (!prompt?.id) {
+      console.error("Prompt no encontrado");
+      return;
+    }
     try {
       await navigator.clipboard.writeText(prompt.content);
 
