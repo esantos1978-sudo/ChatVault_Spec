@@ -12,6 +12,9 @@ import toast from "react-hot-toast";
 import { NoteCard } from "@/components/NoteCard";
 import { PromptCard } from "@/components/PromptCard";
 import { ArenaCard } from "@/components/ArenaCard";
+import { NoteCardSkeleton } from "@/components/NoteCardSkeleton";
+import { PromptCardSkeleton } from "@/components/PromptCardSkeleton";
+import { ArenaCardSkeleton } from "@/components/ArenaCardSkeleton";
 
 // ✅ Modales cargados bajo demanda (solo cuando se abren)
 const NoteModal = dynamic(() => import("@/components/NoteModal"), {
@@ -1181,24 +1184,7 @@ export default function Dashboard({ user }: { user: any }) {
               {notesLoading ? (
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
                   {[1, 2, 3, 4, 5, 6].map((i) => (
-                    <div
-                      key={i}
-                      className="rounded-2xl border border-zinc-200/60 dark:border-zinc-800/60 bg-white dark:bg-zinc-900 p-5 min-h-[240px] animate-pulse"
-                    >
-                      <div className="flex items-start justify-between mb-3">
-                        <div className="flex gap-2">
-                          <div className="h-6 w-16 rounded-full bg-zinc-200 dark:bg-zinc-800" />
-                          <div className="h-6 w-12 rounded-full bg-zinc-200 dark:bg-zinc-800" />
-                        </div>
-                        <div className="flex gap-1">
-                          <div className="h-8 w-8 rounded-lg bg-zinc-200 dark:bg-zinc-800" />
-                          <div className="h-8 w-8 rounded-lg bg-zinc-200 dark:bg-zinc-800" />
-                        </div>
-                      </div>
-                      <div className="h-5 w-3/4 rounded-lg bg-zinc-200 dark:bg-zinc-800 mb-3" />
-                      <div className="h-16 w-full rounded-xl bg-zinc-200 dark:bg-zinc-800 mb-3" />
-                      <div className="h-10 w-full rounded-xl bg-zinc-200 dark:bg-zinc-800" />
-                    </div>
+                    <NoteCardSkeleton key={i} />
                   ))}
                 </div>
               ) : filteredNotes.length === 0 ? (
@@ -1282,26 +1268,9 @@ export default function Dashboard({ user }: { user: any }) {
           {activeTab === "prompts" && (
             <>
               {promptsLoading ? (
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-5">
                   {[1, 2, 3, 4, 5, 6].map((i) => (
-                    <div
-                      key={i}
-                      className="rounded-2xl border border-zinc-200/60 dark:border-zinc-800/60 bg-white dark:bg-zinc-900 p-5 min-h-[200px] animate-pulse"
-                    >
-                      <div className="flex items-start justify-between mb-3">
-                        <div className="flex gap-2">
-                          <div className="h-6 w-16 rounded-full bg-zinc-200 dark:bg-zinc-800" />
-                          <div className="h-6 w-12 rounded-full bg-zinc-200 dark:bg-zinc-800" />
-                        </div>
-                        <div className="flex gap-1">
-                          <div className="h-8 w-8 rounded-lg bg-zinc-200 dark:bg-zinc-800" />
-                          <div className="h-8 w-8 rounded-lg bg-zinc-200 dark:bg-zinc-800" />
-                        </div>
-                      </div>
-                      <div className="h-5 w-3/4 rounded-lg bg-zinc-200 dark:bg-zinc-800 mb-3" />
-                      <div className="h-16 w-full rounded-xl bg-zinc-200 dark:bg-zinc-800 mb-3" />
-                      <div className="h-8 w-1/3 rounded-lg bg-zinc-200 dark:bg-zinc-800" />
-                    </div>
+                    <PromptCardSkeleton key={i} />
                   ))}
                 </div>
               ) : filteredPrompts.length === 0 ? (
@@ -1397,19 +1366,9 @@ export default function Dashboard({ user }: { user: any }) {
           {activeTab === "arena" && (
             <>
               {arenaLoading ? (
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   {[1, 2, 3, 4, 5, 6].map((i) => (
-                    <div
-                      key={i}
-                      className="rounded-2xl border border-zinc-200/60 dark:border-zinc-800/60 bg-white dark:bg-zinc-900 p-5 min-h-[200px] animate-pulse"
-                    >
-                      <div className="h-5 w-3/4 rounded-lg bg-zinc-200 dark:bg-zinc-800 mb-3" />
-                      <div className="grid grid-cols-2 gap-2">
-                        <div className="h-16 rounded-xl bg-zinc-200 dark:bg-zinc-800" />
-                        <div className="h-16 rounded-xl bg-zinc-200 dark:bg-zinc-800" />
-                      </div>
-                      <div className="h-8 w-1/3 rounded-lg bg-zinc-200 dark:bg-zinc-800 mt-3" />
-                    </div>
+                    <ArenaCardSkeleton key={i} />
                   ))}
                 </div>
               ) : filteredArenaComparisons.length === 0 ? (
