@@ -58,6 +58,50 @@ Kimberlite presenta una identidad visual premium con una paleta de violetas cara
 
 ---
 
+## ⚡ Optimizaciones de Rendimiento y Accesibilidad
+
+Optimizaciones aplicadas para mejorar el rendimiento Lighthouse y la accesibilidad WCAG AA en toda la aplicación.
+
+### Técnicas utilizadas
+
+| Técnica                | Aplicación                                    | Impacto                           |
+| ---------------------- | --------------------------------------------- | --------------------------------- |
+| **`next/dynamic`**     | Dashboard y modales cargados bajo demanda     | -98.5% JS sin usar en landing     |
+| **`next/image`**       | Logos con dimensiones explícitas y `priority` | LCP optimizado, sin CLS           |
+| **Landmark `<main>`**  | Estructura semántica en landing               | +12 puntos accesibilidad          |
+| **Jerarquía headings** | `h1` → `h2` → `h3` sin saltos                 | Navegación por lector de pantalla |
+| **Contraste WCAG AA**  | Textos de `zinc-500/600/800` a `zinc-400/600` | 100/100 en accesibilidad          |
+
+### Resultados
+
+#### Landing Page (`/`)
+
+| Métrica           | Antes     | Después | Mejora         |
+| ----------------- | --------- | ------- | -------------- |
+| **Performance**   | 61        | 92      | **+31 puntos** |
+| **Accessibility** | 88        | 100     | **+12 puntos** |
+| LCP               | 3.5s      | 3.0s    | -14%           |
+| TBT               | 3,290ms   | 130ms   | **-96%**       |
+| Unused JS         | 5,748 KiB | 89 KiB  | **-98.5%**     |
+
+#### Dashboard (`/dashboard`)
+
+| Métrica           | Antes     | Después  | Mejora         |
+| ----------------- | --------- | -------- | -------------- |
+| **Performance**   | 44        | 69       | **+25 puntos** |
+| **Accessibility** | 95        | 100      | **+5 puntos**  |
+| TBT               | 3,200ms   | 110ms    | **-97%**       |
+| Unused JS         | 5,621 KiB | <200 KiB | **-96%**       |
+
+### Aprendizajes clave
+
+- **Lazy loading agresivo**: Importar estáticamente componentes pesados (Dashboard de ~1600 líneas) en la landing page duplica el JS sin usar. Con `next/dynamic` y `ssr: false`, el JS se carga solo cuando se necesita.
+- **Modales bajo demanda**: Convertir todos los modales a imports dinámicos evita cargar cientos de kilobytes de código que el usuario quizás nunca abre.
+- **Imágenes con `next/image`**: Añadir `width`/`height` explícitos elimina el Cumulative Layout Shift (CLS) y `priority` acelera el LCP.
+- **Contraste WCAG AA**: Sobre fondos `zinc-950`, los textos necesitan al menos `zinc-400` para cumplir el ratio 4.5:1. Los números grandes (≥18px) pueden usar `zinc-600`.
+
+---
+
 ## ✨ Funcionalidades
 
 ### 🏠 Landing Page Premium
