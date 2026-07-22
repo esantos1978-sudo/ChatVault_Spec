@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
+import Image from "next/image";
 import { supabase } from "@/lib/supabaseClient";
 import AuthForm from "@/components/AuthForm";
 
@@ -22,10 +23,13 @@ function LandingPage({ onGetStarted }: { onGetStarted: () => void }) {
       <header className="fixed top-0 left-0 right-0 z-50 bg-zinc-950/70 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
           <div className="flex items-center gap-2 shrink-0">
-            <img
+            <Image
               src="/images/kimberlite-logo.png"
               alt="Kimberlite"
+              width={160}
+              height={48}
               className="h-10 sm:h-12 w-auto"
+              priority
             />
           </div>
           <button

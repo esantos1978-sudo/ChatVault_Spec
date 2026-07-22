@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 
 import dynamic from "next/dynamic";
+import Image from "next/image";
 import { supabase } from "@/lib/supabaseClient";
 import toast from "react-hot-toast";
 
@@ -732,9 +733,11 @@ export default function Dashboard({ user }: { user: any }) {
       >
         {/* LOGO - CENTRADO Y MÁS GRANDE */}
         <div className="flex justify-center pt-6 pb-5 px-3">
-          <img
+          <Image
             src="/images/kimberlite-logo.png"
             alt="Kimberlite"
+            width={140}
+            height={72}
             className="h-18 w-auto"
           />
         </div>
