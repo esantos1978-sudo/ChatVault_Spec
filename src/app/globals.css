@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* ==================== MODO OSCURO FORZADO VÍA CLASE ==================== */
+@custom-variant dark (&:is(.dark *));
+
 /* ==================== PREVENCIÓN DE OVERFLOW GLOBAL ==================== */
 
 html {
