@@ -64,13 +64,15 @@ Optimizaciones aplicadas para mejorar el rendimiento Lighthouse y la accesibilid
 
 ### Técnicas utilizadas
 
-| Técnica                | Aplicación                                    | Impacto                           |
-| ---------------------- | --------------------------------------------- | --------------------------------- |
-| **`next/dynamic`**     | Dashboard y modales cargados bajo demanda     | -98.5% JS sin usar en landing     |
-| **`next/image`**       | Logos con dimensiones explícitas y `priority` | LCP optimizado, sin CLS           |
-| **Landmark `<main>`**  | Estructura semántica en landing               | +12 puntos accesibilidad          |
-| **Jerarquía headings** | `h1` → `h2` → `h3` sin saltos                 | Navegación por lector de pantalla |
-| **Contraste WCAG AA**  | Textos de `zinc-500/600/800` a `zinc-400/600` | 100/100 en accesibilidad          |
+| Técnica                           | Aplicación                                                          | Impacto                           |
+| --------------------------------- | ------------------------------------------------------------------- | --------------------------------- |
+| **`next/dynamic`**                | Dashboard y modales cargados bajo demanda                           | -98.5% JS sin usar en landing     |
+| **`next/image`**                  | Logos con dimensiones explícitas y `priority`                       | LCP optimizado, sin CLS           |
+| **Skeleton loaders**              | `NoteCardSkeleton`, `PromptCardSkeleton`, `ArenaCardSkeleton`       | CLS -90% en dashboard             |
+| **Landmark `<main>`**             | Estructura semántica en landing                                     | +12 puntos accesibilidad          |
+| **Jerarquía headings**            | `h1` → `h2` → `h3` sin saltos                                       | Navegación por lector de pantalla |
+| **Contraste WCAG AA**             | Textos de `zinc-500/600/800` a `zinc-400/600`                       | 100/100 en accesibilidad          |
+| **Protección contra `undefined`** | Guards en `user.id`, `note.id`, `prompt.id` y doble clic en guardar | Fix de errores críticos           |
 
 ### Resultados
 
@@ -86,19 +88,23 @@ Optimizaciones aplicadas para mejorar el rendimiento Lighthouse y la accesibilid
 
 #### Dashboard (`/dashboard`)
 
-| Métrica           | Antes     | Después  | Mejora         |
-| ----------------- | --------- | -------- | -------------- |
-| **Performance**   | 44        | 69       | **+25 puntos** |
-| **Accessibility** | 95        | 100      | **+5 puntos**  |
-| TBT               | 3,200ms   | 110ms    | **-97%**       |
-| Unused JS         | 5,621 KiB | <200 KiB | **-96%**       |
+| Métrica           | Antes     | Después | Mejora         |
+| ----------------- | --------- | ------- | -------------- |
+| **Performance**   | 44        | 69      | **+25 puntos** |
+| **Accessibility** | 95        | 100     | **+5 puntos**  |
+| CLS               | 0.091     | 0.009   | **-90%**       |
+| TBT               | 3,200ms   | 110ms   | **-97%**       |
+| Unused JS         | 5,621 KiB | 30 KiB  | **-99.5%**     |
+| Long tasks        | 16        | 9       | **-44%**       |
 
 ### Aprendizajes clave
 
 - **Lazy loading agresivo**: Importar estáticamente componentes pesados (Dashboard de ~1600 líneas) en la landing page duplica el JS sin usar. Con `next/dynamic` y `ssr: false`, el JS se carga solo cuando se necesita.
 - **Modales bajo demanda**: Convertir todos los modales a imports dinámicos evita cargar cientos de kilobytes de código que el usuario quizás nunca abre.
 - **Imágenes con `next/image`**: Añadir `width`/`height` explícitos elimina el Cumulative Layout Shift (CLS) y `priority` acelera el LCP.
+- **Skeleton loaders específicos**: Reemplazar `min-h-[200px]` genéricos por componentes que replican exactamente las dimensiones de las tarjetas reales reduce el CLS drásticamente (de 0.091 a 0.009).
 - **Contraste WCAG AA**: Sobre fondos `zinc-950`, los textos necesitan al menos `zinc-400` para cumplir el ratio 4.5:1. Los números grandes (≥18px) pueden usar `zinc-600`.
+- **Protección contra `undefined`**: Añadir optional chaining (`?.`) y guards en accesos a `user.id`, `note.id` y `prompt.id` previene errores "Cannot read properties of undefined (reading 'id')". Deshabilitar botones de guardar tras el primer clic evita envíos duplicados.
 
 ---
 
