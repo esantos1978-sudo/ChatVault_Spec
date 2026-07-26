@@ -400,7 +400,7 @@ export default function Home() {
 
   // Si el usuario está logueado, mostrar el dashboard
   if (user) {
-    return <Dashboard user={user} />;
+    return <Dashboard />;
   }
 
   // Si el usuario no está logueado y está en la landing

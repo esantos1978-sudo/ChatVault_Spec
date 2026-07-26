@@ -293,15 +293,20 @@ export default function NoteModal({
 
     // Si es PDF, cargar pdfjs-dist SOLO EN EL CLIENTE
     if (file.type === "application/pdf") {
-      try {
-        // ✅ CARGA DINÁMICA: solo se ejecuta en el navegador
-        const pdfjsLib = await import("pdfjs-dist");
+      // ✅ Asegurar que solo se ejecuta en el navegador
+      if (typeof window === "undefined") return;
 
-        // ✅  CONFIGURAR EL WORKER CON VERSIÓN 3.11.174
+      try {
+        // ✅ CARGA DINÁMICA: Usamos la versión legacy (ES module) que está
+        // diseñada específicamente para navegadores y no tiene dependencias
+        // nativas como 'canvas'. La versión principal (build/pdf.js) incluye
+        // código para Node.js que requiere 'canvas'.
+        const pdfjsLib = await import("pdfjs-dist/legacy/build/pdf.js");
+
+        // ✅ CONFIGURAR EL WORKER CON CDN (evita dependencias nativas)
         pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js`;
 
         const arrayBuffer = await file.arrayBuffer();
-
         const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
 
         let fullText = "";

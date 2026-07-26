@@ -66,8 +66,27 @@ interface Prompt {
   is_favorite?: boolean;
 }
 
-export default function Dashboard({ user }: { user: any }) {
+export default function Dashboard() {
+  const [user, setUser] = useState<any>(null);
+  const [authLoading, setAuthLoading] = useState(true);
   const router = useRouter();
+
+  // ==================== OBTENER USUARIO AUTENTICADO ====================
+  useEffect(() => {
+    const getUser = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) {
+        router.push("/");
+        return;
+      }
+      setUser(user);
+      setAuthLoading(false);
+    };
+    getUser();
+  }, [router]);
+
   // ==================== ESTADOS GENERALES ====================
   const [activeTab, setActiveTab] = useState<"prompts" | "notes" | "arena">(
     "prompts",
