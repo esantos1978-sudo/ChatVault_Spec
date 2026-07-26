@@ -10,6 +10,8 @@ interface NoteModalProps {
   setTitle: (val: string) => void;
   content: string;
   setContent: (val: string) => void;
+  summary: string;
+  setSummary: (val: string) => void;
   tags: string[];
   tagsInput: string;
   setTagsInput: (val: string) => void;
@@ -238,6 +240,8 @@ export default function NoteModal({
   setTitle,
   content,
   setContent,
+  summary,
+  setSummary,
   tags,
   tagsInput,
   setTagsInput,
@@ -531,6 +535,20 @@ export default function NoteModal({
               </div>
             </div>
           )}
+
+          {/* ===== RESUMEN ===== */}
+          <div>
+            <label className={labelClass}>Resumen</label>
+            <textarea
+              rows={3}
+              value={summary}
+              onChange={(e) => setSummary(e.target.value)}
+              placeholder="Resume aquí las ideas más importantes de esta conversación para poder localizar rápidamente la información en el futuro."
+              className={
+                "w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2.5 text-sm text-zinc-100 placeholder:text-zinc-600 hover:border-zinc-700 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/20 transition-all duration-200 resize-none leading-6 min-h-[80px]"
+              }
+            />
+          </div>
 
           {/* ===== DIVISOR ===== */}
           <div className="divider" />

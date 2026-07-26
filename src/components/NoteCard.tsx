@@ -144,7 +144,7 @@ export function NoteCard({
 
       {/* Resumen */}
       <p className="text-sm text-zinc-500/80 leading-[1.65] flex-grow mb-5 line-clamp-3">
-        {note.content}
+        {note.summary || note.content}
       </p>
 
       {/* Footer: Tags + Acciones */}
