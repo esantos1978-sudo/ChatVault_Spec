@@ -26,7 +26,7 @@ function LandingPage({ onGetStarted }: { onGetStarted: () => void }) {
             <Image
               src="/images/kimberlite-logo.png"
               alt="Kimberlite"
-              width={160}
+              width={132}
               height={48}
               className="h-10 sm:h-12 w-auto"
               priority

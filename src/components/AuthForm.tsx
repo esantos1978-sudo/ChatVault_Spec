@@ -101,7 +101,7 @@ export default function AuthForm({ onAuth }: AuthFormProps) {
             <Image
               src="/images/kimberlite-logo.png"
               alt="Kimberlite"
-              width={160}
+              width={264}
               height={96}
               className="h-20 w-auto md:h-24"
             />

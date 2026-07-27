@@ -6,7 +6,7 @@
 ![Supabase](https://img.shields.io/badge/Supabase-2.0-green?style=flat-square&logo=supabase)
 ![Vercel](https://img.shields.io/badge/Vercel-Deployed-black?style=flat-square&logo=vercel)
 
-**Your data, refined & resilient.** Kimberlite (anteriormente ChatVault) es una aplicación web moderna para organizar conversaciones con IA, gestionar prompts reutilizables y comparar modelos de lenguaje. Construida con Next.js 16, TypeScript, Tailwind CSS v4 y Supabase, ofrece una experiencia premium con autenticación segura, CRUD completo de notas y prompts, scraping inteligente de URLs, **carga de archivos (PDF, TXT, MD) con extracción automática de texto completamente funcional**, sistema de etiquetas independientes por sección, filtros avanzados, una **Arena de LLMs** para comparar respuestas, **sistema de favoritos** ⭐, enlace entre notas y prompts, **botón "Copiar MD" en todas las tarjetas**, **sidebar responsive** con menú hamburguesa en móviles, **selector de prompts en la Arena** para cargar prompts guardados automáticamente, **onboarding guiado** con empty states que enseñan el producto, **pantalla de Configuración** con gestión de cuenta, seguridad y preferencias, **PromptDetailModal** con relaciones bidireccionales entre prompts, notas y arena, **relaciones formales con foreign keys y triggers de validación**, y un diseño oscuro optimizado con paleta equilibrada de violetas, azules y terracota.
+**Your data, refined & resilient.** Kimberlite (anteriormente ChatVault) es una aplicación web moderna para organizar conversaciones con IA, gestionar prompts reutilizables y comparar modelos de lenguaje. Construida con Next.js 16, TypeScript, Tailwind CSS v4 y Supabase, ofrece una experiencia premium con autenticación segura, CRUD completo de notas y prompts, scraping inteligente de URLs, carga de archivos (PDF, TXT, MD) con extracción automática de texto, sistema de etiquetas independientes por sección, filtros avanzados, una **Arena de LLMs** para comparar respuestas, sistema de favoritos ⭐, enlace entre notas y prompts, **renderizado Markdown** con vista previa en el modal de edición, **ConversationContent** con detección de etiquetas de conversación y bloques visuales por interlocutor, **PromptDetailModal** con relaciones bidireccionales entre prompts, notas y arena, **relaciones formales con foreign keys y triggers de validación**, y un diseño oscuro optimizado con paleta equilibrada de violetas, azules y terracota.
 
 ---
 
@@ -19,6 +19,8 @@
 | **Tailwind CSS v4**  | Última versión del framework de estilos                   |
 | **Supabase**         | Backend como servicio (Auth + DB PostgreSQL)              |
 | **react-hot-toast**  | Notificaciones toast elegantes y modernas                 |
+| **react-markdown**   | Renderizado Markdown con sintaxis extendida (GFM)         |
+| **remark-gfm**       | Plugin de tablas, listas, tachados y URLs para Markdown   |
 | **pdfjs-dist**       | Lectura y extracción de texto de archivos PDF (v3.11.174) |
 | **Material Symbols** | Iconografía premium de Google Fonts                       |
 | **ESLint**           | Linting con configuración estándar de Next.js             |
@@ -134,6 +136,7 @@ Optimizaciones aplicadas para mejorar el rendimiento Lighthouse y la accesibilid
 - **Editar** cualquier nota directamente desde la tarjeta con un clic.
 - **Eliminar** notas con confirmación previa y feedback visual mediante toast.
 - **Tres métodos de entrada:** texto manual, scraping de URLs o carga de archivos (PDF, TXT, MD).
+- **Vista previa Markdown:** al editar una nota existente, el modal ofrece pestañas "Editar" / "Vista previa" para ver el contenido renderizado con formato Markdown antes de guardar.
 - **Títulos en terracota:** los títulos de las tarjetas usan un tono terracota (`text-amber-700 dark:text-amber-400`) para mejorar la jerarquía visual y evitar la saturación de violeta.
 - **Etiquetas con Enter:** se pueden añadir etiquetas presionando Enter, además de la coma.
 - **Borde lateral violeta:** las tarjetas tienen un borde lateral izquierdo en color primario (`border-l-4 border-primary`) que las hace más modernas y distintivas.
@@ -253,13 +256,14 @@ Optimizaciones aplicadas para mejorar el rendimiento Lighthouse y la accesibilid
 
 - El código está organizado en componentes React reutilizables y auto-contenidos:
   - **`NoteCard`**: tarjeta individual de nota con efectos hover, badge de modelo de IA con colores por tipo, badge de prompt asociado, icono de favoritos ⭐ y acciones.
-  - **`NoteModal`**: modal de creación/edición de notas con 3 pestañas (Texto, URL, Archivo), autosugerencia de etiquetas, selector de modelo de IA y selector de prompt asociado.
+  - **`NoteModal`**: modal de creación/edición de notas con 3 pestañas (Texto, URL, Archivo), autosugerencia de etiquetas, selector de modelo de IA, selector de prompt asociado y **vista previa Markdown** con pestañas Editar/Vista previa.
+  - **`ConversationContent`**: componente de renderizado que normaliza y muestra el contenido de las notas con detección de etiquetas de conversación (Usuario:, Gemini:, ChatGPT:, Claude:, DeepSeek:, etc.), bloques visuales por interlocutor con colores distintivos, y renderizado Markdown con `react-markdown` + `remark-gfm`.
   - **`PromptCard`**: tarjeta de prompt con badge de categoría por colores, contador de usos, botón de copia con feedback visual e icono de favoritos ⭐.
   - **`PromptModal`**: modal de creación/edición de prompts con selector de categorías y autosugerencia de etiquetas.
+  - **`PromptDetailModal`**: modal de detalle de prompt con relaciones bidireccionales (notas y comparaciones asociadas), métricas de uso y navegación a elementos relacionados.
   - **`ArenaCard`**: tarjeta de comparación con dos columnas, badge del ganador y resaltado visual.
   - **`ArenaModal`**: modal de la Arena con formulario de comparación, selectores de modelo y sistema de votación.
   - **`ArenaDetailModal`**: modal expandido para ver respuestas completas lado a lado en pantalla completa.
-  - **`PromptDetailModal`**: modal de detalle de prompt con relaciones bidireccionales (notas y comparaciones asociadas), métricas de uso y navegación a elementos relacionados.
   - **`AuthForm`**: formulario de autenticación (login/registro) con diseño minimalista, logo grande y degradado Kimberlite V2.
   - **Página de Configuración** (`/settings`): pantalla minimalista con secciones de Cuenta (nombre, email), Seguridad (cambio de contraseña), Aplicación (versión, tema/idioma próximamente) y Cerrar sesión.
 
@@ -337,12 +341,14 @@ Kimberlite/
 │   │   ├── ArenaDetailModal.tsx        # Modal expandido de comparación (respuestas completas)
 │   │   ├── ArenaModal.tsx              # Modal de la Arena con votación
 │   │   ├── AuthForm.tsx                # Formulario de autenticación minimalista (login/registro)
+│   │   ├── ConversationContent.tsx     # Renderizado Markdown con detección de etiquetas de conversación
 │   │   ├── NoteCard.tsx                # Tarjeta de nota con favoritos ⭐, badge de modelo y prompt
-│   │   ├── NoteModal.tsx               # Modal de notas con 3 pestañas + selector de prompts
+│   │   ├── NoteModal.tsx               # Modal de notas con 3 pestañas + selector de prompts + vista previa
 │   │   ├── PromptCard.tsx              # Tarjeta de prompt con favoritos ⭐ y contador
 │   │   ├── PromptDetailModal.tsx       # Modal de detalle de prompt con relaciones bidireccionales
 │   │   └── PromptModal.tsx             # Modal de creación/edición de prompts
 │   ├── lib/                            # Utilidades, helpers y lógica de negocio
+│   │   ├── extractPdfText.ts          # Utilidad de extracción de texto PDF (legacy)
 │   │   └── supabaseClient.ts           # Cliente de Supabase inicializado
 │   └── SupabaseClient.ts               # Cliente de Supabase (raíz, respaldo)
 ├── supabase/
@@ -380,7 +386,7 @@ Kimberlite/
 | `src/app/auth/callback/`       | Ruta de callback OAuth para manejo de sesión post-autenticación y recovery de contraseña.              |
 | `src/app/auth/reset-password/` | Página de restablecimiento de contraseña con flujo completo de Supabase.                               |
 | `src/app/dashboard/`           | Dashboard principal con tabs de Notas, Prompts y Arena, sidebar responsive con filtros y estadísticas. |
-| `src/components/`              | Componentes React atómicos y reutilizables (autenticación, tarjetas, modales, arena).                  |
+| `src/components/`              | Componentes React atómicos y reutilizables (autenticación, tarjetas, modales, arena, renderizado).     |
 | `src/lib/`                     | Lógica compartida: cliente de Supabase, helpers, utilidades.                                           |
 | `supabase/migrations/`         | Migraciones SQL versionadas para la base de datos PostgreSQL.                                          |
 | `scripts/`                     | Scripts Node.js para tareas auxiliares (migraciones, tests de conexión).                               |
@@ -513,18 +519,29 @@ Almacena las comparaciones de la Arena de LLMs.
 
 Todas las funcionalidades principales están **operativas y probadas**. La aplicación es **completamente responsive** y funciona correctamente en dispositivos móviles, tablets y escritorio.
 
-### Novedades de esta sesión (Fase 5 — Beta QA)
+### Novedades de esta sesión (Fase 6 — Markdown Preview & ConversationContent)
 
-- ✅ **AuthForm completamente en español:** Traducidos todos los textos (toasts, labels, placeholders, botones, modo toggle) para mantener consistencia con el resto de la aplicación. Añadido `aria-label` al botón de Google.
-- ✅ **Eliminados todos los `console.log` de producción:** Limpiados todos los logs de depuración en `NoteModal.tsx`, `dashboard/page.tsx` y `ArenaCard.tsx`. Los errores ahora se muestran al usuario mediante `toast.error()` en lugar de `console.error()`.
-- ✅ **Feedback visual al copiar prompt:** El botón de copia en `PromptCard.tsx` ahora cambia a icono `check` con fondo verde (`text-emerald-400 bg-emerald-950/30`) durante 2 segundos, proporcionando confirmación visual inmediata.
-- ✅ **Overflow corregido en ArenaCard:** La cinta de ganador con márgenes negativos ya no provoca overflow horizontal gracias a `overflow-hidden` en el contenedor.
-- ✅ **Navegación sin recarga en PromptDetailModal:** Los enlaces a notas y comparaciones relacionadas ahora usan `router.push()` en lugar de `<a href="...">`, evitando recargas completas de página.
-- ✅ **Cierre de sesión optimizado:** `handleLogout` usa `router.push("/")` en lugar de `window.location.href` para una navegación más rápida y sin recarga.
-- ✅ **Estados `error`/`success` eliminados:** Se eliminaron estados no utilizados y sus bloques JSX, ya que la aplicación usa `react-hot-toast` para todas las notificaciones.
-- ✅ **Accesibilidad mejorada:** Añadidos `aria-label` a todos los botones de cierre de modales (NoteModal, PromptDetailModal) y al botón de Google OAuth.
+- ✅ **ConversationContent:** Nuevo componente de renderizado que normaliza el contenido de las notas con sanitización de HTML, detección de etiquetas de conversación (Usuario:, Gemini:, ChatGPT:, Claude:, DeepSeek:, etc.), bloques visuales por interlocutor con colores distintivos (verde para usuario, violeta para asistente), y renderizado Markdown con `react-markdown` + `remark-gfm`.
+- ✅ **Pipeline inteligente:** El componente detecta si el contenido tiene estructura Markdown; si no, renderiza como texto plano sin pasar por ReactMarkdown, evitando overhead innecesario.
+- ✅ **Vista previa en NoteModal:** Al editar una nota existente, el modal ofrece pestañas "Editar" / "Vista previa" para ver el contenido renderizado antes de guardar.
+- ✅ **Dependencias añadidas:** `react-markdown` y `remark-gfm` instalados para el renderizado Markdown con soporte GFM (tablas, listas, tachados, URLs).
+- ✅ **PromptDetailModal — orden de hooks corregido:** `useRouter()` movido al inicio del componente, antes del retorno condicional `if (!isOpen || !prompt) return null;`, eliminando el error de React sobre cambio de orden de hooks.
+- ✅ **README actualizado:** Documentación completa con todas las funcionalidades, flujo de importación, sistema de prompts, campo Resumen, búsqueda, renderizado Markdown, arquitectura general, stack tecnológico, estado actual y próximos pasos.
 - ✅ **TypeScript sin errores:** Build completado correctamente con Next.js 16.2.10.
 - ✅ **Build exitoso:** Compilación y generación de páginas estáticas completadas sin errores.
+
+---
+
+### Próximos pasos (Fase 7 — Roadmap)
+
+- [ ] **Exportación de notas:** Exportar notas individuales o en lote a Markdown, PDF o JSON.
+- [ ] **Importación masiva:** Importar múltiples conversaciones desde archivos o URLs.
+- [ ] **Vista de detalle de nota:** Modal o página dedicada para ver el contenido completo de una nota con el renderizado Markdown de ConversationContent.
+- [ ] **Estadísticas avanzadas:** Gráficos de uso por modelo, frecuencia de guardado, etiquetas más usadas.
+- [ ] **Modo oscuro/claro:** Selector manual de tema en la página de Configuración.
+- [ ] **Internacionalización (i18n):** Soporte multi-idioma (español, inglés).
+- [ ] **Modo offline:** Cache de notas y prompts con Service Workers.
+- [ ] **Testing:** Tests unitarios con Vitest y tests de integración con Playwright.
 
 ---
 

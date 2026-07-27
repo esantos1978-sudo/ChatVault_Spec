@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import ConversationContent from "./ConversationContent";
 
 interface NoteModalProps {
   isOpen: boolean;
@@ -275,6 +276,9 @@ export default function NoteModal({
   // Estado local para el input "Otro" del selector de modelos
   const [customModel, setCustomModel] = useState("");
 
+  // Estado local para alternar entre edición y vista previa del contenido
+  const [contentTab, setContentTab] = useState<"edit" | "preview">("edit");
+
   // ============================================================
   // 🚀 FUNCIÓN PARA SUBIR ARCHIVOS (CON WORKER CONFIGURADO)
   // ============================================================
@@ -444,16 +448,57 @@ export default function NoteModal({
           {/* ===== CONTENIDO (según tipo de fuente) ===== */}
           {sourceType === "text" && (
             <div>
-              <label className={labelClass}>Contenido del chat</label>
-              <textarea
-                rows={12}
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                placeholder="Usuario: ¿Cómo arreglo este error?..."
-                className={
-                  "w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-3.5 text-sm text-zinc-100 placeholder:text-zinc-600 hover:border-zinc-700 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/20 transition-all duration-200 resize-none leading-7 min-h-[240px]"
-                }
-              />
+              <div className="flex items-center justify-between mb-1.5">
+                <label className={labelClass}>Contenido del chat</label>
+                {/* Tabs de edición/previsualización solo cuando se edita una nota existente */}
+                {editingNoteId && (
+                  <div className="flex gap-1 rounded-lg bg-zinc-950 border border-zinc-800/40 p-0.5">
+                    <button
+                      type="button"
+                      onClick={() => setContentTab("edit")}
+                      className={`px-3 py-1 text-xs font-medium rounded-md transition-all duration-200 ${
+                        contentTab === "edit"
+                          ? "bg-zinc-800 text-zinc-100 shadow-sm"
+                          : "text-zinc-500 hover:text-zinc-300"
+                      }`}
+                    >
+                      Editar
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setContentTab("preview")}
+                      className={`px-3 py-1 text-xs font-medium rounded-md transition-all duration-200 ${
+                        contentTab === "preview"
+                          ? "bg-zinc-800 text-zinc-100 shadow-sm"
+                          : "text-zinc-500 hover:text-zinc-300"
+                      }`}
+                    >
+                      Vista previa
+                    </button>
+                  </div>
+                )}
+              </div>
+              {contentTab === "edit" || !editingNoteId ? (
+                <textarea
+                  rows={12}
+                  value={content}
+                  onChange={(e) => setContent(e.target.value)}
+                  placeholder="Usuario: ¿Cómo arreglo este error?..."
+                  className={
+                    "w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-3.5 text-sm text-zinc-100 placeholder:text-zinc-600 hover:border-zinc-700 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/20 transition-all duration-200 resize-none leading-7 min-h-[240px]"
+                  }
+                />
+              ) : (
+                <div className="w-full rounded-lg border border-zinc-800 bg-zinc-950 px-4 py-4 min-h-[240px] max-h-[480px] overflow-y-auto">
+                  {content.trim() ? (
+                    <ConversationContent content={content} />
+                  ) : (
+                    <p className="text-sm text-zinc-600 italic">
+                      Sin contenido que mostrar.
+                    </p>
+                  )}
+                </div>
+              )}
             </div>
           )}
 

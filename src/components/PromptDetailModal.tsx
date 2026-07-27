@@ -36,6 +36,7 @@ export default function PromptDetailModal({
   onClose,
   prompt,
 }: PromptDetailModalProps) {
+  const router = useRouter();
   const [relatedNotes, setRelatedNotes] = useState<RelatedNote[]>([]);
   const [relatedComparisons, setRelatedComparisons] = useState<
     RelatedComparison[]
@@ -99,7 +100,6 @@ export default function PromptDetailModal({
     label: prompt.category,
   };
 
-  const router = useRouter();
   const noteCount = relatedNotes.length;
   const comparisonCount = relatedComparisons.length;
 

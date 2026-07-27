@@ -784,7 +784,7 @@ export default function Dashboard() {
           <Image
             src="/images/kimberlite-logo.png"
             alt="Kimberlite"
-            width={140}
+            width={198}
             height={72}
             className="h-18 w-auto"
           />
