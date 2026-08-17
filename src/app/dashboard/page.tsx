@@ -191,10 +191,13 @@ export default function Dashboard() {
 
   // ==================== EFECTOS ====================
   useEffect(() => {
-    fetchNotes();
-    fetchPrompts();
-    fetchArenaComparisons();
-  }, []);
+    // Solo cargar datos cuando el usuario esté autenticado
+    if (user && !authLoading) {
+      fetchNotes();
+      fetchPrompts();
+      fetchArenaComparisons();
+    }
+  }, [user, authLoading]);
 
   // ==================== ATAJO DE TECLADO ⌘K ====================
   useEffect(() => {
