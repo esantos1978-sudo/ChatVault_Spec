@@ -11,9 +11,11 @@ import toast from "react-hot-toast";
 // ✅ Componentes normales (síncronos, siempre visibles)
 import { NoteCard } from "@/components/NoteCard";
 import { PromptCard } from "@/components/PromptCard";
+import { SkillCard } from "@/components/SkillCard";
 import { ArenaCard } from "@/components/ArenaCard";
 import { NoteCardSkeleton } from "@/components/NoteCardSkeleton";
 import { PromptCardSkeleton } from "@/components/PromptCardSkeleton";
+import { SkillCardSkeleton } from "@/components/SkillCardSkeleton";
 import { ArenaCardSkeleton } from "@/components/ArenaCardSkeleton";
 
 // ✅ Modales cargados bajo demanda (solo cuando se abren)
@@ -21,6 +23,9 @@ const NoteModal = dynamic(() => import("@/components/NoteModal"), {
   ssr: false,
 });
 const PromptModal = dynamic(() => import("@/components/PromptModal"), {
+  ssr: false,
+});
+const SkillModal = dynamic(() => import("@/components/SkillModal"), {
   ssr: false,
 });
 const ArenaModal = dynamic(() => import("@/components/ArenaModal"), {
@@ -66,9 +71,25 @@ interface Prompt {
   is_favorite?: boolean;
 }
 
+<<<<<<< HEAD
 export default function Dashboard() {
   const [user, setUser] = useState<any>(null);
   const [authLoading, setAuthLoading] = useState(true);
+=======
+interface Skill {
+  id: string;
+  title: string;
+  description?: string | null;
+  content: string;
+  category: string;
+  tags?: string[];
+  times_used: number;
+  created_at: string;
+  is_favorite?: boolean;
+}
+
+export default function Dashboard({ user }: { user: any }) {
+>>>>>>> redesign/kimberlite-v2
   const router = useRouter();
 
   // ==================== OBTENER USUARIO AUTENTICADO ====================
@@ -88,9 +109,9 @@ export default function Dashboard() {
   }, [router]);
 
   // ==================== ESTADOS GENERALES ====================
-  const [activeTab, setActiveTab] = useState<"prompts" | "notes" | "arena">(
-    "prompts",
-  );
+  const [activeTab, setActiveTab] = useState<
+    "prompts" | "skills" | "notes" | "arena"
+  >("prompts");
   const [showFavorites, setShowFavorites] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const sidebarRef = useRef<HTMLDivElement>(null);
@@ -148,6 +169,27 @@ export default function Dashboard() {
   const [promptSaving, setPromptSaving] = useState(false);
   const [editingPromptId, setEditingPromptId] = useState<string | null>(null);
 
+  // ==================== ESTADOS PARA SKILLS ====================
+  const [skills, setSkills] = useState<Skill[]>([]);
+  const [skillsLoading, setSkillsLoading] = useState(true);
+  const [skillSearchQuery, setSkillSearchQuery] = useState("");
+  const [selectedSkillCategory, setSelectedSkillCategory] = useState<
+    string | null
+  >(null);
+
+  const [skillModalOpen, setSkillModalOpen] = useState(false);
+  const [skillTitle, setSkillTitle] = useState("");
+  const [skillDescription, setSkillDescription] = useState("");
+  const [skillContent, setSkillContent] = useState("");
+  const [skillCategory, setSkillCategory] = useState("General");
+  const [skillTags, setSkillTags] = useState<string[]>([]);
+  const [skillTagsInput, setSkillTagsInput] = useState("");
+  const [skillSuggestions, setSkillSuggestions] = useState<string[]>([]);
+  const [skillShowSuggestions, setSkillShowSuggestions] = useState(false);
+  const [skillSelectedSuggestion, setSkillSelectedSuggestion] = useState(-1);
+  const [skillSaving, setSkillSaving] = useState(false);
+  const [editingSkillId, setEditingSkillId] = useState<string | null>(null);
+
   // ==================== OBTENER PROMPTS PARA EL SELECTOR ====================
   const promptOptions = prompts.map((p) => ({
     id: p.id,
@@ -182,6 +224,14 @@ export default function Dashboard() {
     new Set(prompts.flatMap((p) => p.tags || [])),
   );
 
+  const skillTagsFromSkills = Array.from(
+    new Set(skills.flatMap((s) => s.tags || [])),
+  );
+
+  const skillCategories = Array.from(
+    new Set(skills.map((s) => s.category).filter((c): c is string => !!c)),
+  );
+
   // ==================== OBTENER MODELOS DE IA ÚNICOS ====================
   const allAiModels = Array.from(
     new Set(
@@ -191,6 +241,7 @@ export default function Dashboard() {
 
   // ==================== EFECTOS ====================
   useEffect(() => {
+<<<<<<< HEAD
     // Solo cargar datos cuando el usuario esté autenticado
     if (user && !authLoading) {
       fetchNotes();
@@ -198,6 +249,13 @@ export default function Dashboard() {
       fetchArenaComparisons();
     }
   }, [user, authLoading]);
+=======
+    fetchNotes();
+    fetchPrompts();
+    fetchSkills();
+    fetchArenaComparisons();
+  }, []);
+>>>>>>> redesign/kimberlite-v2
 
   // ==================== ATAJO DE TECLADO ⌘K ====================
   useEffect(() => {
@@ -368,6 +426,45 @@ export default function Dashboard() {
       );
     });
 
+  // ==================== FUNCIONES PARA SKILLS ====================
+  async function fetchSkills() {
+    try {
+      setSkillsLoading(true);
+      const { data, error } = await supabase
+        .from("skills")
+        .select("*")
+        .order("times_used", { ascending: false })
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+      setSkills(data || []);
+    } catch (err: unknown) {
+      toast.error(
+        "Error cargando skills: " +
+          (err instanceof Error ? err.message : String(err)),
+      );
+    } finally {
+      setSkillsLoading(false);
+    }
+  }
+
+  const filteredSkills = skills
+    .filter((s) => (showFavorites ? s.is_favorite === true : true))
+    .filter((s) => (selectedTag ? (s.tags || []).includes(selectedTag) : true))
+    .filter((s) =>
+      selectedSkillCategory ? s.category === selectedSkillCategory : true,
+    )
+    .filter((s) => {
+      const query = skillSearchQuery.toLowerCase().trim();
+      if (!query) return true;
+      return (
+        s.title.toLowerCase().includes(query) ||
+        (s.description || "").toLowerCase().includes(query) ||
+        (s.content || "").toLowerCase().includes(query) ||
+        (s.tags && s.tags.some((t) => t.toLowerCase().includes(query)))
+      );
+    });
+
   // ==================== FUNCIONES PARA LA ARENA ====================
   async function fetchArenaComparisons() {
     try {
@@ -444,7 +541,7 @@ export default function Dashboard() {
   // ==================== TOGGLE FAVORITOS ====================
   const toggleFavorite = async (
     id: string,
-    table: "notes" | "prompts",
+    table: "notes" | "prompts" | "skills",
     isFavorite: boolean,
   ) => {
     try {
@@ -461,10 +558,16 @@ export default function Dashboard() {
             n.id === id ? { ...n, is_favorite: isFavorite } : n,
           ),
         );
-      } else {
+      } else if (table === "prompts") {
         setPrompts(
           prompts.map((p) =>
             p.id === id ? { ...p, is_favorite: isFavorite } : p,
+          ),
+        );
+      } else {
+        setSkills(
+          skills.map((s) =>
+            s.id === id ? { ...s, is_favorite: isFavorite } : s,
           ),
         );
       }
@@ -652,6 +755,117 @@ export default function Dashboard() {
     }
   };
 
+  // ==================== HANDLE SUBMIT SKILLS ====================
+  const handleSkillSubmit = async () => {
+    if (!skillTitle.trim() || !skillContent.trim()) {
+      toast.error("Por favor, completa el título y las instrucciones.");
+      return;
+    }
+
+    try {
+      setSkillSaving(true);
+      const loadingToast = toast.loading(
+        editingSkillId ? "Actualizando skill..." : "Guardando skill...",
+      );
+
+      const skillData = {
+        title: skillTitle.trim(),
+        description: skillDescription.trim() || null,
+        content: skillContent.trim(),
+        category: skillCategory.trim() || "General",
+        tags: skillTags.length > 0 ? skillTags : null,
+        user_id: user.id,
+      };
+
+      let result;
+      if (editingSkillId) {
+        result = await supabase
+          .from("skills")
+          .update(skillData)
+          .eq("id", editingSkillId);
+      } else {
+        result = await supabase.from("skills").insert([skillData]);
+      }
+
+      if (result.error) throw result.error;
+
+      toast.success(editingSkillId ? "¡Skill actualizado!" : "¡Skill guardado!", {
+        id: loadingToast,
+      });
+      setSkillModalOpen(false);
+      resetSkillForm();
+      fetchSkills();
+    } catch (err: unknown) {
+      toast.error(
+        "Error: " + (err instanceof Error ? err.message : String(err)),
+      );
+    } finally {
+      setSkillSaving(false);
+    }
+  };
+
+  function resetSkillForm() {
+    setSkillTitle("");
+    setSkillDescription("");
+    setSkillContent("");
+    setSkillCategory("General");
+    setSkillTags([]);
+    setSkillTagsInput("");
+    setEditingSkillId(null);
+  }
+
+  function openSkillModal(skill?: Skill) {
+    if (skill) {
+      setEditingSkillId(skill.id);
+      setSkillTitle(skill.title);
+      setSkillDescription(skill.description || "");
+      setSkillContent(skill.content);
+      setSkillCategory(skill.category || "General");
+      setSkillTags(skill.tags || []);
+      setSkillTagsInput((skill.tags || []).join(", "));
+    } else {
+      resetSkillForm();
+    }
+    setSkillModalOpen(true);
+  }
+
+  // ==================== FUNCIONES CRUD SKILLS ====================
+  const handleDeleteSkill = async (id: string) => {
+    if (!confirm("¿Estás seguro de que quieres eliminar este skill?")) return;
+
+    try {
+      const { error } = await supabase.from("skills").delete().eq("id", id);
+      if (error) throw error;
+      toast.success("Skill eliminado");
+      fetchSkills();
+    } catch (err: unknown) {
+      toast.error(
+        "Error al eliminar: " +
+          (err instanceof Error ? err.message : String(err)),
+      );
+    }
+  };
+
+  const handleCopySkill = async (skill: Skill) => {
+    try {
+      await navigator.clipboard.writeText(skill.content);
+
+      const { error } = await supabase
+        .from("skills")
+        .update({ times_used: (skill.times_used ?? 0) + 1 })
+        .eq("id", skill.id);
+
+      if (error) throw error;
+
+      toast.success("¡Skill copiado al portapapeles! 📋");
+      fetchSkills();
+    } catch (err: unknown) {
+      toast.error(
+        "Error al copiar: " + (err instanceof Error ? err.message : String(err)),
+      );
+    }
+  };
+
   // ==================== FUNCIONES DE NAVEGACIÓN Y FILTROS ====================
   const handleLogout = async () => {
     try {
@@ -715,6 +929,21 @@ export default function Dashboard() {
         });
         await Promise.all(promptPromises);
         await fetchPrompts();
+      } else if (activeTab === "skills") {
+        const skillsWithTag = skills.filter((s) =>
+          (s.tags || []).includes(tagToDelete),
+        );
+        const skillPromises = skillsWithTag.map((skill) => {
+          const updatedTags = (skill.tags || []).filter(
+            (t) => t !== tagToDelete,
+          );
+          return supabase
+            .from("skills")
+            .update({ tags: updatedTags.length > 0 ? updatedTags : null })
+            .eq("id", skill.id);
+        });
+        await Promise.all(skillPromises);
+        await fetchSkills();
       }
 
       if (selectedTag === tagToDelete) setSelectedTag(null);
@@ -748,8 +977,20 @@ export default function Dashboard() {
     setPromptSelectedSuggestion(-1);
   };
 
+  const addSkillSuggestion = (index: number) => {
+    const suggestion = skillSuggestions[index];
+    if (!suggestion) return;
+    const lastTagIndex = skillTags.length - 1;
+    const newTags = skillTags.filter((_, i) => i !== lastTagIndex);
+    const updatedTags = [...newTags, suggestion];
+    setSkillTags(updatedTags);
+    setSkillTagsInput(updatedTags.join(", "));
+    setSkillShowSuggestions(false);
+    setSkillSelectedSuggestion(-1);
+  };
+
   // ==================== CERRAR DRAWER AL NAVEGAR ====================
-  const navigateAndClose = (tab: "prompts" | "notes" | "arena") => {
+  const navigateAndClose = (tab: "prompts" | "skills" | "notes" | "arena") => {
     setActiveTab(tab);
     setSidebarOpen(false);
     menuButtonRef.current?.focus();
@@ -823,6 +1064,16 @@ export default function Dashboard() {
             <span>Arena</span>
             <span className="count">{arenaComparisons.length}</span>
           </button>
+          <button
+            onClick={() => navigateAndClose("skills")}
+            className={`sidebar-item ${activeTab === "skills" ? "active" : ""}`}
+          >
+            <span className="material-symbols-outlined text-[18px]">
+              psychology
+            </span>
+            <span>Skills</span>
+            <span className="count">{skills.length}</span>
+          </button>
         </nav>
 
         <div className="divider mx-3 my-2" />
@@ -851,11 +1102,13 @@ export default function Dashboard() {
               setSelectedTag(null);
               setSelectedAiModel(null);
               setSelectedPromptCategory(null);
+              setSelectedSkillCategory(null);
               setDateFilter("all");
               setStartDate("");
               setEndDate("");
               setSearchQuery("");
               setPromptSearchQuery("");
+              setSkillSearchQuery("");
               setArenaSearchQuery("");
               setShowFavorites(false);
               window.scrollTo({ top: 0, behavior: "smooth" });
@@ -904,7 +1157,9 @@ export default function Dashboard() {
             ? " — Notas"
             : activeTab === "prompts"
               ? " — Prompts"
-              : ""}
+              : activeTab === "skills"
+                ? " — Skills"
+                : ""}
         </div>
         <div className="flex flex-col px-2 gap-0.5 max-h-32 overflow-y-auto">
           {activeTab === "notes" && (
@@ -973,6 +1228,44 @@ export default function Dashboard() {
                     <button
                       onClick={() => handleDeleteTag(t)}
                       className="opacity-0 group-hover:opacity-100 p-1 mr-1 text-zinc-600 hover:text-red-400 transition-all"
+                    >
+                      <span className="material-symbols-outlined text-[14px]">
+                        close
+                      </span>
+                    </button>
+                  </div>
+                ))
+              )}
+            </>
+          )}
+
+          {activeTab === "skills" && (
+            <>
+              {skillTagsFromSkills.length === 0 ? (
+                <span className="px-3 py-2 text-xs text-zinc-600 italic">
+                  Sin etiquetas
+                </span>
+              ) : (
+                skillTagsFromSkills.map((t) => (
+                  <div key={t} className="group flex items-center">
+                    <button
+                      onClick={() =>
+                        setSelectedTag(selectedTag === t ? null : t)
+                      }
+                      className={`sidebar-item flex-1 ${selectedTag === t ? "active" : ""}`}
+                    >
+                      <span className="material-symbols-outlined text-[18px]">
+                        sell
+                      </span>
+                      <span>{t}</span>
+                      <span className="count">
+                        {skills.filter((s) => (s.tags || []).includes(t)).length}
+                      </span>
+                    </button>
+                    <button
+                      onClick={() => handleDeleteTag(t)}
+                      className="opacity-0 group-hover:opacity-100 p-1 mr-1 text-zinc-600 hover:text-red-400 transition-all"
+                      aria-label={`Eliminar etiqueta ${t}`}
                     >
                       <span className="material-symbols-outlined text-[14px]">
                         close
@@ -1103,6 +1396,36 @@ export default function Dashboard() {
           </>
         )}
 
+        {/* CATEGORÍAS (Skills) */}
+        {activeTab === "skills" && skillCategories.length > 0 && (
+          <>
+            <div className="divider mx-3 my-2" />
+            <div className="sidebar-section-label">Categorías</div>
+            <div className="flex flex-col px-2 gap-0.5 max-h-40 overflow-y-auto">
+              {skillCategories.map((cat) => {
+                const count = skills.filter((s) => s.category === cat).length;
+                return (
+                  <button
+                    key={cat}
+                    onClick={() =>
+                      setSelectedSkillCategory(
+                        selectedSkillCategory === cat ? null : cat,
+                      )
+                    }
+                    className={`sidebar-item ${selectedSkillCategory === cat ? "active" : ""}`}
+                  >
+                    <span className="material-symbols-outlined text-[18px]">
+                      folder
+                    </span>
+                    <span className="truncate">{cat}</span>
+                    <span className="count">{count}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </>
+        )}
+
         {/* ==================== CUENTA ==================== */}
         <div className="mt-auto px-2 pt-4">
           <div className="sidebar-section-label">Cuenta</div>
@@ -1157,21 +1480,28 @@ export default function Dashboard() {
                     ? "Buscar comparaciones..."
                     : activeTab === "prompts"
                       ? "Buscar prompts..."
-                      : "Buscar notas..."
+                      : activeTab === "skills"
+                        ? "Buscar skills..."
+                        : "Buscar notas..."
                 }
                 value={
                   activeTab === "notes"
                     ? searchQuery
                     : activeTab === "prompts"
                       ? promptSearchQuery
-                      : arenaSearchQuery
+                      : activeTab === "skills"
+                        ? skillSearchQuery
+                        : arenaSearchQuery
                 }
                 onChange={(e) => {
                   if (activeTab === "notes") setSearchQuery(e.target.value);
                   else if (activeTab === "prompts")
                     setPromptSearchQuery(e.target.value);
+                  else if (activeTab === "skills")
+                    setSkillSearchQuery(e.target.value);
                   else setArenaSearchQuery(e.target.value);
                 }}
+                aria-label="Buscar en la sección activa"
                 className="w-full h-[44px] rounded-lg border border-zinc-800 bg-zinc-950 px-3 pl-10 text-sm text-zinc-100 placeholder:text-zinc-600 hover:border-zinc-700 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/20 transition-all duration-180"
               />
             </div>
@@ -1205,6 +1535,7 @@ export default function Dashboard() {
               onClick={() => {
                 if (activeTab === "notes") openNoteModal();
                 else if (activeTab === "prompts") openPromptModal();
+                else if (activeTab === "skills") openSkillModal();
                 else setArenaModalOpen(true);
               }}
               className="flex items-center gap-1.5 gemstone-gradient text-white px-3 py-2 md:px-4 md:py-2 rounded-xl font-semibold shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 hover:brightness-110 active:brightness-95 transition-all duration-180 text-sm"
@@ -1213,11 +1544,13 @@ export default function Dashboard() {
               <span className="hidden sm:inline">
                 {activeTab === "notes" && "Nota"}
                 {activeTab === "prompts" && "Prompt"}
+                {activeTab === "skills" && "Skill"}
                 {activeTab === "arena" && "Comparación"}
               </span>
               <span className="sm:hidden">
                 {activeTab === "notes" && "+"}
                 {activeTab === "prompts" && "+"}
+                {activeTab === "skills" && "+"}
                 {activeTab === "arena" && "+"}
               </span>
             </button>
@@ -1403,6 +1736,98 @@ export default function Dashboard() {
                         setPromptDetailModalOpen(true);
                       }}
                       index={index}
+                    />
+                  ))}
+                </div>
+              )}
+            </>
+          )}
+
+          {/* ==================== TAB SKILLS ==================== */}
+          {activeTab === "skills" && (
+            <>
+              {skillsLoading ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-5">
+                  {[1, 2, 3, 4, 5, 6].map((i) => (
+                    <SkillCardSkeleton key={i} />
+                  ))}
+                </div>
+              ) : filteredSkills.length === 0 ? (
+                <div className="flex flex-col items-center justify-center rounded-2xl border border-zinc-800/20 bg-zinc-900/20 px-4 md:px-8 py-10 md:py-16">
+                  <div className="max-w-lg text-center space-y-6">
+                    {/* Icono */}
+                    <div className="mx-auto w-14 h-14 rounded-2xl bg-zinc-800/40 flex items-center justify-center">
+                      <span className="material-symbols-outlined text-[28px] text-zinc-400">
+                        psychology
+                      </span>
+                    </div>
+
+                    {/* Título */}
+                    <div>
+                      <h3 className="text-lg font-semibold text-zinc-100">
+                        Enseña a tus agentes cómo trabajar.
+                      </h3>
+                      <p className="text-sm text-zinc-500 mt-2 leading-relaxed">
+                        Guarda instrucciones de sistema y custom instructions en
+                        Markdown para reutilizarlas en cualquier chat.
+                      </p>
+                    </div>
+
+                    {/* Frase de marca */}
+                    <p className="text-sm italic text-zinc-400 leading-relaxed">
+                      Un buen agente empieza con un buen skill.
+                    </p>
+
+                    {/* Botón */}
+                    <button
+                      onClick={() => openSkillModal()}
+                      className="inline-flex items-center gap-2 gemstone-gradient text-white px-5 py-2.5 rounded-xl font-semibold shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 hover:brightness-110 active:brightness-95 transition-all duration-180 text-sm"
+                    >
+                      <span className="material-symbols-outlined text-[16px]">
+                        add
+                      </span>
+                      Guardar mi primer Skill
+                    </button>
+
+                    {/* Tarjeta de ejemplo no interactiva */}
+                    <div className="mt-10 opacity-80 pointer-events-none select-none">
+                      <div className="rounded-2xl border border-zinc-800/40 bg-zinc-900/60 p-6 text-left">
+                        <div className="flex items-start justify-between mb-3">
+                          <div className="flex gap-2">
+                            <span className="inline-flex items-center gap-1 rounded-md bg-sky-500/10 px-2 py-0.5 text-[10px] font-medium text-sky-400 border border-sky-500/20">
+                              React
+                            </span>
+                            <span className="inline-flex items-center gap-1 rounded-md bg-zinc-800/60 px-2 py-0.5 text-[10px] font-medium text-zinc-400 border border-zinc-700/50">
+                              #review
+                            </span>
+                          </div>
+                        </div>
+                        <h4 className="text-sm font-semibold text-amber-600 dark:text-amber-400 mb-2">
+                          Revisor de código React
+                        </h4>
+                        <p className="text-xs text-zinc-500 leading-relaxed line-clamp-2">
+                          Eres un ingeniero senior especializado en React.
+                          Revisa el código y propone mejoras de rendimiento...
+                        </p>
+                      </div>
+                      <p className="text-[10px] text-zinc-600 mt-3 text-center">
+                        Tus skills vivirán aquí.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-5">
+                  {filteredSkills.map((skill) => (
+                    <SkillCard
+                      key={skill.id}
+                      skill={skill}
+                      onEdit={openSkillModal}
+                      onDelete={handleDeleteSkill}
+                      onCopy={handleCopySkill}
+                      onToggleFavorite={(id, isFavorite) =>
+                        toggleFavorite(id, "skills", isFavorite)
+                      }
                     />
                   ))}
                 </div>
@@ -1603,6 +2028,34 @@ export default function Dashboard() {
         setShowSuggestions={setPromptShowSuggestions}
         setSelectedSuggestion={setPromptSelectedSuggestion}
         editingId={editingPromptId}
+      />
+
+      <SkillModal
+        isOpen={skillModalOpen}
+        onClose={() => setSkillModalOpen(false)}
+        onSubmit={handleSkillSubmit}
+        title={skillTitle}
+        setTitle={setSkillTitle}
+        description={skillDescription}
+        setDescription={setSkillDescription}
+        content={skillContent}
+        setContent={setSkillContent}
+        category={skillCategory}
+        setCategory={setSkillCategory}
+        tags={skillTags}
+        tagsInput={skillTagsInput}
+        setTagsInput={setSkillTagsInput}
+        setTags={setSkillTags}
+        saving={skillSaving}
+        allTags={skillTagsFromSkills}
+        suggestions={skillSuggestions}
+        showSuggestions={skillShowSuggestions}
+        selectedSuggestion={skillSelectedSuggestion}
+        addSuggestion={addSkillSuggestion}
+        setSuggestions={setSkillSuggestions}
+        setShowSuggestions={setSkillShowSuggestions}
+        setSelectedSuggestion={setSkillSelectedSuggestion}
+        editingId={editingSkillId}
       />
 
       <ArenaModal
