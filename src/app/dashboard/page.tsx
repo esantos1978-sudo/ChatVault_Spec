@@ -71,11 +71,6 @@ interface Prompt {
   is_favorite?: boolean;
 }
 
-<<<<<<< HEAD
-export default function Dashboard() {
-  const [user, setUser] = useState<any>(null);
-  const [authLoading, setAuthLoading] = useState(true);
-=======
 interface Skill {
   id: string;
   title: string;
@@ -88,8 +83,9 @@ interface Skill {
   is_favorite?: boolean;
 }
 
-export default function Dashboard({ user }: { user: any }) {
->>>>>>> redesign/kimberlite-v2
+export default function Dashboard() {
+  const [user, setUser] = useState<any>(null);
+  const [authLoading, setAuthLoading] = useState(true);
   const router = useRouter();
 
   // ==================== OBTENER USUARIO AUTENTICADO ====================
@@ -241,21 +237,14 @@ export default function Dashboard({ user }: { user: any }) {
 
   // ==================== EFECTOS ====================
   useEffect(() => {
-<<<<<<< HEAD
     // Solo cargar datos cuando el usuario esté autenticado
     if (user && !authLoading) {
       fetchNotes();
       fetchPrompts();
+      fetchSkills();
       fetchArenaComparisons();
     }
   }, [user, authLoading]);
-=======
-    fetchNotes();
-    fetchPrompts();
-    fetchSkills();
-    fetchArenaComparisons();
-  }, []);
->>>>>>> redesign/kimberlite-v2
 
   // ==================== ATAJO DE TECLADO ⌘K ====================
   useEffect(() => {
