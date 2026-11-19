@@ -29,151 +29,86 @@ export function NoteCard({
   onToggleFavorite,
   index = 0,
 }: NoteCardProps) {
-  // Colores para modelos de IA
-  const getModelColor = (model?: string) => {
-    if (!model)
-      return {
-        bg: "bg-zinc-800/30",
-        text: "text-zinc-500",
-        dot: "bg-zinc-500",
-      };
+  // Punto de color del modelo: el chip es neutro (como en la landing) y el
+  // color se conserva sólo en el indicador, así el card no grita.
+  const getModelAccent = (model?: string) => {
+    const fallback = "#958ea0";
+    if (!model) return fallback;
 
-    const modelColors: Record<string, any> = {
-      "DeepSeek-R1": {
-        bg: "bg-zinc-800/30",
-        text: "text-zinc-500",
-        dot: "bg-zinc-500",
-      },
-      "DeepSeek-V3": {
-        bg: "bg-zinc-800/30",
-        text: "text-zinc-500",
-        dot: "bg-zinc-500",
-      },
-      "ChatGPT-4o": {
-        bg: "bg-emerald-500/8",
-        text: "text-emerald-400",
-        dot: "bg-emerald-400",
-      },
-      "ChatGPT-4o-mini": {
-        bg: "bg-emerald-500/8",
-        text: "text-emerald-400",
-        dot: "bg-emerald-400",
-      },
-      "Claude-3.5-Sonnet": {
-        bg: "bg-purple-500/8",
-        text: "text-purple-400",
-        dot: "bg-purple-400",
-      },
-      "Claude-3.7-Sonnet": {
-        bg: "bg-purple-500/8",
-        text: "text-purple-400",
-        dot: "bg-purple-400",
-      },
-      "Gemini-1.5-Pro": {
-        bg: "bg-amber-500/8",
-        text: "text-amber-400",
-        dot: "bg-amber-400",
-      },
-      "Gemini-2.0-Flash": {
-        bg: "bg-amber-500/8",
-        text: "text-amber-400",
-        dot: "bg-amber-400",
-      },
-      "Gemini-2.5-Pro": {
-        bg: "bg-amber-500/8",
-        text: "text-amber-400",
-        dot: "bg-amber-400",
-      },
-      "Llama-3": {
-        bg: "bg-rose-500/8",
-        text: "text-rose-400",
-        dot: "bg-rose-400",
-      },
-      "Llama-3.1": {
-        bg: "bg-rose-500/8",
-        text: "text-rose-400",
-        dot: "bg-rose-400",
-      },
-      "Mistral-Large": {
-        bg: "bg-cyan-500/8",
-        text: "text-cyan-400",
-        dot: "bg-cyan-400",
-      },
-      "Grok-2": {
-        bg: "bg-violet-500/8",
-        text: "text-violet-400",
-        dot: "bg-violet-400",
-      },
-      "Grok-3": {
-        bg: "bg-violet-500/8",
-        text: "text-violet-400",
-        dot: "bg-violet-400",
-      },
+    const accents: Record<string, string> = {
+      "DeepSeek-R1": fallback,
+      "DeepSeek-V3": fallback,
+      "ChatGPT-4o": "#34d399",
+      "ChatGPT-4o-mini": "#34d399",
+      "Claude-3.5-Sonnet": "#c084fc",
+      "Claude-3.7-Sonnet": "#c084fc",
+      "Gemini-1.5-Pro": "#fbbf24",
+      "Gemini-2.0-Flash": "#fbbf24",
+      "Gemini-2.5-Pro": "#fbbf24",
+      "Llama-3": "#fb7185",
+      "Llama-3.1": "#fb7185",
+      "Mistral-Large": "#22d3ee",
+      "Grok-2": "#a78bfa",
+      "Grok-3": "#a78bfa",
     };
 
-    return (
-      modelColors[model] || {
-        bg: "bg-zinc-800/30",
-        text: "text-zinc-500",
-        dot: "bg-zinc-500",
-      }
-    );
+    return accents[model] || fallback;
   };
 
-  const colors = getModelColor(note.ai_model);
+  const accent = getModelAccent(note.ai_model);
 
   return (
     <div
-      className="group bg-zinc-900/70 rounded-2xl border border-zinc-800/40 hover:bg-zinc-800/30 hover:border-zinc-700/40 transition-all duration-180 ease-out p-6 flex flex-col h-full relative cursor-pointer"
+      className="kl-card kl-card--interactive group p-6 flex flex-col h-full relative cursor-pointer"
       onClick={() => onEdit(note)}
     >
       {/* Badge del modelo */}
       <div className="mb-5">
-        <span
-          className={`inline-flex items-center gap-1 pl-0 pr-1 py-[1px] rounded-md ${colors.bg} ${colors.text} text-[9px] font-medium`}
-        >
-          <span className={`w-[3px] h-[3px] rounded-full ${colors.dot}`} />
+        <span className="kl-chip kl-chip--model gap-1.5">
+          <span
+            className="h-[3px] w-[3px] rounded-full shrink-0"
+            style={{ backgroundColor: accent }}
+            aria-hidden="true"
+          />
           {note.ai_model || "Desconocido"}
         </span>
       </div>
 
       {/* Título */}
-      <h3 className="text-[17px] font-bold text-white leading-tight mb-5 line-clamp-1">
+      <h3 className="kl-card-title text-[17px] leading-tight mb-5 line-clamp-1">
         {note.title}
       </h3>
 
       {/* Resumen */}
-      <p className="text-sm text-zinc-500/80 leading-[1.65] flex-grow mb-5 line-clamp-3">
+      <p className="kl-card-text flex-grow mb-5 line-clamp-3">
         {note.summary || note.content}
       </p>
 
+      {/* Separador (1px + 16px = mismo hueco que el antiguo pt-4 border-t) */}
+      <div className="kl-divider mt-4" />
+
       {/* Footer: Tags + Acciones */}
-      <div className="flex items-center justify-between pt-4 border-t border-zinc-800/30">
+      <div className="flex items-center justify-between">
         {/* Tags a la izquierda */}
         <div className="flex items-center gap-1 min-w-0 flex-1">
           {note.tags && note.tags.length > 0 ? (
             note.tags.slice(0, 2).map((t) => (
-              <span
-                key={t}
-                className="px-1 py-[1px] rounded bg-zinc-800/50 text-zinc-600 text-[9px] font-medium truncate"
-              >
+              <span key={t} className="kl-chip kl-chip--tag truncate">
                 #{t}
               </span>
             ))
           ) : (
-            <span className="text-[9px] text-zinc-700">Sin etiquetas</span>
+            <span className="kl-meta">Sin etiquetas</span>
           )}
           {note.tags && note.tags.length > 2 && (
-            <span className="text-[9px] text-zinc-700 shrink-0">
-              +{note.tags.length - 2}
-            </span>
+            <span className="kl-meta shrink-0">+{note.tags.length - 2}</span>
           )}
         </div>
 
         {/* Acciones a la derecha */}
         <div className="flex items-center gap-0 shrink-0">
           {/* Fecha */}
-          <span className="text-[10px] text-zinc-700 mr-3">
+          <span className="kl-meta mr-3">
             {new Date(note.created_at).toLocaleDateString("es-ES", {
               year: "numeric",
               month: "short",
@@ -189,8 +124,9 @@ export function NoteCard({
               navigator.clipboard.writeText(markdown);
               toast.success("Nota copiada en Markdown");
             }}
-            className="p-[3px] rounded-lg text-zinc-600 hover:text-zinc-300 hover:bg-zinc-800/60 transition-all duration-180"
+            className="kl-icon-btn kl-icon-btn--sm kl-icon-btn--success"
             title="Copiar en Markdown"
+            aria-label="Copiar nota en Markdown"
           >
             <span className="material-symbols-outlined text-[16px]">
               content_copy
@@ -203,10 +139,14 @@ export function NoteCard({
               e.stopPropagation();
               onToggleFavorite(note.id, !note.is_favorite);
             }}
-            className="p-[3px] rounded-lg text-zinc-600 hover:text-amber-400 hover:bg-zinc-800/60 transition-all duration-180"
+            className="kl-icon-btn kl-icon-btn--sm kl-icon-btn--favorite"
             title={
               note.is_favorite ? "Quitar de favoritos" : "Añadir a favoritos"
             }
+            aria-label={
+              note.is_favorite ? "Quitar de favoritos" : "Añadir a favoritos"
+            }
+            aria-pressed={note.is_favorite === true}
           >
             <span
               className="material-symbols-outlined text-[16px]"
@@ -226,8 +166,9 @@ export function NoteCard({
               e.stopPropagation();
               onDelete(note.id);
             }}
-            className="p-[3px] rounded-lg text-zinc-600 hover:text-red-400 hover:bg-zinc-800/60 transition-all duration-180"
+            className="kl-icon-btn kl-icon-btn--sm kl-icon-btn--danger"
             title="Eliminar nota"
+            aria-label="Eliminar nota"
           >
             <span className="material-symbols-outlined text-[16px]">
               delete

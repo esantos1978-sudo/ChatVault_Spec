@@ -492,3 +492,228 @@
   }
 }
 
+/* ==========================================================================
+   FASE 2 — Tarjetas, empty states y skeletons
+   --------------------------------------------------------------------------
+   Se añaden aquí (y no en los componentes) las piezas que necesitan CSS
+   propio: el CSS sin capa gana a las utilidades de Tailwind, así que todo lo
+   que dependa del sistema (colores, tipografía, estados) vive en este archivo.
+   Las métricas de las variantes (--cat, --model, --tag, icon-btn--sm) están
+   calculadas para que las tarjetas midan EXACTAMENTE lo mismo que antes.
+   ========================================================================== */
+
+/* ---------------------------- Interior de tarjeta ----------------------- */
+
+/* Título: familia display del sistema. No fija tamaño ni line-height para que
+   cada tarjeta conserve su escala (text-[17px] leading-tight). */
+.kl-card-title {
+  font-family: var(--kld-font-display);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--kld-on-surface);
+}
+
+/* Cuerpo / preview: 14px y 1.65 de interlineado (idéntico al anterior) */
+.kl-card-text {
+  font-size: 0.875rem;
+  line-height: 1.65;
+  color: var(--kld-outline);
+}
+
+/* Etiquetas de bloque dentro de tarjetas (p. ej. "Respuestas" en Arena).
+   9px / 1.5 = misma altura de línea que el antiguo text-[9px]. */
+.kl-card-label {
+  font-family: var(--kld-font-mono);
+  font-size: 9px;
+  font-weight: 500;
+  line-height: 1.5;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--kld-outline);
+}
+
+/* Metadatos: usos, fechas, microcopy. Monospace y cifras tabulares. */
+.kl-meta {
+  font-family: var(--kld-font-mono);
+  font-size: 10px;
+  line-height: 1.4;
+  color: var(--kld-outline);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ------------------------------ Variantes de chip ----------------------- */
+
+/* Categoría de una tarjeta: pastilla con el peso visual del badge anterior
+   (11px / padding 4+10 / borde 1 = 26.5px de alto como antes). */
+.kl-chip--cat {
+  padding: 0.25rem 0.625rem;
+  font-size: 11px;
+  letter-spacing: 0;
+  font-weight: 500;
+}
+
+/* Modelo de IA: 9px, sin relleno vertical y borde transparente para medir
+   15.5px igual que el badge anterior. */
+.kl-chip--model {
+  padding: 0 0.25rem;
+  border-color: transparent;
+  font-size: 9px;
+  letter-spacing: 0.02em;
+  font-weight: 500;
+}
+
+/* Etiqueta (#tag) del footer: puede encogerse y truncar sin desbordar. */
+.kl-chip--tag {
+  flex-shrink: 1;
+  min-width: 0;
+  max-width: 5.5rem;
+  padding: 0.05rem 0.3rem;
+  font-size: 9.5px;
+  letter-spacing: 0.01em;
+  color: var(--kld-outline);
+}
+
+/* ------------------------- Botones de icono en tarjetas ----------------- */
+
+/* Compacto: misma caja que el botón anterior de las tarjetas (36×36 con el
+   glifo de 24px dentro). Fijar el tamaño lo hace independiente de la fuente
+   de iconos y conserva exactamente la altura del footer. */
+.kl-icon-btn--sm {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+}
+
+.kl-icon-btn--success:hover,
+.kl-icon-btn--success[data-active="true"] {
+  color: var(--kld-secondary);
+}
+
+.kl-icon-btn--success[data-active="true"] {
+  background: rgba(123, 208, 255, 0.12);
+  border-color: rgba(123, 208, 255, 0.3);
+}
+
+.kl-icon-btn--favorite:hover,
+.kl-icon-btn--favorite[aria-pressed="true"] {
+  color: #fbbf24;
+}
+
+.kl-icon-btn--danger:hover {
+  color: var(--kld-error);
+}
+
+/* ------------------------------ Paneles / Arena ------------------------- */
+
+/* Sub-tarjeta interna (paneles de comparación, filas de ajustes) */
+.kl-panel {
+  border-radius: var(--kld-radius-md);
+  border: var(--kld-border);
+  background: var(--kld-surface-lowest);
+}
+
+.kl-panel-title {
+  font-family: var(--kld-font-mono);
+  font-size: 10px;
+  line-height: 1.5;
+  letter-spacing: 0.04em;
+  color: var(--kld-on-surface-variant);
+}
+
+/* 12px / 1.625 = mismo interlineado que el antiguo leading-relaxed */
+.kl-panel-text {
+  font-size: 0.75rem;
+  line-height: 1.625;
+  color: var(--kld-outline);
+}
+
+/* Cinta "Ganador" de las tarjetas de Arena */
+.kl-arena-ribbon {
+  background: rgba(123, 208, 255, 0.1);
+  border-bottom: 1px solid rgba(123, 208, 255, 0.22);
+  color: var(--kld-secondary);
+}
+
+.kl-arena-winner {
+  background: rgba(123, 208, 255, 0.08);
+  border-color: rgba(123, 208, 255, 0.28);
+  color: var(--kld-secondary);
+}
+
+/* Variante de tarjeta para acciones destructivas (zona de peligro) */
+.kl-card--danger {
+  border-color: rgba(255, 180, 171, 0.25);
+  background: rgba(255, 180, 171, 0.03);
+}
+
+
+
+
+/* ------------------------------- Empty state ---------------------------- */
+
+/* Contenedor: borde discontinuo + halo violeta superior (lenguaje landing) */
+.kl-empty {
+  border-radius: var(--kld-radius-xl);
+  border: 1px dashed rgba(73, 68, 84, 0.55);
+  background:
+    radial-gradient(
+      circle at 50% 0%,
+      rgba(160, 120, 255, 0.08) 0%,
+      rgba(18, 19, 24, 0) 62%
+    ),
+    rgba(26, 27, 33, 0.45);
+}
+
+/* Tarjeta del icono: 56px, mismo tamaño que el antiguo w-14 h-14 */
+.kl-empty-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--kld-radius-lg);
+  border: 1px solid rgba(160, 120, 255, 0.28);
+  background: rgba(160, 120, 255, 0.12);
+  color: var(--kld-primary);
+  box-shadow: var(--kld-glow-soft);
+}
+
+.kl-empty-title {
+  font-family: var(--kld-font-display);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--kld-on-surface);
+}
+
+.kl-empty-text {
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--kld-outline);
+}
+
+/* Frase de marca de los empty states ("Un buen prompt no se escribe dos veces") */
+.kl-empty-quote {
+  font-family: var(--kld-font-mono);
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--kld-on-surface-variant);
+}
+
+/* -------------------------------- Skeletons ----------------------------- */
+/* SÓLO superficie: los tamaños, paddings y radios siguen viniendo de las
+   utilidades de cada skeleton para no alterar el CLS. */
+.kl-skeleton {
+  background: var(--kld-surface-high);
+}
+
+/* ------------------------------ Settings -------------------------------- */
+
+.kl-page-title {
+  font-family: var(--kld-font-display);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--kld-on-surface);
+}
+
+.kl-page-sub {
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--kld-outline);
+}

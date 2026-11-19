@@ -41,81 +41,56 @@ export function PromptCard({
 
   return (
     <div
-      className="group bg-zinc-900/70 rounded-2xl border border-zinc-800/40 hover:bg-zinc-800/30 hover:border-zinc-700/40 transition-all duration-180 ease-out p-6 flex flex-col h-full relative cursor-pointer"
+      className="kl-card kl-card--interactive group p-6 flex flex-col h-full relative cursor-pointer"
       onClick={() => onEdit(prompt)}
     >
       {/* Badge de categoría */}
       <div className="mb-5">
         {(() => {
-          const categoryConfig: Record<
-            string,
-            { style: string; label: string }
-          > = {
-            texto: {
-              style:
-                "bg-blue-950/20 border-blue-800/20 text-blue-300 hover:bg-blue-950/30",
-              label: "Texto",
-            },
-            imagen: {
-              style:
-                "bg-fuchsia-950/20 border-fuchsia-800/20 text-fuchsia-300 hover:bg-fuchsia-950/30",
-              label: "Imagen",
-            },
-            video: {
-              style:
-                "bg-rose-950/20 border-rose-800/20 text-rose-300 hover:bg-rose-950/30",
-              label: "Video",
-            },
-            codigo: {
-              style:
-                "bg-emerald-950/20 border-emerald-800/20 text-emerald-300 hover:bg-emerald-950/30",
-              label: "Código",
-            },
+          const categoryConfig: Record<string, string> = {
+            texto: "Texto",
+            imagen: "Imagen",
+            video: "Video",
+            codigo: "Código",
           };
           const key = prompt.category.toLowerCase();
-          const config = categoryConfig[key] || {
-            style:
-              "bg-zinc-800/30 border-zinc-700/30 text-zinc-400 hover:bg-zinc-800/40",
-            label: prompt.category,
-          };
+          const label = categoryConfig[key] || prompt.category;
           return (
-            <span
-              className={`inline-flex items-center rounded-md px-2.5 py-1 text-[11px] font-medium border transition-all duration-180 ${config.style}`}
-            >
-              {config.label}
+            <span className="kl-chip kl-chip--cat kl-chip--accent">
+              {label}
             </span>
           );
         })()}
       </div>
 
       {/* Título */}
-      <h3 className="text-[17px] font-bold text-white leading-tight mb-5 line-clamp-1">
+      <h3 className="kl-card-title text-[17px] leading-tight mb-5 line-clamp-1">
         {prompt.title}
       </h3>
 
       {/* Preview del prompt */}
-      <p className="text-sm text-zinc-500/80 leading-[1.65] flex-grow mb-5 line-clamp-3">
+      <p className="kl-card-text flex-grow mb-5 line-clamp-3">
         {prompt.content}
       </p>
 
+      {/* Separador (1px + 16px = mismo hueco que el antiguo pt-4 border-t) */}
+      <div className="kl-divider mt-4" />
+
       {/* Footer: Tags + Acciones */}
-      <div className="flex items-center justify-between pt-4 border-t border-zinc-800/30">
+      <div className="flex items-center justify-between">
         {/* Tags a la izquierda */}
         <div className="flex items-center gap-1 min-w-0 flex-1">
           {prompt.tags && prompt.tags.length > 0 ? (
             prompt.tags.slice(0, 2).map((t) => (
-              <span
-                key={t}
-                className="px-1 py-[1px] rounded bg-zinc-800/50 text-zinc-600 text-[9px] font-medium truncate"
-              >
+              <span key={t} className="kl-chip kl-chip--tag truncate">
                 #{t}
               </span>
             ))
           ) : (
-            <span className="text-[9px] text-zinc-700">Sin etiquetas</span>
+            <span className="kl-meta">Sin etiquetas</span>
           )}
           {prompt.tags && prompt.tags.length > 2 && (
-            <span className="text-[9px] text-zinc-700 shrink-0">
+            <span className="kl-meta shrink-0">
               +{prompt.tags.length - 2}
             </span>
           )}
@@ -124,13 +99,13 @@ export function PromptCard({
         {/* Acciones a la derecha */}
         <div className="flex items-center gap-0 shrink-0">
           {/* Usos */}
-          <span className="text-[10px] text-zinc-700 mr-2 flex items-center gap-1">
+          <span className="kl-meta mr-2 flex items-center gap-1">
             <span className="material-symbols-outlined text-[12px]">bolt</span>
             {prompt.times_used}
           </span>
 
           {/* Fecha */}
-          <span className="text-[10px] text-zinc-700 mr-3">
+          <span className="kl-meta mr-3">
             {new Date(prompt.created_at).toLocaleDateString("es-ES", {
               year: "numeric",
               month: "short",
@@ -145,8 +120,9 @@ export function PromptCard({
                 e.stopPropagation();
                 onViewDetails(prompt);
               }}
-              className="p-[3px] rounded-lg text-zinc-600 hover:text-sky-400 hover:bg-zinc-800/60 transition-all duration-180"
+              className="kl-icon-btn kl-icon-btn--sm"
               title="Ver detalles y relaciones"
+              aria-label="Ver detalles y relaciones"
             >
               <span className="material-symbols-outlined text-[16px]">
                 visibility
@@ -160,12 +136,10 @@ export function PromptCard({
               e.stopPropagation();
               handleCopy();
             }}
-            className={`p-[3px] rounded-lg transition-all duration-180 ${
-              copied
-                ? "text-emerald-400 bg-emerald-950/30"
-                : "text-zinc-600 hover:text-zinc-300 hover:bg-zinc-800/60"
-            }`}
+            className="kl-icon-btn kl-icon-btn--sm kl-icon-btn--success"
+            data-active={copied}
             title={copied ? "¡Copiado!" : "Copiar prompt"}
+            aria-label={copied ? "Prompt copiado" : "Copiar prompt"}
           >
             <span className="material-symbols-outlined text-[16px]">
               {copied ? "check" : "content_copy"}
@@ -178,10 +152,14 @@ export function PromptCard({
               e.stopPropagation();
               onToggleFavorite(prompt.id, !prompt.is_favorite);
             }}
-            className="p-[3px] rounded-lg text-zinc-600 hover:text-amber-400 hover:bg-zinc-800/60 transition-all duration-180"
+            className="kl-icon-btn kl-icon-btn--sm kl-icon-btn--favorite"
             title={
               prompt.is_favorite ? "Quitar de favoritos" : "Añadir a favoritos"
             }
+            aria-label={
+              prompt.is_favorite ? "Quitar de favoritos" : "Añadir a favoritos"
+            }
+            aria-pressed={prompt.is_favorite === true}
           >
             <span
               className="material-symbols-outlined text-[16px]"
@@ -201,8 +179,9 @@ export function PromptCard({
               e.stopPropagation();
               onDelete(prompt.id);
             }}
-            className="p-[3px] rounded-lg text-zinc-600 hover:text-red-400 hover:bg-zinc-800/60 transition-all duration-180"
+            className="kl-icon-btn kl-icon-btn--sm kl-icon-btn--danger"
             title="Eliminar prompt"
+            aria-label="Eliminar prompt"
           >
             <span className="material-symbols-outlined text-[16px]">
               delete

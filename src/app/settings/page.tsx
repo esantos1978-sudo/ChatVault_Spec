@@ -4,22 +4,24 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { fontVariables } from "@/app/fonts";
+import "@/app/dashboard-tokens.css";
 
 // ==================== CONSTANTES ====================
 const APP_VERSION = "Kimberlite v1.0 Beta";
 const BUILD_VERSION = "Build 001";
 
 // ==================== ESTILOS REUTILIZABLES ====================
-const inputClass =
-  "w-full h-[44px] rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-600 hover:border-zinc-700 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/20 transition-all duration-180";
+// Mismo lenguaje visual que el dashboard (tokens --kld-* / utilidades .kl-*).
+// Los inputs conservan 44px de alto y las tarjetas su padding, así la página
+// no cambia de tamaño.
+const inputClass = "kl-input";
 
-const labelClass = "block text-xs font-medium text-zinc-500 mb-1.5";
+const labelClass = "kl-field-label block mb-1.5";
 
-const cardClass =
-  "rounded-2xl border border-zinc-800/60 bg-zinc-900 p-6 shadow-premium";
+const cardClass = "kl-card p-6";
 
-const sectionTitleClass =
-  "text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-4";
+const sectionTitleClass = "kl-eyebrow mb-4";
 
 // ==================== COMPONENTE PRINCIPAL ====================
 export default function SettingsPage() {
@@ -162,22 +164,23 @@ export default function SettingsPage() {
   // ==================== LOADING ====================
   if (loading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-zinc-950">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-zinc-800 border-t-violet-500" />
+      <div className="flex h-screen items-center justify-center bg-[var(--kld-surface-lowest)]">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-[var(--kld-surface-high)] border-t-[var(--kld-primary)]" />
       </div>
     );
   }
 
   // ==================== RENDER ====================
   return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-50">
+    <div className={`kl-dash min-h-screen ${fontVariables}`}>
       <div className="mx-auto max-w-2xl px-6 py-12 md:py-16">
         {/* ==================== CABECERA ==================== */}
         <header className="mb-14">
-          <h1 className="text-2xl font-semibold tracking-tight text-zinc-50">
+          <p className="kl-eyebrow mb-2">Kimberlite</p>
+          <h1 className="kl-page-title text-2xl tracking-tight">
             Configuración
           </h1>
-          <p className="mt-1.5 text-sm text-zinc-500">
+          <p className="kl-page-sub mt-1.5">
             Gestiona tu cuenta y las preferencias básicas de Kimberlite.
           </p>
         </header>
@@ -219,7 +222,7 @@ export default function SettingsPage() {
               <button
                 onClick={handleSaveName}
                 disabled={saving}
-                className="inline-flex items-center gap-2 gemstone-gradient text-white px-5 py-2.5 rounded-xl font-semibold shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 hover:brightness-110 active:brightness-95 transition-all duration-180 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                className="kl-btn kl-btn--primary disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {saving ? (
                   <>
@@ -280,7 +283,7 @@ export default function SettingsPage() {
               <button
                 onClick={handleChangePassword}
                 disabled={changingPassword}
-                className="inline-flex items-center gap-2 gemstone-gradient text-white px-5 py-2.5 rounded-xl font-semibold shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 hover:brightness-110 active:brightness-95 transition-all duration-180 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                className="kl-btn kl-btn--primary disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {changingPassword ? (
                   <>
@@ -301,22 +304,20 @@ export default function SettingsPage() {
 
           <div className="space-y-4">
             {/* Versión */}
-            <div className="flex items-center justify-between rounded-lg border border-zinc-800/40 bg-zinc-950/50 px-4 py-3">
+            <div className="kl-panel flex items-center justify-between px-4 py-3">
               <div>
-                <span className="text-sm text-zinc-400">Versión</span>
-                <p className="mt-0.5 text-[11px] text-zinc-600">
-                  {BUILD_VERSION}
-                </p>
+                <span className="text-sm">Versión</span>
+                <p className="kl-meta mt-0.5">{BUILD_VERSION}</p>
               </div>
-              <span className="text-sm font-medium text-zinc-100">
+              <span className="kl-chip kl-chip--accent">
                 {APP_VERSION}
               </span>
             </div>
 
             {/* Tema (próximamente) */}
-            <div className="flex items-center justify-between rounded-lg border border-zinc-800/40 bg-zinc-950/50 px-4 py-3 opacity-50">
-              <span className="text-sm text-zinc-400">Tema</span>
-              <span className="inline-flex items-center gap-1.5 rounded-md bg-zinc-800/60 px-2 py-0.5 text-[10px] font-medium text-zinc-500">
+            <div className="kl-panel flex items-center justify-between px-4 py-3 opacity-50">
+              <span className="text-sm">Tema</span>
+              <span className="kl-chip gap-1.5">
                 <span className="material-symbols-outlined text-[12px]">
                   schedule
                 </span>
@@ -325,9 +326,9 @@ export default function SettingsPage() {
             </div>
 
             {/* Idioma (próximamente) */}
-            <div className="flex items-center justify-between rounded-lg border border-zinc-800/40 bg-zinc-950/50 px-4 py-3 opacity-50">
-              <span className="text-sm text-zinc-400">Idioma</span>
-              <span className="inline-flex items-center gap-1.5 rounded-md bg-zinc-800/60 px-2 py-0.5 text-[10px] font-medium text-zinc-500">
+            <div className="kl-panel flex items-center justify-between px-4 py-3 opacity-50">
+              <span className="text-sm">Idioma</span>
+              <span className="kl-chip gap-1.5">
                 <span className="material-symbols-outlined text-[12px]">
                   schedule
                 </span>
@@ -339,19 +340,19 @@ export default function SettingsPage() {
 
         {/* ==================== ZONA DE PELIGRO ==================== */}
         <section className="mt-10">
-          <h2 className="text-xs font-semibold text-zinc-600 uppercase tracking-wider mb-3">
+          <h2 className="kl-eyebrow kl-eyebrow--muted mb-3">
             Zona de peligro
           </h2>
 
-          <div className="rounded-2xl border border-zinc-800/30 bg-zinc-900/50 p-5">
+          <div className="kl-card kl-card--danger p-5">
             <div className="flex items-center justify-between">
               <div>
-                <span className="text-sm text-zinc-400">Eliminar cuenta</span>
-                <p className="mt-0.5 text-[11px] text-zinc-600">
+                <span className="text-sm">Eliminar cuenta</span>
+                <p className="kl-meta mt-0.5">
                   Esta acción no se puede deshacer.
                 </p>
               </div>
-              <span className="inline-flex items-center gap-1.5 rounded-md bg-zinc-800/60 px-2 py-0.5 text-[10px] font-medium text-zinc-500">
+              <span className="kl-chip gap-1.5">
                 <span className="material-symbols-outlined text-[12px]">
                   schedule
                 </span>
@@ -365,7 +366,7 @@ export default function SettingsPage() {
         <section className="mt-6">
           <button
             onClick={handleLogout}
-            className="sidebar-item w-full justify-start"
+            className="kl-nav-item kl-nav-item--muted justify-start"
           >
             <span className="material-symbols-outlined text-[18px]">
               logout

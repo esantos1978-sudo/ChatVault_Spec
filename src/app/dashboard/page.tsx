@@ -9,31 +9,10 @@ import { supabase } from "@/lib/supabaseClient";
 import toast from "react-hot-toast";
 
 // 🎨 Lenguaje visual compartido con la landing (FASE 1: tokens + shell)
-import {
-  Inter,
-  JetBrains_Mono,
-  Plus_Jakarta_Sans,
-} from "next/font/google";
+// Las familias viven en @/app/fonts para compartirlas con settings sin
+// duplicar la descarga de next/font.
+import { bodyFont, displayFont, monoFont } from "@/app/fonts";
 import "@/app/dashboard-tokens.css";
-
-const bodyFont = Inter({
-  subsets: ["latin"],
-  variable: "--font-kl-body",
-  display: "swap",
-});
-
-const displayFont = Plus_Jakarta_Sans({
-  subsets: ["latin"],
-  weight: ["600", "700", "800"],
-  variable: "--font-kl-display",
-  display: "swap",
-});
-
-const monoFont = JetBrains_Mono({
-  subsets: ["latin"],
-  variable: "--font-kl-mono",
-  display: "swap",
-});
 
 // ✅ Componentes normales (síncronos, siempre visibles)
 import { NoteCard } from "@/components/NoteCard";
@@ -1588,21 +1567,22 @@ export default function Dashboard() {
                   ))}
                 </div>
               ) : filteredNotes.length === 0 ? (
-                <div className="flex flex-col items-center justify-center rounded-2xl border border-zinc-800/20 bg-zinc-900/20 px-4 md:px-8 py-10 md:py-16">
+                <div className="kl-empty flex flex-col items-center justify-center px-4 md:px-8 py-10 md:py-16">
                   <div className="max-w-md text-center space-y-6">
                     {/* Icono */}
-                    <div className="mx-auto w-14 h-14 rounded-2xl bg-zinc-800/40 flex items-center justify-center">
-                      <span className="material-symbols-outlined text-[28px] text-zinc-400">
+                    <div className="kl-empty-icon mx-auto flex items-center justify-center">
+                      <span className="material-symbols-outlined text-[28px]">
                         diamond
                       </span>
                     </div>
 
                     {/* Título */}
                     <div>
-                      <h3 className="text-lg font-semibold text-zinc-100">
+                      <p className="kl-eyebrow">Notas</p>
+                      <h3 className="kl-empty-title text-lg mt-2">
                         Cada conversación importante merece conservarse
                       </h3>
-                      <p className="text-sm text-zinc-500 mt-2 leading-relaxed">
+                      <p className="kl-empty-text mt-2">
                         El conocimiento solo tiene valor si puedes encontrarlo.
                       </p>
                     </div>
@@ -1610,7 +1590,7 @@ export default function Dashboard() {
                     {/* Botón */}
                     <button
                       onClick={() => openNoteModal()}
-                      className="inline-flex items-center gap-2 gemstone-gradient text-white px-5 py-2.5 rounded-xl font-semibold shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 hover:brightness-110 active:brightness-95 transition-all duration-180 text-sm"
+                      className="kl-btn kl-btn--primary"
                     >
                       <span className="material-symbols-outlined text-[16px]">
                         add
@@ -1620,26 +1600,26 @@ export default function Dashboard() {
 
                     {/* Tarjeta de ejemplo no interactiva */}
                     <div className="mt-10 opacity-80 pointer-events-none select-none">
-                      <div className="rounded-2xl border border-zinc-800/40 bg-zinc-900/60 p-5 text-left">
+                      <div className="kl-card p-5 text-left">
                         <div className="flex items-start justify-between mb-3">
                           <div className="flex gap-2">
-                            <span className="inline-flex items-center gap-1 rounded-md bg-violet-500/10 px-2 py-0.5 text-[10px] font-medium text-violet-400 border border-violet-500/20">
+                            <span className="kl-chip kl-chip--accent">
                               ChatGPT-4o
                             </span>
-                            <span className="inline-flex items-center gap-1 rounded-md bg-zinc-800/60 px-2 py-0.5 text-[10px] font-medium text-zinc-400 border border-zinc-700/50">
+                            <span className="kl-chip kl-chip--tag">
                               #arquitectura
                             </span>
                           </div>
                         </div>
-                        <h4 className="text-sm font-semibold text-amber-600 dark:text-amber-400 mb-2">
+                        <h4 className="kl-card-title text-sm mb-2">
                           Diseño de sistema escalable
                         </h4>
-                        <p className="text-xs text-zinc-500 leading-relaxed line-clamp-2">
+                        <p className="kl-panel-text line-clamp-2">
                           Para diseñar un sistema escalable, empieza por
                           identificar los cuellos de botella...
                         </p>
                       </div>
-                      <p className="text-[10px] text-zinc-600 mt-3 text-center">
+                      <p className="kl-meta mt-3 text-center">
                         Vista previa de una nota.
                       </p>
                     </div>
@@ -1674,21 +1654,22 @@ export default function Dashboard() {
                   ))}
                 </div>
               ) : filteredPrompts.length === 0 ? (
-                <div className="flex flex-col items-center justify-center rounded-2xl border border-zinc-800/20 bg-zinc-900/20 px-4 md:px-8 py-10 md:py-16">
+                <div className="kl-empty flex flex-col items-center justify-center px-4 md:px-8 py-10 md:py-16">
                   <div className="max-w-lg text-center space-y-6">
                     {/* Icono */}
-                    <div className="mx-auto w-14 h-14 rounded-2xl bg-zinc-800/40 flex items-center justify-center">
-                      <span className="material-symbols-outlined text-[28px] text-zinc-400">
+                    <div className="kl-empty-icon mx-auto flex items-center justify-center">
+                      <span className="material-symbols-outlined text-[28px]">
                         bolt
                       </span>
                     </div>
 
                     {/* Título */}
                     <div>
-                      <h3 className="text-lg font-semibold text-zinc-100">
+                      <p className="kl-eyebrow">Prompts</p>
+                      <h3 className="kl-empty-title text-lg mt-2">
                         Empieza construyendo tu biblioteca de conocimiento.
                       </h3>
-                      <p className="text-sm text-zinc-500 mt-2 leading-relaxed">
+                      <p className="kl-empty-text mt-2">
                         Los mejores resultados empiezan con un buen prompt.
                         Guárdalos aquí para reutilizarlos siempre que los
                         necesites.
@@ -1696,14 +1677,14 @@ export default function Dashboard() {
                     </div>
 
                     {/* Frase de marca */}
-                    <p className="text-sm italic text-zinc-400 leading-relaxed">
+                    <p className="kl-empty-quote">
                       Un buen prompt no se escribe dos veces.
                     </p>
 
                     {/* Botón */}
                     <button
                       onClick={() => openPromptModal()}
-                      className="inline-flex items-center gap-2 gemstone-gradient text-white px-5 py-2.5 rounded-xl font-semibold shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 hover:brightness-110 active:brightness-95 transition-all duration-180 text-sm"
+                      className="kl-btn kl-btn--primary"
                     >
                       <span className="material-symbols-outlined text-[16px]">
                         add
@@ -1713,26 +1694,26 @@ export default function Dashboard() {
 
                     {/* Tarjeta de ejemplo no interactiva */}
                     <div className="mt-10 opacity-80 pointer-events-none select-none">
-                      <div className="rounded-2xl border border-zinc-800/40 bg-zinc-900/60 p-6 text-left">
+                      <div className="kl-card p-6 text-left">
                         <div className="flex items-start justify-between mb-3">
                           <div className="flex gap-2">
-                            <span className="inline-flex items-center gap-1 rounded-md bg-emerald-500/10 px-2 py-0.5 text-[10px] font-medium text-emerald-400 border border-emerald-500/20">
+                            <span className="kl-chip kl-chip--accent">
                               texto
                             </span>
-                            <span className="inline-flex items-center gap-1 rounded-md bg-zinc-800/60 px-2 py-0.5 text-[10px] font-medium text-zinc-400 border border-zinc-700/50">
+                            <span className="kl-chip kl-chip--tag">
                               #copywriting
                             </span>
                           </div>
                         </div>
-                        <h4 className="text-sm font-semibold text-amber-600 dark:text-amber-400 mb-2">
+                        <h4 className="kl-card-title text-sm mb-2">
                           Generador de copy para landing
                         </h4>
-                        <p className="text-xs text-zinc-500 leading-relaxed line-clamp-2">
+                        <p className="kl-panel-text line-clamp-2">
                           Eres un experto en copywriting. Genera 5 variaciones
                           de titular para una landing page de...
                         </p>
                       </div>
-                      <p className="text-[10px] text-zinc-600 mt-3 text-center">
+                      <p className="kl-meta mt-3 text-center">
                         Tus mejores prompts vivirán aquí.
                       </p>
                     </div>
@@ -1772,35 +1753,36 @@ export default function Dashboard() {
                   ))}
                 </div>
               ) : filteredSkills.length === 0 ? (
-                <div className="flex flex-col items-center justify-center rounded-2xl border border-zinc-800/20 bg-zinc-900/20 px-4 md:px-8 py-10 md:py-16">
+                <div className="kl-empty flex flex-col items-center justify-center px-4 md:px-8 py-10 md:py-16">
                   <div className="max-w-lg text-center space-y-6">
                     {/* Icono */}
-                    <div className="mx-auto w-14 h-14 rounded-2xl bg-zinc-800/40 flex items-center justify-center">
-                      <span className="material-symbols-outlined text-[28px] text-zinc-400">
+                    <div className="kl-empty-icon mx-auto flex items-center justify-center">
+                      <span className="material-symbols-outlined text-[28px]">
                         psychology
                       </span>
                     </div>
 
                     {/* Título */}
                     <div>
-                      <h3 className="text-lg font-semibold text-zinc-100">
+                      <p className="kl-eyebrow">Skills</p>
+                      <h3 className="kl-empty-title text-lg mt-2">
                         Enseña a tus agentes cómo trabajar.
                       </h3>
-                      <p className="text-sm text-zinc-500 mt-2 leading-relaxed">
+                      <p className="kl-empty-text mt-2">
                         Guarda instrucciones de sistema y custom instructions en
                         Markdown para reutilizarlas en cualquier chat.
                       </p>
                     </div>
 
                     {/* Frase de marca */}
-                    <p className="text-sm italic text-zinc-400 leading-relaxed">
+                    <p className="kl-empty-quote">
                       Un buen agente empieza con un buen skill.
                     </p>
 
                     {/* Botón */}
                     <button
                       onClick={() => openSkillModal()}
-                      className="inline-flex items-center gap-2 gemstone-gradient text-white px-5 py-2.5 rounded-xl font-semibold shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 hover:brightness-110 active:brightness-95 transition-all duration-180 text-sm"
+                      className="kl-btn kl-btn--primary"
                     >
                       <span className="material-symbols-outlined text-[16px]">
                         add
@@ -1810,26 +1792,26 @@ export default function Dashboard() {
 
                     {/* Tarjeta de ejemplo no interactiva */}
                     <div className="mt-10 opacity-80 pointer-events-none select-none">
-                      <div className="rounded-2xl border border-zinc-800/40 bg-zinc-900/60 p-6 text-left">
+                      <div className="kl-card p-6 text-left">
                         <div className="flex items-start justify-between mb-3">
                           <div className="flex gap-2">
-                            <span className="inline-flex items-center gap-1 rounded-md bg-sky-500/10 px-2 py-0.5 text-[10px] font-medium text-sky-400 border border-sky-500/20">
+                            <span className="kl-chip kl-chip--accent">
                               React
                             </span>
-                            <span className="inline-flex items-center gap-1 rounded-md bg-zinc-800/60 px-2 py-0.5 text-[10px] font-medium text-zinc-400 border border-zinc-700/50">
+                            <span className="kl-chip kl-chip--tag">
                               #review
                             </span>
                           </div>
                         </div>
-                        <h4 className="text-sm font-semibold text-amber-600 dark:text-amber-400 mb-2">
+                        <h4 className="kl-card-title text-sm mb-2">
                           Revisor de código React
                         </h4>
-                        <p className="text-xs text-zinc-500 leading-relaxed line-clamp-2">
+                        <p className="kl-panel-text line-clamp-2">
                           Eres un ingeniero senior especializado en React.
                           Revisa el código y propone mejoras de rendimiento...
                         </p>
                       </div>
-                      <p className="text-[10px] text-zinc-600 mt-3 text-center">
+                      <p className="kl-meta mt-3 text-center">
                         Tus skills vivirán aquí.
                       </p>
                     </div>
@@ -1864,21 +1846,22 @@ export default function Dashboard() {
                   ))}
                 </div>
               ) : filteredArenaComparisons.length === 0 ? (
-                <div className="flex flex-col items-center justify-center rounded-2xl border border-zinc-800/20 bg-zinc-900/20 px-4 md:px-8 py-10 md:py-16">
+                <div className="kl-empty flex flex-col items-center justify-center px-4 md:px-8 py-10 md:py-16">
                   <div className="max-w-md text-center space-y-6">
                     {/* Icono */}
-                    <div className="mx-auto w-14 h-14 rounded-2xl bg-zinc-800/40 flex items-center justify-center">
-                      <span className="material-symbols-outlined text-[28px] text-zinc-400">
+                    <div className="kl-empty-icon mx-auto flex items-center justify-center">
+                      <span className="material-symbols-outlined text-[28px]">
                         swords
                       </span>
                     </div>
 
                     {/* Título */}
                     <div>
-                      <h3 className="text-lg font-semibold text-zinc-100">
+                      <p className="kl-eyebrow">Arena</p>
+                      <h3 className="kl-empty-title text-lg mt-2">
                         Descubre qué modelo responde mejor
                       </h3>
-                      <p className="text-sm text-zinc-500 mt-2 leading-relaxed">
+                      <p className="kl-empty-text mt-2">
                         Compara la misma pregunta entre distintos modelos y
                         guarda siempre la mejor respuesta.
                       </p>
@@ -1887,7 +1870,7 @@ export default function Dashboard() {
                     {/* Botón */}
                     <button
                       onClick={() => setArenaModalOpen(true)}
-                      className="inline-flex items-center gap-2 gemstone-gradient text-white px-5 py-2.5 rounded-xl font-semibold shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 hover:brightness-110 active:brightness-95 transition-all duration-180 text-sm"
+                      className="kl-btn kl-btn--primary"
                     >
                       <span className="material-symbols-outlined text-[16px]">
                         add
@@ -1897,69 +1880,67 @@ export default function Dashboard() {
 
                     {/* Tarjeta de ejemplo no interactiva */}
                     <div className="mt-10 opacity-80 pointer-events-none select-none">
-                      <div className="rounded-2xl border border-zinc-800/40 bg-zinc-900/60 p-5 text-left">
+                      <div className="kl-card p-5 text-left">
                         {/* Badge ✨ Ejemplo */}
-                        <span className="inline-flex items-center gap-1 rounded-md bg-amber-500/10 px-2 py-0.5 text-[10px] font-medium text-amber-400 border border-amber-500/20 mb-4">
-                          ✨ Ejemplo
-                        </span>
+                        <div className="mb-4">
+                          <span className="kl-chip kl-chip--accent">
+                            ✨ Ejemplo
+                          </span>
+                        </div>
 
                         {/* Prompt */}
                         <div className="mb-4">
-                          <span className="text-[10px] font-medium text-zinc-600 uppercase tracking-wider">
+                          <span className="kl-eyebrow kl-eyebrow--xs kl-eyebrow--muted">
                             Prompt
                           </span>
-                          <p className="text-sm text-zinc-300 mt-1 font-medium">
+                          <p className="kl-card-title text-sm mt-1">
                             Explica recursión en Python
                           </p>
                         </div>
 
                         {/* Flecha hacia abajo */}
                         <div className="flex justify-center mb-4">
-                          <span className="material-symbols-outlined text-zinc-700 text-[18px]">
+                          <span className="material-symbols-outlined text-[18px] text-[var(--kld-outline)]">
                             arrow_downward
                           </span>
                         </div>
 
                         {/* Modelos enfrentados */}
                         <div className="grid grid-cols-2 gap-3 mb-4">
-                          <div className="rounded-xl bg-zinc-800/40 p-3">
-                            <span className="text-[10px] font-medium text-zinc-500 uppercase tracking-wider">
+                          <div className="kl-panel p-3">
+                            <span className="kl-eyebrow kl-eyebrow--xs kl-eyebrow--muted">
                               Modelo A
                             </span>
-                            <p className="text-xs text-zinc-400 mt-1 font-medium">
+                            <p className="kl-panel-title mt-1">
                               Claude 3.5 Sonnet
                             </p>
                           </div>
-                          <div className="rounded-xl bg-zinc-800/40 p-3">
-                            <span className="text-[10px] font-medium text-zinc-500 uppercase tracking-wider">
+                          <div className="kl-panel p-3">
+                            <span className="kl-eyebrow kl-eyebrow--xs kl-eyebrow--muted">
                               Modelo B
                             </span>
-                            <p className="text-xs text-zinc-400 mt-1 font-medium">
-                              ChatGPT-4o
-                            </p>
+                            <p className="kl-panel-title mt-1">ChatGPT-4o</p>
                           </div>
                         </div>
 
                         {/* VS */}
                         <div className="flex justify-center mb-4">
-                          <span className="text-[11px] font-semibold text-zinc-600">
-                            VS
-                          </span>
+                          <span className="kl-meta">VS</span>
                         </div>
 
                         {/* Ganador */}
-                        <div className="rounded-xl bg-emerald-950/10 border border-emerald-800/30 p-3 flex items-center gap-2">
-                          <span className="material-symbols-outlined text-[16px] text-emerald-400">
+                        <div className="kl-panel kl-arena-winner p-3 flex items-center gap-2">
+                          <span className="material-symbols-outlined text-[16px]">
                             emoji_events
                           </span>
-                          <span className="text-xs font-medium text-emerald-400">
+                          <span className="kl-panel-title">
                             Ganador · Claude 3.5 Sonnet
                           </span>
                         </div>
                       </div>
 
                       {/* Microcopy */}
-                      <p className="text-[10px] text-zinc-600 mt-3 text-center">
+                      <p className="kl-meta mt-3 text-center">
                         Nunca vuelvas a preguntarte qué modelo respondió mejor.
                       </p>
                     </div>
