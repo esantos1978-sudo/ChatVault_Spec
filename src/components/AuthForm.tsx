@@ -2,12 +2,14 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { supabase } from "@/lib/supabaseClient";
 import toast from "react-hot-toast";
 
 interface AuthFormProps {
   onAuth: () => void;
-  initialMode?: "login" | "register";
+  /** Modo actual del formulario; lo dicta la URL (?auth=login | ?auth=register). */
+  mode?: "login" | "register";
   /** Se muestra un enlace para volver a la landing cuando se provee. */
   onBack?: () => void;
 }
@@ -23,9 +25,8 @@ const getErrorMessage = (error: unknown) =>
 export default function AuthForm({
   onAuth,
   onBack,
-  initialMode = "login",
+  mode = "login",
 }: AuthFormProps) {
-  const [mode, setMode] = useState<"login" | "register">(initialMode);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -239,24 +240,22 @@ export default function AuthForm({
           {mode === "login" ? (
             <>
               ¿Nuevo en Kimberlite?{" "}
-              <button
-                type="button"
-                onClick={() => setMode("register")}
+              <Link
+                href="/?auth=register"
                 className="font-semibold text-violet-500 hover:text-violet-400 transition-colors"
               >
                 Crear cuenta
-              </button>
+              </Link>
             </>
           ) : (
             <>
               ¿Ya tienes cuenta?{" "}
-              <button
-                type="button"
-                onClick={() => setMode("login")}
+              <Link
+                href="/?auth=login"
                 className="font-semibold text-violet-500 hover:text-violet-400 transition-colors"
               >
                 Iniciar sesión
-              </button>
+              </Link>
             </>
           )}
         </p>

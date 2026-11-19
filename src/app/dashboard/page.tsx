@@ -95,7 +95,8 @@ export default function Dashboard() {
         data: { user },
       } = await supabase.auth.getUser();
       if (!user) {
-        router.push("/");
+        // replace (no push) para que el botón atrás no rebote entre /dashboard y /
+        router.replace("/");
         return;
       }
       setUser(user);

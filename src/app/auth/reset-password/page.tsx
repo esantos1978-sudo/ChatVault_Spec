@@ -32,7 +32,7 @@ export default function ResetPassword() {
       });
       if (error) throw error;
       toast.success("Password updated successfully!");
-      router.push("/");
+      router.push("/dashboard");
     } catch (error: any) {
       toast.error(error.message);
     } finally {

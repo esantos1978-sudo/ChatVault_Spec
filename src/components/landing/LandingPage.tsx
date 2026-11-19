@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import {
   Inter,
   JetBrains_Mono,
@@ -27,11 +28,6 @@ const monoFont = JetBrains_Mono({
   variable: "--font-kl-mono",
   display: "swap",
 });
-
-interface LandingPageProps {
-  onStart: () => void;
-  onLogin: () => void;
-}
 
 interface IconProps {
   name: string;
@@ -159,7 +155,7 @@ function Brand() {
   );
 }
 
-export default function LandingPage({ onStart, onLogin }: LandingPageProps) {
+export default function LandingPage() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
@@ -194,20 +190,15 @@ export default function LandingPage({ onStart, onLogin }: LandingPageProps) {
           </nav>
 
           <div className="kl-header-actions">
-            <button
-              type="button"
+            <Link
+              href="/?auth=login"
               className="kl-btn kl-btn--ghost kl-header-login"
-              onClick={onLogin}
             >
               Iniciar sesión
-            </button>
-            <button
-              type="button"
-              className="kl-btn kl-btn--primary"
-              onClick={onStart}
-            >
+            </Link>
+            <Link href="/?auth=register" className="kl-btn kl-btn--primary">
               Crear cuenta
-            </button>
+            </Link>
             <button
               type="button"
               className="kl-menu-toggle"
@@ -245,26 +236,20 @@ export default function LandingPage({ onStart, onLogin }: LandingPageProps) {
                 </a>
               </li>
             </ul>
-            <button
-              type="button"
+            <Link
+              href="/?auth=register"
               className="kl-btn kl-btn--primary kl-btn--block"
-              onClick={() => {
-                setMenuOpen(false);
-                onStart();
-              }}
+              onClick={() => setMenuOpen(false)}
             >
               Crear mi biblioteca
-            </button>
-            <button
-              type="button"
+            </Link>
+            <Link
+              href="/?auth=login"
               className="kl-btn kl-btn--ghost kl-btn--block"
-              onClick={() => {
-                setMenuOpen(false);
-                onLogin();
-              }}
+              onClick={() => setMenuOpen(false)}
             >
               Iniciar sesión
-            </button>
+            </Link>
           </div>
         )}
       </header>
@@ -293,14 +278,10 @@ export default function LandingPage({ onStart, onLogin }: LandingPageProps) {
               </p>
 
               <div className="kl-hero-actions">
-                <button
-                  type="button"
-                  className="kl-btn kl-btn--primary"
-                  onClick={onStart}
-                >
+                <Link href="/?auth=register" className="kl-btn kl-btn--primary">
                   Crear mi biblioteca
                   <Icon name="arrow_forward" />
-                </button>
+                </Link>
                 <a className="kl-btn kl-btn--secondary" href="#como-funciona">
                   <Icon name="play_circle" className="filled" />
                   Ver cómo funciona
@@ -535,21 +516,13 @@ export default function LandingPage({ onStart, onLogin }: LandingPageProps) {
               </div>
 
               <div className="kl-cta-actions">
-                <button
-                  type="button"
-                  className="kl-btn kl-btn--primary"
-                  onClick={onStart}
-                >
+                <Link href="/?auth=register" className="kl-btn kl-btn--primary">
                   Crear mi biblioteca
                   <Icon name="arrow_forward" />
-                </button>
-                <button
-                  type="button"
-                  className="kl-btn kl-btn--secondary"
-                  onClick={onLogin}
-                >
+                </Link>
+                <Link href="/?auth=login" className="kl-btn kl-btn--secondary">
                   Ya tengo cuenta
-                </button>
+                </Link>
               </div>
 
               <div className="kl-cta-meta">
@@ -617,14 +590,10 @@ export default function LandingPage({ onStart, onLogin }: LandingPageProps) {
               <span className="kl-footer-col-title">Cuenta</span>
               <ul className="kl-footer-links">
                 <li>
-                  <button type="button" onClick={onLogin}>
-                    Iniciar sesión
-                  </button>
+                  <Link href="/?auth=login">Iniciar sesión</Link>
                 </li>
                 <li>
-                  <button type="button" onClick={onStart}>
-                    Crear cuenta
-                  </button>
+                  <Link href="/?auth=register">Crear cuenta</Link>
                 </li>
               </ul>
             </div>
