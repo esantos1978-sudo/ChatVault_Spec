@@ -1545,12 +1545,6 @@ export default function Dashboard() {
                 {activeTab === "skills" && "Skill"}
                 {activeTab === "arena" && "Comparación"}
               </span>
-              <span className="sm:hidden">
-                {activeTab === "notes" && "+"}
-                {activeTab === "prompts" && "+"}
-                {activeTab === "skills" && "+"}
-                {activeTab === "arena" && "+"}
-              </span>
             </button>
           </div>
         </header>

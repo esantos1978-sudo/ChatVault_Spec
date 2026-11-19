@@ -41,10 +41,13 @@ const CATEGORIES = [
   { value: "Diseño", label: "Diseño" },
 ];
 
-const inputClass =
-  "w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-600 hover:border-zinc-700 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/20 transition-all duration-200";
+/* Piel de los campos: .kl-input (44px) y .kl-input--area (textarea). La
+   tipografía/tokens llegan del scope .kl-portal del contenedor del modal. */
+const inputClass = "kl-input";
 
-const labelClass = "text-xs font-medium text-zinc-500 mb-1.5 block";
+const textareaClass = "kl-input kl-input--area";
+
+const labelClass = "kl-field-label mb-1.5 block";
 
 // ============================================================
 // POPOVER COMPONENTE REUTILIZABLE
@@ -116,9 +119,9 @@ function PopoverSelect({
         onClick={() => setOpen(!open)}
         aria-haspopup="listbox"
         aria-expanded={open}
-        className="w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 hover:border-zinc-700 transition-all duration-200 flex items-center justify-between gap-2 text-left"
+        className="kl-input flex items-center justify-between gap-2 text-left"
       >
-        <span className={value ? "text-zinc-100" : "text-zinc-600"}>
+        <span className={value ? undefined : "kl-text-muted"}>
           {value ? selectedLabel : placeholder}
         </span>
         <svg
@@ -128,7 +131,7 @@ function PopoverSelect({
           strokeWidth={2}
           stroke="currentColor"
           aria-hidden="true"
-          className={`w-4 h-4 text-zinc-500 transition-transform duration-200 ${
+          className={`w-4 h-4 shrink-0 transition-transform duration-200 ${
             open ? "rotate-180" : ""
           }`}
         >
@@ -141,7 +144,7 @@ function PopoverSelect({
       </button>
 
       {open && (
-        <div className="absolute z-30 mt-1 w-full rounded-lg border border-zinc-800 bg-zinc-950 shadow-premium py-1 max-h-64 overflow-hidden flex flex-col">
+        <div className="kl-popover absolute z-30 mt-1 w-full py-1 max-h-64 overflow-hidden flex flex-col">
           <div className="px-2 pb-1 pt-1">
             <input
               type="text"
@@ -150,13 +153,13 @@ function PopoverSelect({
               onKeyDown={handleSearchKeyDown}
               placeholder={searchPlaceholder || "Buscar..."}
               aria-label={searchPlaceholder || "Buscar categoría"}
-              className="w-full rounded-md border border-zinc-800 bg-zinc-900 px-2.5 py-1.5 text-xs text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-zinc-700 transition-colors"
+              className="kl-input kl-input--sm"
               autoFocus
             />
           </div>
           <div className="overflow-y-auto flex-1">
             {filtered.length === 0 && !canCreate && (
-              <div className="px-3 py-3 text-xs text-zinc-600 text-center">
+              <div className="kl-popover-empty px-3 py-3 text-center">
                 Sin resultados
               </div>
             )}
@@ -165,10 +168,8 @@ function PopoverSelect({
                 key={option.value}
                 type="button"
                 onClick={() => select(option.value)}
-                className={`w-full px-3 py-1.5 text-left text-xs transition-colors duration-150 flex items-center justify-between ${
-                  value === option.value
-                    ? "bg-zinc-800/60 text-zinc-100"
-                    : "text-zinc-400 hover:bg-zinc-800/30 hover:text-zinc-300"
+                className={`kl-popover-item w-full px-3 py-1.5 text-left flex items-center justify-between ${
+                  value === option.value ? "kl-popover-item--active" : ""
                 }`}
               >
                 <span>{option.label}</span>
@@ -180,7 +181,7 @@ function PopoverSelect({
                     strokeWidth={2}
                     stroke="currentColor"
                     aria-hidden="true"
-                    className="w-3.5 h-3.5 text-violet-500"
+                    className="w-3.5 h-3.5"
                   >
                     <path
                       strokeLinecap="round"
@@ -195,7 +196,7 @@ function PopoverSelect({
               <button
                 type="button"
                 onClick={() => select(trimmed)}
-                className="w-full px-3 py-1.5 text-left text-xs text-violet-400 hover:bg-zinc-800/30 hover:text-violet-300 transition-colors duration-150 flex items-center gap-2 border-t border-zinc-800/60"
+                className="kl-popover-item kl-popover-item--active w-full px-3 py-1.5 text-left flex items-center gap-2 border-t border-[color:rgba(73,68,84,0.45)]"
               >
                 <span className="material-symbols-outlined text-[14px]">
                   add
@@ -246,8 +247,7 @@ export default function SkillModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto"
-      style={{ backgroundColor: "rgba(9, 9, 11, 0.6)" }}
+      className="kl-portal kl-modal-backdrop fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto"
       onClick={(e) => {
         if (e.target === e.currentTarget) {
           onClose();
@@ -258,19 +258,19 @@ export default function SkillModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby="skill-modal-title"
-        className="w-[calc(100%-2rem)] sm:w-full max-w-3xl rounded-xl bg-zinc-900 shadow-premium border border-zinc-800/40 my-8 max-h-[90dvh] overflow-y-auto animate-zoom-in flex flex-col"
+        className="kl-modal w-[calc(100%-2rem)] sm:w-full max-w-3xl my-8 max-h-[90dvh] overflow-y-auto animate-zoom-in flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* HEADER */}
-        <div className="sticky top-0 z-10 bg-zinc-900 px-5 sm:px-6 pt-5 sm:pt-6 pb-4 border-b border-zinc-800/30 flex items-start justify-between">
+        <div className="kl-modal-header sticky top-0 z-10 px-5 sm:px-6 pt-5 sm:pt-6 pb-4 flex items-start justify-between gap-3">
           <div>
             <h2
               id="skill-modal-title"
-              className="text-xl font-semibold tracking-tight text-zinc-50"
+              className="kl-modal-title text-xl"
             >
               {editingId ? "Editar Skill" : "Nuevo Skill"}
             </h2>
-            <p className="text-xs text-zinc-500 mt-1">
+            <p className="kl-modal-sub mt-1">
               {editingId
                 ? "Modifica las instrucciones de este skill"
                 : "Guarda instrucciones de sistema reutilizables en Markdown"}
@@ -280,7 +280,7 @@ export default function SkillModal({
             type="button"
             onClick={onClose}
             aria-label="Cerrar modal"
-            className="group p-1.5 rounded-lg text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/40 transition-all duration-180 shrink-0"
+            className="kl-icon-btn shrink-0"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -289,7 +289,7 @@ export default function SkillModal({
               strokeWidth={2}
               stroke="currentColor"
               aria-hidden="true"
-              className="w-5 h-5 text-zinc-400 group-hover:text-zinc-100 transition-colors"
+              className="w-5 h-5"
             >
               <path
                 strokeLinecap="round"
@@ -313,7 +313,7 @@ export default function SkillModal({
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Ej: Revisor de código React"
-              className="w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2.5 text-base font-semibold text-zinc-100 placeholder:text-zinc-600 hover:border-zinc-700 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/20 transition-all duration-200"
+              className="kl-input kl-input--title"
             />
           </div>
 
@@ -334,7 +334,7 @@ export default function SkillModal({
           <div>
             <label htmlFor="skill-description" className={labelClass}>
               Descripción{" "}
-              <span className="text-zinc-600 font-normal">(opcional)</span>
+              <span className="kl-text-muted font-normal">(opcional)</span>
             </label>
             <input
               id="skill-description"
@@ -359,15 +359,15 @@ export default function SkillModal({
               placeholder={
                 "# Rol\nEres un ingeniero senior especializado en...\n\n## Reglas\n- ...\n- ...\n\n## Formato de respuesta\n..."
               }
-              className="w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2.5 text-sm text-zinc-100 placeholder:text-zinc-600 hover:border-zinc-700 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/20 transition-all duration-200 resize-y leading-7 min-h-[240px] font-mono"
+              className={`${textareaClass} kl-input--mono resize-y min-h-[240px]`}
             />
-            <p className="text-[10px] text-zinc-600 mt-1.5">
+            <p className="kl-meta mt-1.5">
               {content.length} caracteres · Markdown admitido
             </p>
           </div>
 
           {/* DIVISOR */}
-          <div className="divider" />
+          <div className="kl-divider" />
 
           {/* ETIQUETAS */}
           <div>
@@ -460,20 +460,20 @@ export default function SkillModal({
               />
 
               {showSuggestions && suggestions.length > 0 && (
-                <div className="absolute z-20 mt-1 w-full max-h-48 overflow-y-auto rounded-lg border border-zinc-800 bg-zinc-950 shadow-premium py-1">
+                <div className="kl-popover absolute z-20 mt-1 w-full max-h-48 overflow-y-auto py-1">
                   {suggestions.map((suggestion, index) => (
                     <button
                       key={suggestion}
                       type="button"
                       onClick={() => addSuggestion(index)}
-                      className={`w-full px-3 py-1.5 text-left text-xs transition-colors duration-150 ${
+                      className={`kl-popover-item w-full px-3 py-1.5 text-left ${
                         index === selectedSuggestion
-                          ? "bg-zinc-800/60 text-zinc-100"
-                          : "text-zinc-400 hover:bg-zinc-800/30 hover:text-zinc-300"
+                          ? "kl-popover-item--active"
+                          : ""
                       }`}
                     >
                       <span className="inline-flex items-center gap-2">
-                        <span className="text-zinc-600">#</span>
+                        <span className="kl-text-muted">#</span>
                         {suggestion}
                       </span>
                     </button>
@@ -484,10 +484,7 @@ export default function SkillModal({
               {tags.length > 0 && (
                 <div className="mt-3 flex flex-wrap gap-2">
                   {tags.map((t, idx) => (
-                    <span
-                      key={idx}
-                      className="inline-flex items-center gap-1 rounded-md bg-zinc-800/60 px-1.5 py-0.5 text-[10px] font-medium text-zinc-300 border border-zinc-700/50"
-                    >
+                    <span key={idx} className="kl-chip gap-1">
                       #{t}
                       <button
                         type="button"
@@ -497,7 +494,7 @@ export default function SkillModal({
                           setTagsInput(newTags.join(", "));
                         }}
                         aria-label={`Quitar etiqueta ${t}`}
-                        className="hover:text-red-400 transition-colors"
+                        className="kl-tag-remove"
                       >
                         ✕
                       </button>
@@ -510,11 +507,11 @@ export default function SkillModal({
         </div>
 
         {/* FOOTER */}
-        <div className="sticky bottom-0 bg-zinc-900 px-5 sm:px-6 pb-5 sm:pb-6 pt-5 border-t border-zinc-800/30 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-3">
+        <div className="kl-modal-footer sticky bottom-0 px-5 sm:px-6 pb-5 sm:pb-6 pt-5 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-3">
           <button
             type="button"
             onClick={onClose}
-            className="text-sm font-medium text-zinc-500 hover:text-zinc-400 transition-colors duration-200 py-2 sm:py-0"
+            className="kl-btn kl-btn--ghost"
           >
             Cancelar
           </button>
@@ -523,16 +520,12 @@ export default function SkillModal({
             type="button"
             onClick={onSubmit}
             disabled={saving}
-            className={`w-full sm:w-auto h-11 sm:h-9 px-4 py-2 text-sm font-semibold text-white rounded-lg transition-all duration-200 flex items-center justify-center gap-2 ${
-              saving
-                ? "bg-zinc-700 cursor-not-allowed"
-                : "gemstone-gradient shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 hover:brightness-110 active:brightness-95 disabled:opacity-50 disabled:cursor-not-allowed"
-            }`}
+            className="kl-btn kl-btn--primary w-full sm:w-auto"
           >
             {saving ? (
               <>
                 <svg
-                  className="animate-spin h-4 w-4 text-white"
+                  className="animate-spin h-4 w-4"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"

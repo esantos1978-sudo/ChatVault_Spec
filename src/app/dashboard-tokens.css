@@ -63,14 +63,20 @@
 /* --font-kl-* las inyecta next/font sobre el contenedor .kl-dash (las mismas
    familias que la landing: Plus Jakarta Sans / Inter / JetBrains Mono). */
 
-.kl-dash {
+/* .kl-portal replica la resolución de fuentes fuera de .kl-dash (modales y
+   cualquier superficie que en el futuro se monte con createPortal). Sólo
+   declara variables: no pinta fondo ni color. */
+.kl-dash,
+.kl-portal {
   --kld-font-display: var(--font-kl-display), "Plus Jakarta Sans", ui-sans-serif,
     system-ui, sans-serif;
   --kld-font-body: var(--font-kl-body), "Inter", ui-sans-serif, system-ui,
     sans-serif;
   --kld-font-mono: var(--font-kl-mono), "JetBrains Mono", ui-monospace,
     SFMono-Regular, monospace;
+}
 
+.kl-dash {
   background-color: var(--kld-surface);
   color: var(--kld-on-surface);
   font-family: var(--kld-font-body);
@@ -717,3 +723,325 @@
   line-height: 1.5;
   color: var(--kld-outline);
 }
+
+/* ==========================================================================
+   FASE 3 — Modales, formularios y micro-fix del header
+   --------------------------------------------------------------------------
+   Los modales se montan al final del árbol del dashboard (sin createPortal),
+   así que ya heredan --font-kl-* de next/font; .kl-portal repite la
+   resolución por si en el futuro se portan a document.body.
+   ========================================================================== */
+
+/* ------------------------------ Superficies ----------------------------- */
+
+/* Backdrop: oscurecido + blur ligero (mismo gesto que .kl-dash-header) */
+.kl-modal-backdrop {
+  background: rgba(9, 10, 14, 0.72);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+
+/* Panel: superficie del shell, radio 24 y halo violeta */
+.kl-modal {
+  border-radius: var(--kld-radius-xl);
+  border: 1px solid rgba(73, 68, 84, 0.5);
+  background: var(--kld-surface);
+  color: var(--kld-on-surface);
+  font-family: var(--kld-font-body);
+  box-shadow:
+    0 0 0 1px rgba(160, 120, 255, 0.06),
+    0 32px 80px -24px rgba(0, 0, 0, 0.85),
+    0 0 60px -30px rgba(160, 120, 255, 0.45);
+}
+
+/* Header / footer pegados: borde + blur(20px) como .kl-dash-header */
+.kl-modal-header {
+  background: rgba(15, 17, 26, 0.86);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(73, 68, 84, 0.35);
+}
+
+.kl-modal-footer {
+  background: rgba(15, 17, 26, 0.86);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(73, 68, 84, 0.35);
+}
+
+/* Título: familia display; el tamaño lo fija cada modal (text-lg / text-xl) */
+.kl-modal-title {
+  font-family: var(--kld-font-display);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--kld-on-surface);
+}
+
+/* Subtítulo: 12px / 16px = misma caja que el antiguo text-xs */
+.kl-modal-sub {
+  font-size: 0.75rem;
+  line-height: 1rem;
+  color: var(--kld-outline);
+}
+
+/* Texto secundario reutilizable en formularios */
+.kl-text-muted {
+  color: var(--kld-outline);
+}
+
+.kl-text-soft {
+  color: var(--kld-on-surface-variant);
+}
+
+/* ------------------------------- Inputs --------------------------------- */
+
+/* Textarea: piel de .kl-input sin altura fija (min-h y resize por utilidad) */
+.kl-input--area {
+  height: auto;
+  padding: 0.75rem;
+  line-height: 1.7;
+}
+
+/* Campo de título: misma piel con la display del sistema (16px). Va en CSS
+   porque las utilidades text-* viven en capas y pierden ante .kl-input. */
+.kl-input--title {
+  font-family: var(--kld-font-display);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+/* Instrucciones en Markdown (textarea monoespaciada) */
+.kl-input--mono {
+  font-family: var(--kld-font-mono);
+}
+
+/* --------------------- Selector de categoría (popover) ------------------ */
+
+/* El trigger usa .kl-input + utilidades flex (44px como el resto de campos) */
+
+.kl-popover {
+  border-radius: var(--kld-radius-md);
+  border: 1px solid rgba(73, 68, 84, 0.5);
+  background: var(--kld-surface-low);
+  box-shadow: 0 24px 60px -20px rgba(0, 0, 0, 0.85);
+}
+
+.kl-popover-item {
+  color: var(--kld-on-surface-variant);
+  font-size: 12px;
+  transition:
+    background-color 150ms ease,
+    color 150ms ease;
+}
+
+.kl-popover-item:hover {
+  background: rgba(41, 42, 47, 0.65);
+  color: var(--kld-on-surface);
+}
+
+.kl-popover-item--active {
+  background: rgba(160, 120, 255, 0.14);
+  color: var(--kld-primary);
+}
+
+.kl-popover-item--active:hover {
+  background: rgba(160, 120, 255, 0.2);
+  color: var(--kld-primary);
+}
+
+/* Estado vacío del autocompletado ("Sin resultados") */
+.kl-popover-empty {
+  font-size: 12px;
+  color: var(--kld-outline);
+}
+
+/* --------------------------- Tabs y segmentos --------------------------- */
+
+.kl-tab {
+  color: var(--kld-outline);
+  border-bottom: 2px solid transparent;
+  transition:
+    color 180ms ease,
+    border-color 180ms ease;
+}
+
+.kl-tab:hover {
+  color: var(--kld-on-surface-variant);
+}
+
+.kl-tab--active {
+  color: var(--kld-on-surface);
+  border-bottom-color: var(--kld-primary);
+}
+
+/* Control segmentado (Editar / Vista previa) */
+.kl-segment {
+  color: var(--kld-outline);
+  transition:
+    background-color 180ms ease,
+    color 180ms ease;
+}
+
+.kl-segment:hover {
+  color: var(--kld-on-surface-variant);
+}
+
+.kl-segment--active {
+  background: var(--kld-surface-high);
+  color: var(--kld-on-surface);
+}
+
+/* ------------------------------ Subida de archivos ---------------------- */
+
+.kl-dropzone {
+  border: 2px dashed rgba(73, 68, 84, 0.65);
+  border-radius: var(--kld-radius-md);
+  background: rgba(13, 14, 19, 0.5);
+  transition:
+    border-color 180ms ease,
+    background-color 180ms ease;
+}
+
+.kl-dropzone:hover {
+  border-color: rgba(160, 120, 255, 0.45);
+  background: rgba(160, 120, 255, 0.04);
+}
+
+/* ------------------------- Paneles interactivos ------------------------- */
+
+.kl-panel--interactive {
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease;
+}
+
+.kl-panel--interactive:hover {
+  background: var(--kld-surface-container);
+  border-color: rgba(160, 120, 255, 0.32);
+}
+
+/* ----------------------------- Botones: peligro ------------------------- */
+
+/* Acciones destructivas: rojo de la paleta sobre superficie oscura
+   (#ffb4ab sobre #2a1e20 ≈ 8:1, muy por encima de AA). */
+.kl-btn--danger {
+  background: rgba(255, 180, 171, 0.1);
+  border-color: rgba(255, 180, 171, 0.35);
+  color: var(--kld-error);
+}
+
+.kl-btn--danger:hover {
+  background: rgba(255, 180, 171, 0.18);
+  border-color: rgba(255, 180, 171, 0.55);
+  color: #ffdad6;
+}
+
+/* ------------------------ CTA principal: ocupado ------------------------ */
+
+.kl-btn:disabled {
+  cursor: not-allowed;
+}
+
+.kl-btn--primary:disabled {
+  background: var(--kld-surface-high);
+  color: var(--kld-outline);
+  box-shadow: none;
+  transform: none;
+}
+
+.kl-btn--primary:disabled:hover {
+  box-shadow: none;
+  transform: none;
+}
+
+/* ✕ de las etiquetas (chips editables del formulario) */
+.kl-tag-remove {
+  color: var(--kld-outline);
+  border-radius: 2px;
+  transition: color 180ms ease;
+}
+
+.kl-tag-remove:hover {
+  color: var(--kld-error);
+}
+
+/* --------------------- Ganador de la comparación ------------------------ */
+
+/* Badge "Ganador": mismo cian que .kl-arena-winner de las tarjetas */
+.kl-chip--win {
+  background: rgba(123, 208, 255, 0.12);
+  border-color: rgba(123, 208, 255, 0.32);
+  color: var(--kld-secondary);
+}
+
+.kl-winner-btn {
+  border-color: rgba(73, 68, 84, 0.45);
+  background: var(--kld-surface-low);
+  color: var(--kld-outline);
+  font-family: var(--kld-font-display);
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.kl-winner-btn:hover {
+  border-color: rgba(160, 120, 255, 0.32);
+  color: var(--kld-on-surface-variant);
+}
+
+.kl-winner-btn--active {
+  border-color: rgba(160, 120, 255, 0.55);
+  background: rgba(160, 120, 255, 0.12);
+  color: var(--kld-primary);
+  box-shadow: var(--kld-glow-soft);
+}
+
+/* ------------------------- Filas relacionadas --------------------------- */
+
+/* Icono y "Abrir →" de las filas clickables de los modales de detalle */
+.kl-row-icon {
+  color: var(--kld-outline);
+  transition: color 180ms ease;
+}
+
+.kl-row-link {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--kld-outline);
+  transition: color 180ms ease;
+}
+
+.group:hover .kl-row-icon {
+  color: var(--kld-primary);
+}
+
+.group:hover .kl-row-link {
+  color: var(--kld-primary);
+}
+
+/* ---------------------------- Focus visible ----------------------------- */
+
+.kl-popover-item:focus-visible,
+.kl-tab:focus-visible,
+.kl-segment:focus-visible,
+.kl-winner-btn:focus-visible {
+  outline: 2px solid var(--kld-secondary);
+  outline-offset: 2px;
+}
+
+/* ---------------------------- Reduced motion ---------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .kl-popover-item,
+  .kl-tab,
+  .kl-segment,
+  .kl-dropzone,
+  .kl-panel--interactive,
+  .kl-winner-btn,
+  .kl-tag-remove {
+    transition: none;
+  }
+}
+

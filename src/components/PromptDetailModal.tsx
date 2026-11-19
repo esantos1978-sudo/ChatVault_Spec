@@ -75,62 +75,49 @@ export default function PromptDetailModal({
 
   if (!isOpen || !prompt) return null;
 
-  const categoryConfig: Record<string, { style: string; label: string }> = {
-    texto: {
-      style: "bg-blue-950/20 border-blue-800/20 text-blue-300",
-      label: "Texto",
-    },
-    imagen: {
-      style: "bg-fuchsia-950/20 border-fuchsia-800/20 text-fuchsia-300",
-      label: "Imagen",
-    },
-    video: {
-      style: "bg-rose-950/20 border-rose-800/20 text-rose-300",
-      label: "Video",
-    },
-    codigo: {
-      style: "bg-emerald-950/20 border-emerald-800/20 text-emerald-300",
-      label: "Código",
-    },
+  /* Sólo etiqueta: el color lo pone `.kl-chip--cat kl-chip--accent`, así la
+     categoría se lee igual que en las tarjetas de la Fase 2. */
+  const categoryLabels: Record<string, string> = {
+    texto: "Texto",
+    imagen: "Imagen",
+    video: "Video",
+    codigo: "Código",
   };
 
-  const catKey = prompt.category.toLowerCase();
-  const catConfig = categoryConfig[catKey] || {
-    style: "bg-zinc-800/30 border-zinc-700/30 text-zinc-400",
-    label: prompt.category,
-  };
+  const catLabel =
+    categoryLabels[prompt.category.toLowerCase()] || prompt.category;
 
   const noteCount = relatedNotes.length;
   const comparisonCount = relatedComparisons.length;
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto"
-      style={{ backgroundColor: "rgba(9, 9, 11, 0.6)" }}
+      className="kl-portal kl-modal-backdrop fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
     >
       <div
-        className="w-[calc(100%-2rem)] sm:w-full max-w-3xl rounded-xl bg-zinc-900 shadow-premium border border-zinc-800/40 my-8 max-h-[90dvh] overflow-y-auto animate-zoom-in flex flex-col"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="prompt-detail-title"
+        className="kl-modal w-[calc(100%-2rem)] sm:w-full max-w-3xl my-8 max-h-[90dvh] overflow-y-auto animate-zoom-in flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* HEADER */}
-        <div className="sticky top-0 z-10 bg-zinc-900 px-5 sm:px-6 pt-5 sm:pt-6 pb-4 border-b border-zinc-800/30 flex items-start justify-between">
-          <div className="flex items-center gap-3">
-            <span
-              className={`inline-flex items-center rounded-md px-2.5 py-1 text-[11px] font-medium border ${catConfig.style}`}
-            >
-              {catConfig.label}
+        <div className="kl-modal-header sticky top-0 z-10 px-5 sm:px-6 pt-5 sm:pt-6 pb-4 flex items-start justify-between gap-3">
+          <div className="flex items-center gap-3 min-w-0">
+            <span className="kl-chip kl-chip--cat kl-chip--accent shrink-0">
+              {catLabel}
             </span>
-            <h2 className="text-lg font-semibold tracking-tight text-zinc-50">
+            <h2 id="prompt-detail-title" className="kl-modal-title text-lg">
               {prompt.title}
             </h2>
           </div>
           <button
             onClick={onClose}
             aria-label="Cerrar modal"
-            className="p-1 rounded-lg hover:bg-zinc-800/40 transition-all duration-200 group"
+            className="kl-icon-btn shrink-0"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -138,7 +125,7 @@ export default function PromptDetailModal({
               viewBox="0 0 24 24"
               strokeWidth={2}
               stroke="currentColor"
-              className="w-4 h-4 text-zinc-400 group-hover:text-zinc-100 transition-colors"
+              className="w-4 h-4"
             >
               <path
                 strokeLinecap="round"
@@ -153,26 +140,26 @@ export default function PromptDetailModal({
         <div className="px-5 sm:px-6 py-5 sm:py-6 space-y-8 sm:space-y-10 flex-1">
           {/* ===== RESUMEN SUPERIOR (métricas) ===== */}
           <div className="flex items-center gap-5 -mt-2">
-            <span className="text-[11px] text-zinc-600 font-medium">
+            <span className="kl-meta font-medium">
               {noteCount} nota{noteCount !== 1 ? "s" : ""}
             </span>
-            <span className="w-1 h-1 rounded-full bg-zinc-700" />
-            <span className="text-[11px] text-zinc-600 font-medium">
+            <span className="w-1 h-1 rounded-full bg-[var(--kld-outline-variant)]" />
+            <span className="kl-meta font-medium">
               {comparisonCount} comparac
               {comparisonCount !== 1 ? "iones" : "ión"}
             </span>
-            <span className="w-1 h-1 rounded-full bg-zinc-700" />
-            <span className="text-[11px] text-zinc-600 font-medium">
+            <span className="w-1 h-1 rounded-full bg-[var(--kld-outline-variant)]" />
+            <span className="kl-meta font-medium">
               {prompt.times_used} uso{prompt.times_used !== 1 ? "s" : ""}
             </span>
           </div>
 
           {/* ===== PROMPT (protagonista) ===== */}
           <div>
-            <span className="text-[10px] font-medium text-zinc-600 uppercase tracking-wider mb-3 block">
+            <span className="kl-eyebrow kl-eyebrow--xs mb-3 block">
               Prompt
             </span>
-            <div className="rounded-xl border border-zinc-700/50 bg-zinc-950/80 px-5 py-4 text-sm text-zinc-100 leading-relaxed whitespace-pre-wrap shadow-sm">
+            <div className="kl-panel px-5 py-4 kl-card-text whitespace-pre-wrap">
               {prompt.content}
             </div>
           </div>
@@ -180,15 +167,12 @@ export default function PromptDetailModal({
           {/* ===== ETIQUETAS ===== */}
           {prompt.tags && prompt.tags.length > 0 && (
             <div>
-              <span className="text-[10px] font-medium text-zinc-600 uppercase tracking-wider mb-3 block">
+              <span className="kl-eyebrow kl-eyebrow--xs mb-3 block">
                 Etiquetas
               </span>
               <div className="flex flex-wrap gap-1.5">
                 {prompt.tags.map((t) => (
-                  <span
-                    key={t}
-                    className="px-2.5 py-1 rounded-md bg-zinc-800/50 text-zinc-400 text-[11px] font-medium"
-                  >
+                  <span key={t} className="kl-chip kl-chip--cat">
                     #{t}
                   </span>
                 ))}
@@ -198,16 +182,16 @@ export default function PromptDetailModal({
 
           {/* ===== NOTAS RELACIONADAS ===== */}
           <div>
-            <span className="text-[10px] font-medium text-zinc-600 uppercase tracking-wider mb-3 block">
+            <span className="kl-eyebrow kl-eyebrow--xs mb-3 block">
               Notas relacionadas ({noteCount})
             </span>
             {loading ? (
-              <div className="rounded-xl border border-zinc-800 bg-zinc-950/50 px-5 py-4">
-                <div className="h-4 w-3/4 rounded bg-zinc-800 animate-pulse" />
+              <div className="kl-panel px-5 py-4">
+                <div className="kl-skeleton h-4 w-3/4 rounded animate-pulse" />
               </div>
             ) : noteCount === 0 ? (
-              <div className="rounded-xl border border-zinc-800 bg-zinc-950/50 px-5 py-4">
-                <p className="text-xs text-zinc-600">
+              <div className="kl-panel px-5 py-4">
+                <p className="text-xs kl-text-muted">
                   Ninguna nota utiliza este prompt todavía.
                 </p>
               </div>
@@ -220,27 +204,25 @@ export default function PromptDetailModal({
                       onClose();
                       router.push(`/dashboard?tab=notes&noteId=${note.id}`);
                     }}
-                    className="group w-full flex items-center justify-between rounded-xl border border-zinc-800 bg-zinc-950/50 px-5 py-3.5 hover:bg-zinc-800/30 hover:border-zinc-700 transition-all duration-180 text-left"
+                    className="kl-panel kl-panel--interactive group w-full flex items-center justify-between px-5 py-3.5 text-left"
                   >
                     <div className="flex items-center gap-3 min-w-0">
-                      <span className="material-symbols-outlined text-[16px] text-zinc-600 group-hover:text-zinc-400 transition-colors shrink-0">
+                      <span className="kl-row-icon material-symbols-outlined text-[16px] shrink-0">
                         description
                       </span>
-                      <span className="text-sm text-zinc-200 font-medium truncate">
+                      <span className="kl-text-soft text-sm font-medium truncate">
                         {note.title}
                       </span>
                     </div>
                     <div className="flex items-center gap-3 shrink-0">
-                      <span className="text-[10px] text-zinc-600">
+                      <span className="kl-meta">
                         {new Date(note.created_at).toLocaleDateString("es-ES", {
                           year: "numeric",
                           month: "short",
                           day: "numeric",
                         })}
                       </span>
-                      <span className="text-[11px] text-zinc-600 group-hover:text-violet-400 transition-colors font-medium">
-                        Abrir →
-                      </span>
+                      <span className="kl-row-link">Abrir →</span>
                     </div>
                   </button>
                 ))}
@@ -250,19 +232,19 @@ export default function PromptDetailModal({
 
           {/* ===== COMPARACIONES RELACIONADAS ===== */}
           <div>
-            <span className="text-[10px] font-medium text-zinc-600 uppercase tracking-wider mb-3 block">
+            <span className="kl-eyebrow kl-eyebrow--xs mb-3 block">
               Comparaciones relacionadas ({comparisonCount})
             </span>
             {loading ? (
-              <div className="rounded-xl border border-zinc-800 bg-zinc-950/50 px-5 py-4">
-                <div className="h-4 w-3/4 rounded bg-zinc-800 animate-pulse" />
+              <div className="kl-panel px-5 py-4">
+                <div className="kl-skeleton h-4 w-3/4 rounded animate-pulse" />
               </div>
             ) : comparisonCount === 0 ? (
-              <div className="rounded-xl border border-zinc-800 bg-zinc-950/50 px-5 py-4">
-                <p className="text-xs text-zinc-600 leading-relaxed">
+              <div className="kl-panel px-5 py-4">
+                <p className="text-xs kl-text-muted leading-relaxed">
                   Todavía no has comparado este prompt entre distintos modelos.
                 </p>
-                <p className="text-xs text-zinc-600 leading-relaxed mt-1">
+                <p className="text-xs kl-text-muted leading-relaxed mt-1">
                   Crea una comparación en Arena para descubrir cuál ofrece la
                   mejor respuesta.
                 </p>
@@ -278,18 +260,18 @@ export default function PromptDetailModal({
                         `/dashboard?tab=arena&comparisonId=${comparison.id}`,
                       );
                     }}
-                    className="group w-full flex items-center justify-between rounded-xl border border-zinc-800 bg-zinc-950/50 px-5 py-3.5 hover:bg-zinc-800/30 hover:border-zinc-700 transition-all duration-180 text-left"
+                    className="kl-panel kl-panel--interactive group w-full flex items-center justify-between px-5 py-3.5 text-left"
                   >
                     <div className="flex items-center gap-3 min-w-0">
-                      <span className="material-symbols-outlined text-[16px] text-zinc-600 group-hover:text-zinc-400 transition-colors shrink-0">
+                      <span className="kl-row-icon material-symbols-outlined text-[16px] shrink-0">
                         swords
                       </span>
-                      <span className="text-sm text-zinc-200 font-medium truncate">
+                      <span className="kl-text-soft text-sm font-medium truncate">
                         {comparison.prompt}
                       </span>
                     </div>
                     <div className="flex items-center gap-3 shrink-0">
-                      <span className="text-[10px] text-zinc-600">
+                      <span className="kl-meta">
                         {new Date(comparison.created_at).toLocaleDateString(
                           "es-ES",
                           {
@@ -299,9 +281,7 @@ export default function PromptDetailModal({
                           },
                         )}
                       </span>
-                      <span className="text-[11px] text-zinc-600 group-hover:text-violet-400 transition-colors font-medium">
-                        Abrir →
-                      </span>
+                      <span className="kl-row-link">Abrir →</span>
                     </div>
                   </button>
                 ))}
@@ -311,8 +291,8 @@ export default function PromptDetailModal({
         </div>
 
         {/* FOOTER */}
-        <div className="sticky bottom-0 bg-zinc-900 px-5 sm:px-6 pb-5 sm:pb-6 pt-5 border-t border-zinc-800/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-          <span className="text-[10px] text-zinc-700">
+        <div className="kl-modal-footer sticky bottom-0 px-5 sm:px-6 pb-5 sm:pb-6 pt-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <span className="kl-meta">
             Creado el{" "}
             {new Date(prompt.created_at).toLocaleDateString("es-ES", {
               year: "numeric",
@@ -322,7 +302,7 @@ export default function PromptDetailModal({
           </span>
           <button
             onClick={onClose}
-            className="w-full sm:w-auto text-sm font-medium text-zinc-500 hover:text-zinc-400 transition-colors duration-200 py-2 sm:py-0"
+            className="kl-btn kl-btn--ghost w-full sm:w-auto"
           >
             Cerrar
           </button>

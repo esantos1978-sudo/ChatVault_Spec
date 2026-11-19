@@ -44,10 +44,13 @@ interface NoteModalProps {
   setFileName: (val: string) => void;
 }
 
-const inputClass =
-  "w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-600 hover:border-zinc-700 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/20 transition-all duration-200";
+/* Piel de los campos: .kl-input (44px) y .kl-input--area (textarea). La
+   tipografía/tokens llegan del scope .kl-portal del contenedor del modal. */
+const inputClass = "kl-input";
 
-const labelClass = "text-xs font-medium text-zinc-500 mb-1.5 block";
+const textareaClass = "kl-input kl-input--area";
+
+const labelClass = "kl-field-label mb-1.5 block";
 
 // ============================================================
 // MODELOS DE IA DISPONIBLES
@@ -125,9 +128,9 @@ function PopoverSelect({
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className="w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 hover:border-zinc-700 transition-all duration-200 flex items-center justify-between gap-2 text-left"
+        className="kl-input flex items-center justify-between gap-2 text-left"
       >
-        <span className={value ? "text-zinc-100" : "text-zinc-600"}>
+        <span className={value ? undefined : "kl-text-muted"}>
           {value ? selectedLabel : placeholder}
         </span>
         <svg
@@ -136,7 +139,7 @@ function PopoverSelect({
           viewBox="0 0 24 24"
           strokeWidth={2}
           stroke="currentColor"
-          className={`w-4 h-4 text-zinc-500 transition-transform duration-200 ${
+          className={`w-4 h-4 shrink-0 transition-transform duration-200 ${
             open ? "rotate-180" : ""
           }`}
         >
@@ -149,20 +152,20 @@ function PopoverSelect({
       </button>
 
       {open && (
-        <div className="absolute z-30 mt-1 w-full rounded-lg border border-zinc-800 bg-zinc-950 shadow-premium py-1 max-h-64 overflow-hidden flex flex-col">
+        <div className="kl-popover absolute z-30 mt-1 w-full py-1 max-h-64 overflow-hidden flex flex-col">
           <div className="px-2 pb-1 pt-1">
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder={searchPlaceholder || "Buscar..."}
-              className="w-full rounded-md border border-zinc-800 bg-zinc-900 px-2.5 py-1.5 text-xs text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-zinc-700 transition-colors"
+              className="kl-input kl-input--sm"
               autoFocus
             />
           </div>
           <div className="overflow-y-auto flex-1">
             {filtered.length === 0 && !allowCustom && (
-              <div className="px-3 py-3 text-xs text-zinc-600 text-center">
+              <div className="kl-popover-empty px-3 py-3 text-center">
                 Sin resultados
               </div>
             )}
@@ -175,10 +178,8 @@ function PopoverSelect({
                   setOpen(false);
                   setSearch("");
                 }}
-                className={`w-full px-3 py-1.5 text-left text-xs transition-colors duration-150 flex items-center justify-between ${
-                  value === option.value
-                    ? "bg-zinc-800/60 text-zinc-100"
-                    : "text-zinc-400 hover:bg-zinc-800/30 hover:text-zinc-300"
+                className={`kl-popover-item w-full px-3 py-1.5 text-left flex items-center justify-between ${
+                  value === option.value ? "kl-popover-item--active" : ""
                 }`}
               >
                 <span>{option.label}</span>
@@ -189,7 +190,7 @@ function PopoverSelect({
                     viewBox="0 0 24 24"
                     strokeWidth={2}
                     stroke="currentColor"
-                    className="w-3.5 h-3.5 text-violet-500"
+                    className="w-3.5 h-3.5"
                   >
                     <path
                       strokeLinecap="round"
@@ -203,10 +204,10 @@ function PopoverSelect({
             {allowCustom && (
               <>
                 {filtered.length > 0 && (
-                  <div className="border-t border-zinc-800/40 mt-1 pt-1" />
+                  <div className="kl-divider mt-1" />
                 )}
                 <div className="px-3 py-1.5">
-                  <div className="text-[10px] text-zinc-600 mb-1">
+                  <div className="kl-field-label mb-1">
                     Otro (escribir manualmente)
                   </div>
                   <input
@@ -221,7 +222,7 @@ function PopoverSelect({
                       }
                     }}
                     placeholder="Escribe el nombre..."
-                    className="w-full rounded-md border border-zinc-800 bg-zinc-900 px-2.5 py-1.5 text-xs text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-zinc-700 transition-colors"
+                    className="kl-input kl-input--sm"
                   />
                 </div>
               </>
@@ -346,8 +347,7 @@ export default function NoteModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto"
-      style={{ backgroundColor: "rgba(9, 9, 11, 0.6)" }}
+      className="kl-portal kl-modal-backdrop fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto"
       onClick={(e) => {
         if (e.target === e.currentTarget) {
           onClose();
@@ -355,16 +355,19 @@ export default function NoteModal({
       }}
     >
       <div
-        className="w-[calc(100%-2rem)] sm:w-full max-w-3xl rounded-xl bg-zinc-900 shadow-premium border border-zinc-800/40 my-8 max-h-[90dvh] overflow-y-auto animate-zoom-in flex flex-col"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="note-modal-title"
+        className="kl-modal w-[calc(100%-2rem)] sm:w-full max-w-3xl my-8 max-h-[90dvh] overflow-y-auto animate-zoom-in flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* HEADER */}
-        <div className="sticky top-0 z-10 bg-zinc-900 px-5 pt-5 pb-3 border-b border-zinc-800/30 flex items-start justify-between">
+        <div className="kl-modal-header sticky top-0 z-10 px-5 pt-5 pb-3 flex items-start justify-between gap-3">
           <div>
-            <h2 className="text-lg font-semibold tracking-tight text-zinc-50">
+            <h2 id="note-modal-title" className="kl-modal-title text-lg">
               {editingNoteId ? "Editar Nota" : "Guardar conversación"}
             </h2>
-            <p className="text-xs text-zinc-500 mt-0.5">
+            <p className="kl-modal-sub mt-0.5">
               {editingNoteId
                 ? "Modifica los datos de esta conversación"
                 : "Archiva tus chats con IA de forma organizada"}
@@ -373,7 +376,7 @@ export default function NoteModal({
           <button
             onClick={onClose}
             aria-label="Cerrar modal"
-            className="p-1 rounded-lg hover:bg-zinc-800/40 transition-all duration-200 group"
+            className="kl-icon-btn shrink-0"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -381,7 +384,7 @@ export default function NoteModal({
               viewBox="0 0 24 24"
               strokeWidth={2}
               stroke="currentColor"
-              className="w-4 h-4 text-zinc-400 group-hover:text-zinc-100 transition-colors"
+              className="w-4 h-4"
             >
               <path
                 strokeLinecap="round"
@@ -395,14 +398,12 @@ export default function NoteModal({
         {/* CONTENIDO DEL MODAL */}
         <div className="px-5 py-5 space-y-5">
           {/* PESTAÑAS (tabs horizontales tipo Linear) */}
-          <div className="flex gap-6 border-b border-zinc-800/30">
+          <div className="flex gap-6 border-b border-[color:rgba(73,68,84,0.35)]">
             <button
               type="button"
               onClick={() => setSourceType("text")}
-              className={`pb-2 px-4 text-sm font-medium transition-all duration-200 border-b-2 -mb-[1px] ${
-                sourceType === "text"
-                  ? "text-zinc-100 border-zinc-100"
-                  : "text-zinc-500 border-transparent hover:text-zinc-300"
+              className={`kl-tab -mb-[1px] px-4 pb-2 ${
+                sourceType === "text" ? "kl-tab--active" : ""
               }`}
             >
               Pegar conversación
@@ -410,10 +411,8 @@ export default function NoteModal({
             <button
               type="button"
               onClick={() => setSourceType("url")}
-              className={`pb-2 px-4 text-sm font-medium transition-all duration-200 border-b-2 -mb-[1px] ${
-                sourceType === "url"
-                  ? "text-zinc-100 border-zinc-100"
-                  : "text-zinc-500 border-transparent hover:text-zinc-300"
+              className={`kl-tab -mb-[1px] px-4 pb-2 ${
+                sourceType === "url" ? "kl-tab--active" : ""
               }`}
             >
               Enlace compartido
@@ -421,10 +420,8 @@ export default function NoteModal({
             <button
               type="button"
               onClick={() => setSourceType("file")}
-              className={`pb-2 px-4 text-sm font-medium transition-all duration-200 border-b-2 -mb-[1px] ${
-                sourceType === "file"
-                  ? "text-zinc-100 border-zinc-100"
-                  : "text-zinc-500 border-transparent hover:text-zinc-300"
+              className={`kl-tab -mb-[1px] px-4 pb-2 ${
+                sourceType === "file" ? "kl-tab--active" : ""
               }`}
             >
               Subir archivo
@@ -439,9 +436,7 @@ export default function NoteModal({
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Ej: Fix del bug de autenticación..."
-              className={
-                "w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-3 text-lg font-semibold text-zinc-100 placeholder:text-zinc-600 hover:border-zinc-700 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/20 transition-all duration-200"
-              }
+              className="kl-input kl-input--title"
             />
           </div>
 
@@ -452,14 +447,12 @@ export default function NoteModal({
                 <label className={labelClass}>Contenido del chat</label>
                 {/* Tabs de edición/previsualización solo cuando se edita una nota existente */}
                 {editingNoteId && (
-                  <div className="flex gap-1 rounded-lg bg-zinc-950 border border-zinc-800/40 p-0.5">
+                  <div className="kl-panel flex gap-1 p-0.5">
                     <button
                       type="button"
                       onClick={() => setContentTab("edit")}
-                      className={`px-3 py-1 text-xs font-medium rounded-md transition-all duration-200 ${
-                        contentTab === "edit"
-                          ? "bg-zinc-800 text-zinc-100 shadow-sm"
-                          : "text-zinc-500 hover:text-zinc-300"
+                      className={`kl-segment px-3 py-1 text-xs font-medium rounded-md ${
+                        contentTab === "edit" ? "kl-segment--active" : ""
                       }`}
                     >
                       Editar
@@ -467,10 +460,8 @@ export default function NoteModal({
                     <button
                       type="button"
                       onClick={() => setContentTab("preview")}
-                      className={`px-3 py-1 text-xs font-medium rounded-md transition-all duration-200 ${
-                        contentTab === "preview"
-                          ? "bg-zinc-800 text-zinc-100 shadow-sm"
-                          : "text-zinc-500 hover:text-zinc-300"
+                      className={`kl-segment px-3 py-1 text-xs font-medium rounded-md ${
+                        contentTab === "preview" ? "kl-segment--active" : ""
                       }`}
                     >
                       Vista previa
@@ -484,16 +475,14 @@ export default function NoteModal({
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
                   placeholder="Usuario: ¿Cómo arreglo este error?..."
-                  className={
-                    "w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-3.5 text-sm text-zinc-100 placeholder:text-zinc-600 hover:border-zinc-700 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/20 transition-all duration-200 resize-none leading-7 min-h-[240px]"
-                  }
+                  className={`${textareaClass} resize-none min-h-[240px]`}
                 />
               ) : (
-                <div className="w-full rounded-lg border border-zinc-800 bg-zinc-950 px-4 py-4 min-h-[240px] max-h-[480px] overflow-y-auto">
+                <div className="kl-panel w-full px-4 py-4 min-h-[240px] max-h-[480px] overflow-y-auto">
                   {content.trim() ? (
                     <ConversationContent content={content} />
                   ) : (
-                    <p className="text-sm text-zinc-600 italic">
+                    <p className="text-sm italic kl-text-muted">
                       Sin contenido que mostrar.
                     </p>
                   )}
@@ -504,8 +493,8 @@ export default function NoteModal({
 
           {sourceType === "url" && (
             <div className="space-y-4">
-              <div className="rounded-lg bg-zinc-900/60 p-3 border border-zinc-800/30">
-                <p className="text-xs text-zinc-400">
+              <div className="kl-panel p-3">
+                <p className="text-xs kl-text-soft">
                   Opcional: deja el título vacío y nuestro servidor extraerá
                   automáticamente el nombre del chat.
                 </p>
@@ -526,7 +515,7 @@ export default function NoteModal({
           {sourceType === "file" && (
             <div className="space-y-4">
               {/* ZONA DE SUBIDA DE ARCHIVOS */}
-              <div className="flex flex-col items-center justify-center border-2 border-dashed border-zinc-700 rounded-lg p-8 bg-zinc-950/30 hover:border-zinc-500 transition-colors duration-200">
+              <div className="kl-dropzone flex flex-col items-center justify-center p-8">
                 <input
                   type="file"
                   accept=".pdf,.txt,.md"
@@ -539,23 +528,23 @@ export default function NoteModal({
                   className="cursor-pointer flex flex-col items-center gap-2 w-full"
                 >
                   <span className="text-3xl">📄</span>
-                  <p className="text-sm font-medium text-zinc-400">
+                  <p className="text-sm font-medium kl-text-soft">
                     Haz clic para subir un archivo
                   </p>
-                  <p className="text-[10px] text-zinc-500">
+                  <p className="kl-meta">
                     Formatos: PDF, TXT, MD
                   </p>
                 </label>
 
                 {fileName && (
                   <div className="mt-4 w-full">
-                    <div className="flex items-center justify-between gap-2 text-sm bg-zinc-800/40 p-3 rounded-lg border border-zinc-700/50">
-                      <div className="flex items-center gap-2 text-zinc-300">
+                    <div className="kl-card flex items-center justify-between gap-2 text-sm p-3">
+                      <div className="flex items-center gap-2">
                         <span>📄</span>
-                        <span className="font-medium truncate max-w-[200px]">
+                        <span className="font-medium truncate max-w-[200px] kl-text-soft">
                           {fileName}
                         </span>
-                        <span className="text-[10px] text-zinc-500">
+                        <span className="kl-meta">
                           ({fileContent.length} caracteres)
                         </span>
                       </div>
@@ -568,13 +557,14 @@ export default function NoteModal({
                           ) as HTMLInputElement;
                           if (input) input.value = "";
                         }}
-                        className="text-zinc-500 hover:text-red-400 transition-colors"
+                        aria-label="Quitar archivo"
+                        className="kl-icon-btn kl-icon-btn--danger shrink-0"
                       >
                         ✕
                       </button>
                     </div>
                     {fileContent && (
-                      <div className="mt-2 text-xs text-zinc-500 max-h-20 overflow-y-auto bg-zinc-900/40 p-2 rounded border border-zinc-800/30">
+                      <div className="kl-panel mt-2 text-xs kl-text-muted max-h-20 overflow-y-auto p-2">
                         <p className="whitespace-pre-wrap line-clamp-3">
                           {fileContent.substring(0, 300)}...
                         </p>
@@ -594,14 +584,12 @@ export default function NoteModal({
               value={summary}
               onChange={(e) => setSummary(e.target.value)}
               placeholder="Resume aquí las ideas más importantes de esta conversación para poder localizar rápidamente la información en el futuro."
-              className={
-                "w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2.5 text-sm text-zinc-100 placeholder:text-zinc-600 hover:border-zinc-700 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/20 transition-all duration-200 resize-none leading-6 min-h-[80px]"
-              }
+              className={`${textareaClass} resize-none min-h-[80px]`}
             />
           </div>
 
           {/* ===== DIVISOR ===== */}
-          <div className="divider" />
+          <div className="kl-divider" />
 
           {/* ===== METADATOS ===== */}
           {/* MODELO IA + PROMPT ASOCIADO (grid) */}
@@ -627,7 +615,7 @@ export default function NoteModal({
                 }}
               />
               {aiModel === "otro" && customModel && (
-                <p className="text-[10px] text-zinc-500 mt-1">
+                <p className="kl-meta mt-1">
                   Modelo personalizado: {customModel}
                 </p>
               )}
@@ -731,20 +719,20 @@ export default function NoteModal({
               />
 
               {showSuggestions && suggestions.length > 0 && (
-                <div className="absolute z-20 mt-1 w-full max-h-48 overflow-y-auto rounded-lg border border-zinc-800 bg-zinc-950 shadow-premium py-1">
+                <div className="kl-popover absolute z-20 mt-1 w-full max-h-48 overflow-y-auto py-1">
                   {suggestions.map((suggestion, index) => (
                     <button
                       key={suggestion}
                       type="button"
                       onClick={() => addSuggestion(index)}
-                      className={`w-full px-3 py-1.5 text-left text-xs transition-colors duration-150 ${
+                      className={`kl-popover-item w-full px-3 py-1.5 text-left ${
                         index === selectedSuggestion
-                          ? "bg-zinc-800/60 text-zinc-100"
-                          : "text-zinc-400 hover:bg-zinc-800/30 hover:text-zinc-300"
+                          ? "kl-popover-item--active"
+                          : ""
                       }`}
                     >
                       <span className="inline-flex items-center gap-2">
-                        <span className="text-zinc-600">#</span>
+                        <span className="kl-text-muted">#</span>
                         {suggestion}
                       </span>
                     </button>
@@ -755,10 +743,7 @@ export default function NoteModal({
               {tags.length > 0 && (
                 <div className="mt-3 flex flex-wrap gap-2">
                   {tags.map((t, idx) => (
-                    <span
-                      key={idx}
-                      className="inline-flex items-center gap-1 rounded-md bg-zinc-800/60 px-1.5 py-0.5 text-[10px] font-medium text-zinc-300 border border-zinc-700/50"
-                    >
+                    <span key={idx} className="kl-chip gap-1">
                       #{t}
                       <button
                         type="button"
@@ -767,7 +752,8 @@ export default function NoteModal({
                           setTags(newTags);
                           setTagsInput(newTags.join(", "));
                         }}
-                        className="hover:text-red-400 transition-colors"
+                        aria-label={`Quitar etiqueta ${t}`}
+                        className="kl-tag-remove"
                       >
                         ✕
                       </button>
@@ -780,11 +766,11 @@ export default function NoteModal({
         </div>
 
         {/* FOOTER */}
-        <div className="sticky bottom-0 bg-zinc-900 px-5 pb-5 pt-4 border-t border-zinc-800/30 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-3">
+        <div className="kl-modal-footer sticky bottom-0 px-5 pb-5 pt-4 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-3">
           <button
             type="button"
             onClick={onClose}
-            className="text-sm font-medium text-zinc-500 hover:text-zinc-400 transition-colors duration-200 py-2 sm:py-0"
+            className="kl-btn kl-btn--ghost"
           >
             Cancelar
           </button>
@@ -793,16 +779,12 @@ export default function NoteModal({
             type="button"
             onClick={onSubmit}
             disabled={saving || (sourceType === "file" && !fileContent)}
-            className={`w-full sm:w-auto h-11 sm:h-9 px-4 py-2 text-sm font-semibold text-white rounded-lg transition-all duration-200 flex items-center justify-center gap-2 ${
-              saving || (sourceType === "file" && !fileContent)
-                ? "bg-zinc-700 cursor-not-allowed"
-                : "gemstone-gradient shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 hover:brightness-110 active:brightness-95 disabled:opacity-50 disabled:cursor-not-allowed"
-            }`}
+            className="kl-btn kl-btn--primary w-full sm:w-auto"
           >
             {saving ? (
               <>
                 <svg
-                  className="animate-spin h-4 w-4 text-white"
+                  className="animate-spin h-4 w-4"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"

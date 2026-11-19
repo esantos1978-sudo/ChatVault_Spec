@@ -31,8 +31,7 @@ export function ArenaDetailModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto"
-      style={{ backgroundColor: "rgba(9, 9, 11, 0.6)" }}
+      className="kl-portal kl-modal-backdrop fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto"
       onClick={(e) => {
         if (e.target === e.currentTarget) {
           onClose();
@@ -40,19 +39,23 @@ export function ArenaDetailModal({
       }}
     >
       <div
-        className="w-[calc(100%-2rem)] sm:w-full max-w-4xl rounded-xl bg-zinc-900 shadow-premium border border-zinc-800/40 my-8 max-h-[90dvh] overflow-y-auto animate-zoom-in flex flex-col"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="arena-detail-title"
+        className="kl-modal w-[calc(100%-2rem)] sm:w-full max-w-4xl my-8 max-h-[90dvh] overflow-y-auto animate-zoom-in flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* HEADER */}
-        <div className="sticky top-0 z-10 bg-zinc-900 px-5 sm:px-6 pt-5 sm:pt-6 pb-4 border-b border-zinc-800/30 flex items-start justify-between">
+        <div className="kl-modal-header sticky top-0 z-10 px-5 sm:px-6 pt-5 sm:pt-6 pb-4 flex items-start justify-between gap-3">
           <div>
-            <h2 className="text-lg font-semibold tracking-tight text-zinc-50">
+            <h2 id="arena-detail-title" className="kl-modal-title text-lg">
               Comparación detallada
             </h2>
           </div>
           <button
             onClick={onClose}
-            className="p-1 rounded-lg hover:bg-zinc-800/40 transition-all duration-200 group"
+            aria-label="Cerrar modal"
+            className="kl-icon-btn shrink-0"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -60,7 +63,7 @@ export function ArenaDetailModal({
               viewBox="0 0 24 24"
               strokeWidth={2}
               stroke="currentColor"
-              className="w-4 h-4 text-zinc-400 group-hover:text-zinc-100 transition-colors"
+              className="w-4 h-4"
             >
               <path
                 strokeLinecap="round"
@@ -75,10 +78,10 @@ export function ArenaDetailModal({
         <div className="px-5 sm:px-6 py-5 sm:py-6 space-y-6 sm:space-y-8 flex-1">
           {/* Prompt asociado */}
           <div>
-            <span className="text-[10px] font-medium text-zinc-600 uppercase tracking-wider mb-2 block">
+            <span className="kl-eyebrow kl-eyebrow--xs mb-2 block">
               Prompt asociado
             </span>
-            <div className="rounded-lg border border-zinc-800 bg-zinc-950 px-4 py-3.5 text-sm text-zinc-100 leading-relaxed">
+            <div className="kl-panel px-4 py-3.5 kl-card-text whitespace-pre-wrap">
               {prompt}
             </div>
           </div>
@@ -86,19 +89,13 @@ export function ArenaDetailModal({
           {/* Respuestas */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Modelo 1 */}
-            <div
-              className={`rounded-xl border p-4 transition-all ${
-                isWinner1
-                  ? "bg-emerald-950/10 border-emerald-800/40"
-                  : "bg-zinc-900 border-zinc-800"
-              }`}
-            >
+            <div className={`kl-card p-4 ${isWinner1 ? "kl-arena-winner" : ""}`}>
               <div className="flex items-center justify-between mb-3">
-                <h3 className="text-sm font-semibold text-zinc-100">
+                <h3 className="kl-card-title text-sm">
                   {responses.model1 || "Modelo 1"}
                 </h3>
                 {isWinner1 && (
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-950/40 border border-emerald-800/30 text-emerald-400 text-[10px] font-medium">
+                  <span className="kl-chip kl-chip--win gap-1">
                     <span className="material-symbols-outlined text-[12px]">
                       emoji_events
                     </span>
@@ -106,25 +103,19 @@ export function ArenaDetailModal({
                   </span>
                 )}
               </div>
-              <div className="text-sm text-zinc-300 whitespace-pre-wrap leading-relaxed">
+              <div className="kl-card-text whitespace-pre-wrap">
                 {responses.response1 || "Respuesta vacía"}
               </div>
             </div>
 
             {/* Modelo 2 */}
-            <div
-              className={`rounded-xl border p-4 transition-all ${
-                isWinner2
-                  ? "bg-emerald-950/10 border-emerald-800/40"
-                  : "bg-zinc-900 border-zinc-800"
-              }`}
-            >
+            <div className={`kl-card p-4 ${isWinner2 ? "kl-arena-winner" : ""}`}>
               <div className="flex items-center justify-between mb-3">
-                <h3 className="text-sm font-semibold text-zinc-100">
+                <h3 className="kl-card-title text-sm">
                   {responses.model2 || "Modelo 2"}
                 </h3>
                 {isWinner2 && (
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-950/40 border border-emerald-800/30 text-emerald-400 text-[10px] font-medium">
+                  <span className="kl-chip kl-chip--win gap-1">
                     <span className="material-symbols-outlined text-[12px]">
                       emoji_events
                     </span>
@@ -132,7 +123,7 @@ export function ArenaDetailModal({
                   </span>
                 )}
               </div>
-              <div className="text-sm text-zinc-300 whitespace-pre-wrap leading-relaxed">
+              <div className="kl-card-text whitespace-pre-wrap">
                 {responses.response2 || "Respuesta vacía"}
               </div>
             </div>
@@ -140,8 +131,8 @@ export function ArenaDetailModal({
         </div>
 
         {/* FOOTER */}
-        <div className="sticky bottom-0 bg-zinc-900 px-5 sm:px-6 pb-5 sm:pb-6 pt-4 border-t border-zinc-800/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-          <span className="text-[10px] text-zinc-700">
+        <div className="kl-modal-footer sticky bottom-0 px-5 sm:px-6 pb-5 sm:pb-6 pt-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <span className="kl-meta">
             Comparación creada el{" "}
             {new Date(comparison.created_at).toLocaleDateString("es-ES", {
               year: "numeric",
@@ -153,7 +144,7 @@ export function ArenaDetailModal({
           </span>
           <button
             onClick={onClose}
-            className="w-full sm:w-auto text-sm font-medium text-zinc-500 hover:text-zinc-400 transition-colors duration-200 py-2 sm:py-0"
+            className="kl-btn kl-btn--ghost w-full sm:w-auto"
           >
             Cerrar
           </button>
