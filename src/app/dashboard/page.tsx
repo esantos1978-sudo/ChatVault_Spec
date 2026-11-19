@@ -8,6 +8,33 @@ import Image from "next/image";
 import { supabase } from "@/lib/supabaseClient";
 import toast from "react-hot-toast";
 
+// 🎨 Lenguaje visual compartido con la landing (FASE 1: tokens + shell)
+import {
+  Inter,
+  JetBrains_Mono,
+  Plus_Jakarta_Sans,
+} from "next/font/google";
+import "@/app/dashboard-tokens.css";
+
+const bodyFont = Inter({
+  subsets: ["latin"],
+  variable: "--font-kl-body",
+  display: "swap",
+});
+
+const displayFont = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  weight: ["600", "700", "800"],
+  variable: "--font-kl-display",
+  display: "swap",
+});
+
+const monoFont = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-kl-mono",
+  display: "swap",
+});
+
 // ✅ Componentes normales (síncronos, siempre visibles)
 import { NoteCard } from "@/components/NoteCard";
 import { PromptCard } from "@/components/PromptCard";
@@ -988,7 +1015,9 @@ export default function Dashboard() {
 
   // ==================== RENDER ====================
   return (
-    <div className="flex min-h-dvh w-full bg-zinc-100 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-50 overflow-hidden">
+    <div
+      className={`kl-dash flex h-dvh w-full overflow-hidden ${displayFont.variable} ${bodyFont.variable} ${monoFont.variable}`}
+    >
       {/* ================= OVERLAY DEL DRAWER ================= */}
       {sidebarOpen && (
         <div
@@ -1009,12 +1038,12 @@ export default function Dashboard() {
         aria-modal={sidebarOpen ? "true" : undefined}
         aria-label="Menú de navegación"
         id="sidebar-drawer"
-        className={`fixed md:relative top-0 left-0 z-50 w-[280px] md:w-60 h-full bg-zinc-950 border-r border-zinc-800/40 flex flex-col select-none overflow-y-auto transition-transform duration-300 ease-out ${
+        className={`kl-dash-sidebar fixed md:relative top-0 left-0 z-50 w-[280px] md:w-60 h-full flex flex-col select-none overflow-y-auto transition-transform duration-300 ease-out ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         } md:translate-x-0`}
       >
         {/* LOGO - CENTRADO Y MÁS GRANDE */}
-        <div className="flex justify-center pt-6 pb-5 px-3">
+        <div className="kl-dash-brand flex justify-center pt-6 pb-5 px-3">
           <Image
             src="/images/kimberlite-logo.png"
             alt="Kimberlite"
@@ -1028,52 +1057,52 @@ export default function Dashboard() {
         <nav className="flex flex-col px-2 gap-0.5">
           <button
             onClick={() => navigateAndClose("prompts")}
-            className={`sidebar-item ${activeTab === "prompts" ? "active" : ""}`}
+            className={`kl-nav-item ${activeTab === "prompts" ? "active" : ""}`}
           >
             <span className="material-symbols-outlined text-[18px]">bolt</span>
             <span>Prompts</span>
-            <span className="count">{prompts.length}</span>
+            <span className="kl-chip">{prompts.length}</span>
           </button>
           <button
             onClick={() => navigateAndClose("notes")}
-            className={`sidebar-item ${activeTab === "notes" ? "active" : ""}`}
+            className={`kl-nav-item ${activeTab === "notes" ? "active" : ""}`}
           >
             <span className="material-symbols-outlined text-[18px]">
               description
             </span>
             <span>Notas</span>
-            <span className="count">{notes.length}</span>
+            <span className="kl-chip">{notes.length}</span>
           </button>
           <button
             onClick={() => navigateAndClose("arena")}
-            className={`sidebar-item ${activeTab === "arena" ? "active" : ""}`}
+            className={`kl-nav-item ${activeTab === "arena" ? "active" : ""}`}
           >
             <span className="material-symbols-outlined text-[18px]">
               swords
             </span>
             <span>Arena</span>
-            <span className="count">{arenaComparisons.length}</span>
+            <span className="kl-chip">{arenaComparisons.length}</span>
           </button>
           <button
             onClick={() => navigateAndClose("skills")}
-            className={`sidebar-item ${activeTab === "skills" ? "active" : ""}`}
+            className={`kl-nav-item ${activeTab === "skills" ? "active" : ""}`}
           >
             <span className="material-symbols-outlined text-[18px]">
               psychology
             </span>
             <span>Skills</span>
-            <span className="count">{skills.length}</span>
+            <span className="kl-chip">{skills.length}</span>
           </button>
         </nav>
 
-        <div className="divider mx-3 my-2" />
+        <div className="kl-divider mx-3 my-2" />
 
         {/* FILTROS */}
         <div className="flex flex-col px-2 gap-0.5">
           {/* FAVORITOS */}
           <button
             onClick={() => setShowFavorites(!showFavorites)}
-            className={`sidebar-item ${showFavorites ? "active" : ""}`}
+            className={`kl-nav-item ${showFavorites ? "active" : ""}`}
           >
             <span
               className="material-symbols-outlined text-[18px]"
@@ -1103,7 +1132,7 @@ export default function Dashboard() {
               setShowFavorites(false);
               window.scrollTo({ top: 0, behavior: "smooth" });
             }}
-            className="sidebar-item"
+            className="kl-nav-item"
           >
             <span className="material-symbols-outlined text-[18px]">
               refresh
@@ -1115,8 +1144,8 @@ export default function Dashboard() {
         {/* MODELOS DE IA */}
         {activeTab === "notes" && allAiModels.length > 0 && (
           <>
-            <div className="divider mx-3 my-2" />
-            <div className="sidebar-section-label">Modelos de IA</div>
+            <div className="kl-divider mx-3 my-2" />
+            <div className="kl-eyebrow kl-nav-label">Modelos de IA</div>
             <div className="flex flex-col px-2 gap-0.5 max-h-32 overflow-y-auto">
               {allAiModels.map((model) => (
                 <button
@@ -1124,13 +1153,13 @@ export default function Dashboard() {
                   onClick={() =>
                     setSelectedAiModel(selectedAiModel === model ? null : model)
                   }
-                  className={`sidebar-item ${selectedAiModel === model ? "active" : ""}`}
+                  className={`kl-nav-item ${selectedAiModel === model ? "active" : ""}`}
                 >
                   <span className="material-symbols-outlined text-[18px]">
                     neurology
                   </span>
                   <span className="truncate">{model}</span>
-                  <span className="count">
+                  <span className="kl-chip">
                     {notes.filter((n) => n.ai_model === model).length}
                   </span>
                 </button>
@@ -1140,8 +1169,8 @@ export default function Dashboard() {
         )}
 
         {/* ETIQUETAS */}
-        <div className="divider mx-3 my-2" />
-        <div className="sidebar-section-label">
+        <div className="kl-divider mx-3 my-2" />
+        <div className="kl-eyebrow kl-nav-label">
           Etiquetas
           {activeTab === "notes"
             ? " — Notas"
@@ -1155,7 +1184,7 @@ export default function Dashboard() {
           {activeTab === "notes" && (
             <>
               {noteTagsFromNotes.length === 0 ? (
-                <span className="px-3 py-2 text-xs text-zinc-600 italic">
+                <span className="kl-nav-empty px-3 py-2">
                   Sin etiquetas
                 </span>
               ) : (
@@ -1165,13 +1194,13 @@ export default function Dashboard() {
                       onClick={() =>
                         setSelectedTag(selectedTag === t ? null : t)
                       }
-                      className={`sidebar-item flex-1 ${selectedTag === t ? "active" : ""}`}
+                      className={`kl-nav-item flex-1 ${selectedTag === t ? "active" : ""}`}
                     >
                       <span className="material-symbols-outlined text-[18px]">
                         sell
                       </span>
                       <span>{t}</span>
-                      <span className="count">
+                      <span className="kl-chip">
                         {notes.filter((n) => (n.tags || []).includes(t)).length}
                       </span>
                     </button>
@@ -1192,7 +1221,7 @@ export default function Dashboard() {
           {activeTab === "prompts" && (
             <>
               {promptTagsFromPrompts.length === 0 ? (
-                <span className="px-3 py-2 text-xs text-zinc-600 italic">
+                <span className="kl-nav-empty px-3 py-2">
                   Sin etiquetas
                 </span>
               ) : (
@@ -1202,13 +1231,13 @@ export default function Dashboard() {
                       onClick={() =>
                         setSelectedTag(selectedTag === t ? null : t)
                       }
-                      className={`sidebar-item flex-1 ${selectedTag === t ? "active" : ""}`}
+                      className={`kl-nav-item flex-1 ${selectedTag === t ? "active" : ""}`}
                     >
                       <span className="material-symbols-outlined text-[18px]">
                         sell
                       </span>
                       <span>{t}</span>
-                      <span className="count">
+                      <span className="kl-chip">
                         {
                           prompts.filter((p) => (p.tags || []).includes(t))
                             .length
@@ -1232,7 +1261,7 @@ export default function Dashboard() {
           {activeTab === "skills" && (
             <>
               {skillTagsFromSkills.length === 0 ? (
-                <span className="px-3 py-2 text-xs text-zinc-600 italic">
+                <span className="kl-nav-empty px-3 py-2">
                   Sin etiquetas
                 </span>
               ) : (
@@ -1242,13 +1271,13 @@ export default function Dashboard() {
                       onClick={() =>
                         setSelectedTag(selectedTag === t ? null : t)
                       }
-                      className={`sidebar-item flex-1 ${selectedTag === t ? "active" : ""}`}
+                      className={`kl-nav-item flex-1 ${selectedTag === t ? "active" : ""}`}
                     >
                       <span className="material-symbols-outlined text-[18px]">
                         sell
                       </span>
                       <span>{t}</span>
-                      <span className="count">
+                      <span className="kl-chip">
                         {skills.filter((s) => (s.tags || []).includes(t)).length}
                       </span>
                     </button>
@@ -1268,7 +1297,7 @@ export default function Dashboard() {
           )}
 
           {activeTab === "arena" && (
-            <span className="px-3 py-2 text-xs text-zinc-600 italic">
+            <span className="kl-nav-empty px-3 py-2">
               Próximamente
             </span>
           )}
@@ -1277,8 +1306,8 @@ export default function Dashboard() {
         {/* FILTROS POR FECHA */}
         {activeTab === "notes" && (
           <>
-            <div className="divider mx-3 my-2" />
-            <div className="sidebar-section-label">Por fecha</div>
+            <div className="kl-divider mx-3 my-2" />
+            <div className="kl-eyebrow kl-nav-label">Por fecha</div>
             <div className="flex flex-col px-2 gap-0.5">
               {[
                 { key: "today", label: "Hoy", icon: "today" },
@@ -1296,7 +1325,7 @@ export default function Dashboard() {
                     setStartDate("");
                     setEndDate("");
                   }}
-                  className={`sidebar-item ${dateFilter === key ? "active" : ""}`}
+                  className={`kl-nav-item ${dateFilter === key ? "active" : ""}`}
                 >
                   <span className="material-symbols-outlined text-[18px]">
                     {icon}
@@ -1308,12 +1337,12 @@ export default function Dashboard() {
 
             {/* RANGO PERSONALIZADO */}
             <div className="px-3 pt-2 mt-1 space-y-1.5">
-              <span className="text-[10px] font-medium text-zinc-600 uppercase tracking-wider">
+              <span className="kl-eyebrow kl-eyebrow--muted kl-eyebrow--xs">
                 Rango personalizado
               </span>
               <div className="grid grid-cols-2 gap-1.5">
                 <div>
-                  <label className="text-[10px] text-zinc-600 block mb-0.5">
+                  <label className="kl-field-label block mb-0.5">
                     Desde
                   </label>
                   <input
@@ -1323,11 +1352,11 @@ export default function Dashboard() {
                       setStartDate(e.target.value);
                       setDateFilter("all");
                     }}
-                    className="w-full text-[11px] rounded-lg border border-zinc-800 bg-zinc-950 px-2 py-1.5 text-zinc-300 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/20 transition-all duration-180"
+                    className="kl-input kl-input--sm"
                   />
                 </div>
                 <div>
-                  <label className="text-[10px] text-zinc-600 block mb-0.5">
+                  <label className="kl-field-label block mb-0.5">
                     Hasta
                   </label>
                   <input
@@ -1337,7 +1366,7 @@ export default function Dashboard() {
                       setEndDate(e.target.value);
                       setDateFilter("all");
                     }}
-                    className="w-full text-[11px] rounded-lg border border-zinc-800 bg-zinc-950 px-2 py-1.5 text-zinc-300 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/20 transition-all duration-180"
+                    className="kl-input kl-input--sm"
                   />
                 </div>
               </div>
@@ -1359,8 +1388,8 @@ export default function Dashboard() {
         {/* CATEGORÍAS (Prompts) */}
         {activeTab === "prompts" && (
           <>
-            <div className="divider mx-3 my-2" />
-            <div className="sidebar-section-label">Categorías</div>
+            <div className="kl-divider mx-3 my-2" />
+            <div className="kl-eyebrow kl-nav-label">Categorías</div>
             <div className="flex flex-col px-2 gap-0.5">
               {["imagen", "texto", "codigo", "video"].map((cat) => {
                 const count = prompts.filter((p) => p.category === cat).length;
@@ -1372,13 +1401,13 @@ export default function Dashboard() {
                         selectedPromptCategory === cat ? null : cat,
                       )
                     }
-                    className={`sidebar-item ${selectedPromptCategory === cat ? "active" : ""}`}
+                    className={`kl-nav-item ${selectedPromptCategory === cat ? "active" : ""}`}
                   >
                     <span className="material-symbols-outlined text-[18px]">
                       folder
                     </span>
                     <span className="capitalize">{cat}</span>
-                    <span className="count">{count}</span>
+                    <span className="kl-chip">{count}</span>
                   </button>
                 );
               })}
@@ -1389,8 +1418,8 @@ export default function Dashboard() {
         {/* CATEGORÍAS (Skills) */}
         {activeTab === "skills" && skillCategories.length > 0 && (
           <>
-            <div className="divider mx-3 my-2" />
-            <div className="sidebar-section-label">Categorías</div>
+            <div className="kl-divider mx-3 my-2" />
+            <div className="kl-eyebrow kl-nav-label">Categorías</div>
             <div className="flex flex-col px-2 gap-0.5 max-h-40 overflow-y-auto">
               {skillCategories.map((cat) => {
                 const count = skills.filter((s) => s.category === cat).length;
@@ -1402,13 +1431,13 @@ export default function Dashboard() {
                         selectedSkillCategory === cat ? null : cat,
                       )
                     }
-                    className={`sidebar-item ${selectedSkillCategory === cat ? "active" : ""}`}
+                    className={`kl-nav-item ${selectedSkillCategory === cat ? "active" : ""}`}
                   >
                     <span className="material-symbols-outlined text-[18px]">
                       folder
                     </span>
                     <span className="truncate">{cat}</span>
-                    <span className="count">{count}</span>
+                    <span className="kl-chip">{count}</span>
                   </button>
                 );
               })}
@@ -1418,11 +1447,11 @@ export default function Dashboard() {
 
         {/* ==================== CUENTA ==================== */}
         <div className="mt-auto px-2 pt-4">
-          <div className="sidebar-section-label">Cuenta</div>
+          <div className="kl-eyebrow kl-nav-label">Cuenta</div>
 
           <a
             href="/settings"
-            className="sidebar-item text-zinc-500 hover:text-zinc-400"
+            className="kl-nav-item kl-nav-item--muted"
           >
             <span className="material-symbols-outlined text-[18px]">
               settings
@@ -1432,7 +1461,7 @@ export default function Dashboard() {
 
           <button
             onClick={handleLogout}
-            className="sidebar-item text-zinc-500 hover:text-zinc-400"
+            className="kl-nav-item kl-nav-item--muted"
           >
             <span className="material-symbols-outlined text-[18px]">
               logout
@@ -1443,13 +1472,13 @@ export default function Dashboard() {
       </aside>
 
       {/* ================= CONTENIDO PRINCIPAL ================= */}
-      <main className="flex-1 flex flex-col min-w-0 overflow-hidden bg-white dark:bg-zinc-950 pt-16">
-        <header className="h-16 fixed top-0 right-0 left-0 md:left-60 z-10 bg-zinc-50/80 dark:bg-zinc-950/80 backdrop-blur-md border-b border-zinc-200/30 dark:border-zinc-800/30 flex items-center justify-between gap-2 px-4 md:px-8">
+      <main className="kl-dash-main flex-1 flex flex-col min-w-0 overflow-hidden pt-16">
+        <header className="kl-dash-header h-16 fixed top-0 right-0 left-0 md:left-60 z-10 flex items-center justify-between gap-2 px-4 md:px-8">
           {/* Botón de menú (solo en móviles) */}
           <button
             ref={menuButtonRef}
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="md:hidden p-1.5 text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/40 rounded-lg transition-all duration-180 shrink-0"
+            className="kl-icon-btn kl-dash-menu-toggle shrink-0"
             aria-label={sidebarOpen ? "Cerrar menú" : "Abrir menú"}
             aria-expanded={sidebarOpen}
             aria-controls="sidebar-drawer"
@@ -1459,8 +1488,8 @@ export default function Dashboard() {
 
           {/* Búsqueda */}
           <div className="flex-1 min-w-0 max-w-xl">
-            <div className="relative group">
-              <span className="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500 group-focus-within:text-zinc-400 transition-colors duration-180 text-[18px]">
+            <div className="kl-search relative">
+              <span className="kl-search-icon material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-[18px]">
                 search
               </span>
               <input
@@ -1492,7 +1521,7 @@ export default function Dashboard() {
                   else setArenaSearchQuery(e.target.value);
                 }}
                 aria-label="Buscar en la sección activa"
-                className="w-full h-[44px] rounded-lg border border-zinc-800 bg-zinc-950 px-3 pl-10 text-sm text-zinc-100 placeholder:text-zinc-600 hover:border-zinc-700 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/20 transition-all duration-180"
+                className="kl-input kl-input--search"
               />
             </div>
           </div>
@@ -1501,7 +1530,7 @@ export default function Dashboard() {
           <div className="flex items-center gap-2 md:gap-5 shrink-0">
             <div className="flex items-center gap-1">
               <button
-                className="p-1.5 text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/40 rounded-lg transition-all duration-180"
+                className="kl-icon-btn"
                 aria-label="Notificaciones"
               >
                 <span className="material-symbols-outlined text-[18px]">
@@ -1509,7 +1538,7 @@ export default function Dashboard() {
                 </span>
               </button>
               <button
-                className="p-1.5 text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/40 rounded-lg transition-all duration-180"
+                className="kl-icon-btn"
                 aria-label="Ayuda"
               >
                 <span className="material-symbols-outlined text-[18px]">
@@ -1528,7 +1557,7 @@ export default function Dashboard() {
                 else if (activeTab === "skills") openSkillModal();
                 else setArenaModalOpen(true);
               }}
-              className="flex items-center gap-1.5 gemstone-gradient text-white px-3 py-2 md:px-4 md:py-2 rounded-xl font-semibold shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 hover:brightness-110 active:brightness-95 transition-all duration-180 text-sm"
+              className="kl-btn kl-btn--sm kl-btn--primary"
             >
               <span className="material-symbols-outlined text-[16px]">add</span>
               <span className="hidden sm:inline">
@@ -1548,7 +1577,7 @@ export default function Dashboard() {
         </header>
 
         {/* CONTENIDO SEGÚN TAB */}
-        <section className="flex-1 overflow-y-auto p-4 md:p-6 bg-gradient-to-br from-zinc-50/50 via-white/50 to-zinc-50/30 dark:from-zinc-950 dark:via-zinc-950/95 dark:to-zinc-950">
+        <section className="kl-dash-canvas flex-1 overflow-y-auto p-4 md:p-6">
           {/* ==================== TAB NOTAS ==================== */}
           {activeTab === "notes" && (
             <>
