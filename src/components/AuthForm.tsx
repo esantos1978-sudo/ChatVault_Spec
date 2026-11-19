@@ -7,13 +7,25 @@ import toast from "react-hot-toast";
 
 interface AuthFormProps {
   onAuth: () => void;
+  initialMode?: "login" | "register";
+  /** Se muestra un enlace para volver a la landing cuando se provee. */
+  onBack?: () => void;
 }
 
 const inputClass =
   "w-full h-[44px] rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-600 hover:border-zinc-700 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/20 transition-all duration-180";
 
-export default function AuthForm({ onAuth }: AuthFormProps) {
-  const [mode, setMode] = useState<"login" | "register">("login");
+const getErrorMessage = (error: unknown) =>
+  error instanceof Error
+    ? error.message
+    : "Algo salió mal. Inténtalo de nuevo.";
+
+export default function AuthForm({
+  onAuth,
+  onBack,
+  initialMode = "login",
+}: AuthFormProps) {
+  const [mode, setMode] = useState<"login" | "register">(initialMode);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -41,8 +53,8 @@ export default function AuthForm({ onAuth }: AuthFormProps) {
         toast.success("¡Cuenta creada! Bienvenido a Kimberlite.");
         onAuth();
       }
-    } catch (error: any) {
-      toast.error(error.message);
+    } catch (error) {
+      toast.error(getErrorMessage(error));
     } finally {
       setLoading(false);
     }
@@ -63,8 +75,8 @@ export default function AuthForm({ onAuth }: AuthFormProps) {
       toast.success(
         "Correo de recuperación enviado. Revisa tu bandeja de entrada.",
       );
-    } catch (error: any) {
-      toast.error(error.message);
+    } catch (error) {
+      toast.error(getErrorMessage(error));
     }
   };
 
@@ -78,8 +90,8 @@ export default function AuthForm({ onAuth }: AuthFormProps) {
         },
       });
       if (error) throw error;
-    } catch (error: any) {
-      toast.error(error.message);
+    } catch (error) {
+      toast.error(getErrorMessage(error));
     }
   };
 
@@ -93,6 +105,19 @@ export default function AuthForm({ onAuth }: AuthFormProps) {
       {/* Blobs decorativos */}
       <div className="absolute -top-48 -left-48 w-[600px] h-[600px] bg-violet-500/5 rounded-full blur-[120px]" />
       <div className="absolute -bottom-48 -right-48 w-[600px] h-[600px] bg-violet-500/5 rounded-full blur-[120px]" />
+
+      {onBack && (
+        <button
+          type="button"
+          onClick={onBack}
+          className="absolute left-4 top-4 z-20 flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium text-zinc-400 hover:bg-zinc-900 hover:text-zinc-100 transition-colors"
+        >
+          <span aria-hidden="true" className="text-base leading-none">
+            ←
+          </span>
+          Volver al inicio
+        </button>
+      )}
 
       <div className="w-full max-w-md relative z-10">
         {/* Logo */}

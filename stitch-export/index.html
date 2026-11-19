@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500;600&amp;family=Plus+Jakarta+Sans:wght@600;700;800&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "on-background": "#e3e1e9", "surface-container-low": "#1a1b21", "secondary": "#7bd0ff", "inverse-on-surface": "#2f3036", "primary-fixed": "#e9ddff", "on-secondary": "#00354a", "on-tertiary": "#1000a9", "on-error": "#690005", "outline": "#958ea0", "error": "#ffb4ab", "primary-fixed-dim": "#d0bcff", "secondary-container": "#00a6e0", "surface-tint": "#d0bcff", "on-tertiary-container": "#0d0096", "error-container": "#93000a", "secondary-fixed": "#c4e7ff", "on-primary-container": "#340080", "inverse-surface": "#e3e1e9", "inverse-primary": "#6d3bd7", "surface-bright": "#38393f", "surface-variant": "#34343a", "surface": "#121318", "tertiary-fixed-dim": "#c0c1ff", "primary-container": "#a078ff", "on-secondary-container": "#00374d", "on-primary-fixed": "#23005c", "surface-dim": "#121318", "tertiary-container": "#8083ff", "surface-container-high": "#292a2f", "on-primary": "#3c0091", "on-surface-variant": "#cbc3d7", "tertiary-fixed": "#e1e0ff", "on-secondary-fixed-variant": "#004c69", "outline-variant": "#494454", "surface-container": "#1e1f25", "surface-container-highest": "#34343a", "on-tertiary-fixed-variant": "#2f2ebe", "secondary-fixed-dim": "#7bd0ff", "surface-container-lowest": "#0d0e13", "on-secondary-fixed": "#001e2c", "primary": "#d0bcff", "background": "#121318", "tertiary": "#c0c1ff", "on-error-container": "#ffdad6", "on-tertiary-fixed": "#07006c", "on-surface": "#e3e1e9", "on-primary-fixed-variant": "#5516be" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "space-xl": "2.5rem", "space-lg": "1.5rem", "space-md": "1rem", "space-sm": "0.5rem", "gutter": "1.5rem", "margin": "2rem", "space-xs": "0.25rem" }, "fontFamily": { "headline-lg-mobile": [ "Plus Jakarta Sans" ], "display-mobile": [ "Plus Jakarta Sans" ], "headline-sm": [ "Plus Jakarta Sans" ], "body-md": [ "Inter" ], "headline-md": [ "Plus Jakarta Sans" ], "headline-lg": [ "Plus Jakarta Sans" ], "label-sm": [ "JetBrains Mono" ], "display": [ "Plus Jakarta Sans" ], "label-md": [ "JetBrains Mono" ], "body-lg": [ "Inter" ], "body-sm": [ "Inter" ] }, "fontSize": { "headline-lg-mobile": [ "28px", { "lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700" } ], "display-mobile": [ "36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "800" } ], "headline-sm": [ "18px", { "lineHeight": "26px", "letterSpacing": "-0.01em", "fontWeight": "600" } ], "body-md": [ "15px", { "lineHeight": "24px", "fontWeight": "400" } ], "headline-md": [ "24px", { "lineHeight": "32px", "letterSpacing": "-0.015em", "fontWeight": "600" } ], "headline-lg": [ "40px", { "lineHeight": "48px", "letterSpacing": "-0.025em", "fontWeight": "700" } ], "label-sm": [ "11px", { "lineHeight": "16px", "letterSpacing": "0.04em", "fontWeight": "500" } ], "display": [ "56px", { "lineHeight": "64px", "letterSpacing": "-0.03em", "fontWeight": "800" } ], "label-md": [ "13px", { "lineHeight": "18px", "letterSpacing": "0.02em", "fontWeight": "500" } ], "body-lg": [ "18px", { "lineHeight": "28px", "fontWeight": "400" } ], "body-sm": [ "13px", { "lineHeight": "20px", "fontWeight": "400" } ] } } } };</script></head><body class="bg-background font-body-md text-on-surface antialiased selection:bg-primary-container selection:text-on-primary-container"><header class="fixed top-0 left-0 right-0 z-50 bg-[#0F111A]/80 backdrop-blur-xl border-b border-outline-variant/30 shadow-[0_4px_30px_rgba(0,0,0,0.5)]"><div class="h-20 max-w-[1280px] mx-auto px-gutter flex items-center justify-between"><div class="flex items-center gap-space-lg"><a class="flex items-center gap-space-sm group" data-path="inicio" href="#"><div class="relative flex items-center justify-center"><div class="absolute -inset-1 rounded-full bg-primary/20 blur-md group-hover:bg-primary/40 transition-all"></div><img alt="Kimberlite Logo" class="relative h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/ALJJyrCtNLQlLLnP44ecBGto5nm9D1mU7oWWK9JPlyqHxgBi1TU2i2-71tfpOvQ5UzoU6OeQUTxVGsF6K63S9iz1dSFSac229sHwqtXEGExzfV4huXxMiZmOrwqwTBhyP8Bps9nIMxBSxJVejfefO04h-W945rxWE-KsvfETpO1WvyVEbm24U1z1POi0yuWN-Rra3BC-KBht-C2K80w2tfb9CRGFoWN8eDcEr-wg9GoGCKfy"/></div><span class="font-headline-sm text-headline-sm text-on-surface tracking-tight font-bold">Kimberlite</span></a><nav class="hidden lg:flex items-center gap-space-lg" data-active-classes="text-primary font-semibold"><a class="font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="caracteristicas" href="#">Características</a><a class="font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="casos-de-uso" href="#">Casos de uso</a><a class="font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="comparador" href="#">Comparador</a><a class="font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="precios" href="#">Precios</a><a class="font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="changelog" href="#">Changelog</a></nav></div><div class="flex items-center gap-space-md"><a class="hidden sm:inline-flex items-center font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors px-space-sm py-space-xs" data-path="login" href="#">Iniciar sesión</a><a class="relative group inline-flex items-center justify-center px-space-md py-space-sm rounded-lg bg-gradient-to-r from-primary-container via-inverse-primary to-primary text-on-primary font-headline-sm text-label-md shadow-[0_0_24px_rgba(139,92,246,0.35)] hover:shadow-[0_0_32px_rgba(139,92,246,0.6)] transition-all transform hover:-translate-y-0.5 active:translate-y-0" data-path="registro" href="#"><span class="relative z-10 flex items-center gap-space-xs font-semibold">Crear mi biblioteca<span class="material-symbols-outlined text-[16px]">arrow_forward</span></span></a><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shadow-[0_0_12px_rgba(208,188,255,0.3)]"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-20 bg-background"><div class="flex flex-col w-full overflow-hidden">
+<!-- HERO SECTION -->
+<section class="relative w-full max-w-[1280px] mx-auto px-gutter pt-space-lg pb-space-xl lg:py-space-xl">
+<!-- Atmospheric Ambient Glows -->
+<div class="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[480px] h-[480px] rounded-full bg-primary/10 blur-[140px] pointer-events-none -z-10"></div>
+<div class="absolute top-1/3 right-10 w-[520px] h-[520px] rounded-full bg-secondary/10 blur-[160px] pointer-events-none -z-10"></div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-xl items-center">
+<!-- Left Column: Copy & Actions (7 cols) -->
+<div class="lg:col-span-6 flex flex-col items-start text-left space-y-space-md">
+<!-- Micro-Announcement Pill Badge -->
+<div class="inline-flex items-center gap-space-xs px-space-sm py-1 rounded-full bg-primary-container/15 text-primary shadow-[0_0_20px_rgba(160,120,255,0.15)]">
+<span class="relative flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-80"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+</span>
+<span class="font-label-sm text-label-sm tracking-wide">La memoria para tu trabajo con IA</span>
+</div>
+<!-- Main Headline -->
+<h1 class="font-display text-headline-lg lg:text-display text-on-surface tracking-tight leading-[1.08] font-extrabold">
+          Convierte tus conversaciones con IA en una biblioteca de conocimiento.
+        </h1>
+<!-- Subheadline -->
+<p class="font-body-lg text-body-md lg:text-body-lg text-on-surface-variant max-w-xl">
+          Guarda, organiza y reutiliza todo lo que aprendes con la IA. Desde tus mejores prompts hasta comparaciones entre modelos, todo queda conectado para que nunca vuelvas a empezar desde cero.
+        </p>
+<!-- CTA Action Buttons -->
+<div class="flex flex-wrap items-center gap-space-sm pt-space-xs w-full sm:w-auto">
+<a class="w-full sm:w-auto inline-flex items-center justify-center gap-space-xs px-space-lg py-space-sm rounded-lg bg-primary-container text-on-primary-container font-headline-sm text-label-md font-bold shadow-[0_0_28px_rgba(160,120,255,0.45)] hover:shadow-[0_0_40px_rgba(160,120,255,0.7)] hover:bg-primary transition-all transform hover:-translate-y-0.5 active:translate-y-0" data-path="registro" href="#">
+<span>Crear mi biblioteca</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</a>
+<button class="w-full sm:w-auto inline-flex items-center justify-center gap-space-xs px-space-md py-space-sm rounded-lg bg-surface-container-high text-on-surface hover:text-secondary hover:bg-surface-variant font-headline-sm text-label-md font-semibold transition-all" id="trigger-demo" type="button">
+<span class="material-symbols-outlined text-secondary text-[20px]" style="font-variation-settings: 'FILL' 1;">play_circle</span>
+<span>Ver demo interactiva</span>
+</button>
+</div>
+<!-- Value Bullet Checklist -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-x-space-md gap-y-space-xs pt-space-sm text-on-surface-variant font-body-sm text-body-sm">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-secondary text-[18px]">check_circle</span>
+<span>Nunca pierdas un buen prompt</span>
+</div>
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-secondary text-[18px]">check_circle</span>
+<span>Búsqueda semántica instantánea</span>
+</div>
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-secondary text-[18px]">check_circle</span>
+<span>Compara respuestas entre modelos</span>
+</div>
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-secondary text-[18px]">check_circle</span>
+<span>Biblioteca compartida o privada</span>
+</div>
+</div>
+</div>
+<!-- Right Column: High-Fidelity Interactive IDE Preview (6 cols) -->
+<div class="lg:col-span-6 relative mt-space-md lg:mt-0">
+<!-- Diffused Glow Accent behind Window -->
+<div class="absolute -inset-4 bg-gradient-to-r from-primary-container/20 to-secondary-container/20 rounded-2xl blur-2xl -z-10 opacity-70"></div>
+<!-- SaaS Workspace Window -->
+<div class="w-full rounded-xl bg-surface-container-lowest shadow-2xl overflow-hidden flex flex-col">
+<!-- Top Window Navigation Bar -->
+<div class="bg-surface-container px-space-md py-space-xs flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-error inline-block opacity-80"></span>
+<span class="w-3 h-3 rounded-full bg-secondary-container inline-block opacity-80"></span>
+<span class="w-3 h-3 rounded-full bg-primary inline-block opacity-80"></span>
+<span class="ml-space-sm font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">auto_stories</span> kimberlite-workspace — v2.4
+              </span>
+</div>
+<div class="flex items-center gap-space-xs">
+<span class="px-space-xs py-0.5 rounded bg-surface-container-high font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px]">lock</span> Privado
+              </span>
+<span class="px-space-xs py-0.5 rounded bg-primary/20 text-primary font-label-sm text-label-sm">⌘K</span>
+</div>
+</div>
+<!-- Main App Workspace Split Grid -->
+<div class="grid grid-cols-12 min-h-[380px] bg-surface-container-low">
+<!-- Left Workspace Tree (3 cols) -->
+<div class="col-span-4 bg-surface-container-lowest p-space-sm flex flex-col space-y-space-sm">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-2 top-2 text-[14px] text-outline">search</span>
+<input class="w-full bg-surface-container-high pl-7 pr-2 py-1 rounded font-label-sm text-label-sm text-on-surface focus:outline-none" readonly="" type="text" value="system:prompt-eng"/>
+</div>
+<div class="space-y-1">
+<span class="font-label-sm text-[10px] uppercase text-outline tracking-wider block px-1">Colecciones</span>
+<div class="flex items-center justify-between px-2 py-1 rounded bg-surface-container-high text-primary font-label-sm text-label-sm cursor-pointer">
+<div class="flex items-center gap-1 truncate">
+<span class="material-symbols-outlined text-[14px]">folder_open</span>
+<span class="truncate">Ingeniería Core</span>
+</div>
+<span class="text-[10px] bg-primary/20 px-1 rounded">28</span>
+</div>
+<div class="flex items-center justify-between px-2 py-1 rounded text-on-surface-variant hover:bg-surface-container font-label-sm text-label-sm cursor-pointer transition-colors">
+<div class="flex items-center gap-1 truncate">
+<span class="material-symbols-outlined text-[14px]">folder</span>
+<span class="truncate">Razonamiento Multi-hop</span>
+</div>
+<span class="text-[10px] text-outline">14</span>
+</div>
+<div class="flex items-center justify-between px-2 py-1 rounded text-on-surface-variant hover:bg-surface-container font-label-sm text-label-sm cursor-pointer transition-colors">
+<div class="flex items-center gap-1 truncate">
+<span class="material-symbols-outlined text-[14px]">folder</span>
+<span class="truncate">Refactor de Código</span>
+</div>
+<span class="text-[10px] text-outline">09</span>
+</div>
+</div>
+<div class="pt-space-xs mt-auto space-y-1">
+<span class="font-label-sm text-[10px] uppercase text-outline tracking-wider block px-1">Metadatos de sesión</span>
+<div class="p-2 rounded bg-surface-container text-on-surface-variant font-label-sm text-[11px] space-y-1">
+<div class="flex justify-between">
+<span class="text-outline">Sync Status:</span>
+<span class="text-secondary flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Activo</span>
+</div>
+<div class="flex justify-between">
+<span class="text-outline">Vectores index:</span>
+<span class="text-on-surface font-semibold">1,492 embeddings</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Center Prompt Benchmarking Canvas (8 cols) -->
+<div class="col-span-8 p-space-md flex flex-col space-y-space-sm bg-surface">
+<!-- Item Header -->
+<div class="flex items-start justify-between">
+<div>
+<div class="flex items-center gap-2">
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold">SQL Optimizer via AST Analysis</h3>
+<span class="px-1.5 py-0.5 rounded bg-secondary/15 text-secondary font-label-sm text-[10px]">v3.2</span>
+</div>
+<p class="font-body-sm text-[12px] text-on-surface-variant">Generación de planes de ejecución eficientes para Postgres 16</p>
+</div>
+<span class="material-symbols-outlined text-outline hover:text-primary cursor-pointer text-[18px]">bookmark</span>
+</div>
+<!-- Active Prompt System Prompt Pill Box -->
+<div class="bg-surface-container-low p-2.5 rounded-lg space-y-1">
+<div class="flex items-center justify-between text-outline font-label-sm text-[10px]">
+<span>SYSTEM PROMPT INYECTADO</span>
+<span>142 TOKENS</span>
+</div>
+<div class="font-label-sm text-[11px] text-on-surface bg-surface-container-lowest p-2 rounded leading-relaxed overflow-x-auto">
+<span class="text-primary font-semibold"># Role:</span> Principal DB Engineer.<br/>
+                  Dado el siguiente esquema relacional, reescribe subqueries anidadas en CTEs indexados.
+                </div>
+</div>
+<!-- Multi-Model Comparison Pills Bar -->
+<div class="flex items-center gap-2 pt-1">
+<button class="px-2.5 py-1 rounded bg-surface-container-high text-primary font-label-sm text-label-sm flex items-center gap-1.5 shadow-sm">
+<span class="w-2 h-2 rounded-full bg-primary"></span> Claude 3.5 Sonnet
+                </button>
+<button class="px-2.5 py-1 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm flex items-center gap-1.5 hover:bg-surface-container-high">
+<span class="w-2 h-2 rounded-full bg-secondary"></span> GPT-4o
+                </button>
+<button class="px-2.5 py-1 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm flex items-center gap-1.5 hover:bg-surface-container-high">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span> Gemini 1.5 Pro
+                </button>
+</div>
+<!-- Output Code Snippet Preview -->
+<div class="bg-surface-container-lowest p-space-sm rounded-lg font-label-sm text-[11px] text-on-surface space-y-1">
+<div class="flex justify-between items-center text-outline text-[10px]">
+<span>OUTPUT COMPARATOR PREVIEW</span>
+<span class="text-secondary font-medium">99.4% Precisión sintáctica</span>
+</div>
+<div class="text-secondary font-mono leading-tight">
+                  WITH ranked_events AS (<br/>
+                    SELECT user_id, event_type, created_at,<br/>
+                    ROW_NUMBER() OVER(PARTITION BY user_id ORDER BY created_at DESC) as rk<br/>
+                    FROM analytics_log<br/>
+                  ) ...
+                </div>
+</div>
+<!-- Bottom Tag & Metrics Strip -->
+<div class="flex items-center justify-between pt-1 font-label-sm text-[11px]">
+<div class="flex items-center gap-1">
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-outline">#sql</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-outline">#database</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-outline">#postgres</span>
+</div>
+<div class="flex items-center gap-3 text-outline">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[13px]">speed</span> 240ms</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[13px]">toll</span> $0.0034</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- SOCIAL PROOF / ECOSYSTEM INTEGRATIONS STRIP -->
+<section class="w-full bg-surface-container-lowest py-space-lg">
+<div class="max-w-[1280px] mx-auto px-gutter flex flex-col md:flex-row items-center justify-between gap-space-md">
+<div class="max-w-xs text-center md:text-left">
+<span class="font-label-sm text-label-sm text-primary tracking-wider uppercase font-semibold block">Ecosistema Integrado</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Conecta con los modelos que usas a diario sin cambiar de flujo.</p>
+</div>
+<!-- Models & Ecosystem Badges Strip -->
+<div class="flex flex-wrap items-center justify-center gap-space-sm">
+<div class="px-space-md py-space-xs rounded-lg bg-surface-container flex items-center gap-space-xs font-label-md text-label-md text-on-surface">
+<span class="material-symbols-outlined text-secondary text-[18px]">psychology</span> OpenAI GPT-4o
+        </div>
+<div class="px-space-md py-space-xs rounded-lg bg-surface-container flex items-center gap-space-xs font-label-md text-label-md text-on-surface">
+<span class="material-symbols-outlined text-primary text-[18px]">neurology</span> Anthropic Claude 3.5
+        </div>
+<div class="px-space-md py-space-xs rounded-lg bg-surface-container flex items-center gap-space-xs font-label-md text-label-md text-on-surface">
+<span class="material-symbols-outlined text-tertiary text-[18px]">token</span> Google Gemini Pro
+        </div>
+<div class="px-space-md py-space-xs rounded-lg bg-surface-container flex items-center gap-space-xs font-label-md text-label-md text-on-surface">
+<span class="material-symbols-outlined text-secondary text-[18px]">terminal</span> DeepSeek V3
+        </div>
+<div class="px-space-md py-space-xs rounded-lg bg-surface-container flex items-center gap-space-xs font-label-md text-label-md text-on-surface">
+<span class="material-symbols-outlined text-outline text-[18px]">memory</span> Ollama / Local
+        </div>
+</div>
+</div>
+</section>
+<!-- SECTION 2: 4-CARD BENTO GRID (TODO LO QUE NECESITAS) -->
+<section class="w-full max-w-[1280px] mx-auto px-gutter py-space-xl">
+<div class="space-y-space-xs text-center max-w-2xl mx-auto mb-space-xl">
+<span class="font-label-md text-label-md text-primary tracking-widest uppercase font-semibold">Arquitectura de Conocimiento</span>
+<h2 class="font-headline-lg text-headline-md lg:text-headline-lg text-on-surface font-bold tracking-tight">
+        Todo lo que necesitas para trabajar mejor con IA
+      </h2>
+<p class="font-body-md text-body-md text-on-surface-variant">
+        Kimberlite organiza todo el conocimiento que generas para que puedas reutilizarlo una y otra vez sin fricción ni desorden.
+      </p>
+</div>
+<!-- 4 Cards Feature Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-space-md">
+<!-- Card 1 -->
+<div class="bg-surface-container-low p-space-lg rounded-xl flex flex-col justify-between hover:bg-surface-container transition-all group">
+<div class="space-y-space-md">
+<div class="w-12 h-12 rounded-lg bg-primary-container/20 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-[24px]">bookmark_add</span>
+</div>
+<div class="space-y-space-xs">
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold">No vuelvas a perder una buena respuesta</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+              Sistema de captura instantánea mediante atajos de teclado globales y extensión directa en ChatGPT, Claude y Gemini.
+            </p>
+</div>
+</div>
+<div class="pt-space-md flex items-center gap-1 font-label-sm text-label-sm text-primary">
+<span>Atajo: ⌥ + Space</span>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container-low p-space-lg rounded-xl flex flex-col justify-between hover:bg-surface-container transition-all group">
+<div class="space-y-space-md">
+<div class="w-12 h-12 rounded-lg bg-secondary/15 flex items-center justify-center text-secondary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-[24px]">hub</span>
+</div>
+<div class="space-y-space-xs">
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold">Todo conectado en un único lugar</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+              Grafo semántico interactivo que vincula prompts relacionados, notas contextuales, proyectos y fragmentos de código.
+            </p>
+</div>
+</div>
+<div class="pt-space-md flex items-center gap-1 font-label-sm text-label-sm text-secondary">
+<span>Árbol de grafos 3D</span>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface-container-low p-space-lg rounded-xl flex flex-col justify-between hover:bg-surface-container transition-all group">
+<div class="space-y-space-md">
+<div class="w-12 h-12 rounded-lg bg-tertiary-container/30 flex items-center justify-center text-tertiary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-[24px]">compare_arrows</span>
+</div>
+<div class="space-y-space-xs">
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold">Descubre qué modelo responde mejor</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+              Comparador multi-modelo lado a lado con benchmarking de calidad, velocidad de inferencia y coste exacto por token.
+            </p>
+</div>
+</div>
+<div class="pt-space-md flex items-center gap-1 font-label-sm text-label-sm text-tertiary">
+<span>Benchmarking en vivo</span>
+</div>
+</div>
+<!-- Card 4 -->
+<div class="bg-surface-container-low p-space-lg rounded-xl flex flex-col justify-between hover:bg-surface-container transition-all group">
+<div class="space-y-space-md">
+<div class="w-12 h-12 rounded-lg bg-primary-container/20 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-[24px]">troubleshoot</span>
+</div>
+<div class="space-y-space-xs">
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold">Aprovecha lo que ya has aprendido</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+              Búsqueda semántica instantánea potenciada por vectores que encuentra conceptos incluso si no recuerdas las palabras exactas.
+            </p>
+</div>
+</div>
+<div class="pt-space-md flex items-center gap-1 font-label-sm text-label-sm text-primary">
+<span>Búsqueda Vectorial HNSW</span>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 3: BEFORE / AFTER TRANSFORMATION SPOTLIGHT -->
+<section class="w-full bg-surface-container-lowest py-space-xl">
+<div class="max-w-[1280px] mx-auto px-gutter">
+<div class="text-center max-w-2xl mx-auto mb-space-xl space-y-space-xs">
+<span class="font-label-md text-label-md text-secondary tracking-widest uppercase font-semibold">Evolución de Flujo</span>
+<h2 class="font-headline-lg text-headline-md lg:text-headline-lg text-on-surface font-bold tracking-tight">
+          De conversaciones caóticas a un segundo cerebro estructurado
+        </h2>
+<p class="font-body-md text-body-md text-on-surface-variant">
+          Mira cómo cambia tu flujo diario cuando reemplazas el historial plano de chat por memoria contextual permanente.
+        </p>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-space-lg">
+<!-- Before Panel -->
+<div class="bg-surface-container-low rounded-xl p-space-lg flex flex-col space-y-space-md">
+<div class="flex items-center justify-between pb-space-xs">
+<div class="flex items-center gap-space-xs">
+<span class="w-3 h-3 rounded-full bg-error inline-block"></span>
+<span class="font-label-md text-label-md text-error font-semibold uppercase tracking-wider">Antes de Kimberlite</span>
+</div>
+<span class="font-label-sm text-label-sm text-outline">El caos común</span>
+</div>
+<div class="space-y-space-sm">
+<div class="p-space-sm rounded-lg bg-surface-container flex items-start gap-space-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-error text-[20px]">close</span>
+<div class="space-y-1">
+<span class="font-headline-sm text-body-md text-on-surface font-medium block">Prompts perdidos en 4 plataformas</span>
+<span class="font-body-sm text-body-sm">Pestañas infinitas abiertas en navegadores con respuestas geniales que nunca más vuelves a encontrar.</span>
+</div>
+</div>
+<div class="p-space-sm rounded-lg bg-surface-container flex items-start gap-space-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-error text-[20px]">close</span>
+<div class="space-y-1">
+<span class="font-headline-sm text-body-md text-on-surface font-medium block">Notas fragmentadas en Docs y Notion</span>
+<span class="font-body-sm text-body-sm">Copiar y pegar a mano sin contexto, perdiendo parámetros de temperatura o system prompts originales.</span>
+</div>
+</div>
+<div class="p-space-sm rounded-lg bg-surface-container flex items-start gap-space-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-error text-[20px]">close</span>
+<div class="space-y-1">
+<span class="font-headline-sm text-body-md text-on-surface font-medium block">Reescribir lo mismo cada semana</span>
+<span class="font-body-sm text-body-sm">Explicar una y otra vez tu contexto empresarial, stack tecnológico y directrices a la IA.</span>
+</div>
+</div>
+</div>
+</div>
+<!-- After Panel (With Kimberlite) -->
+<div class="bg-surface-container rounded-xl p-space-lg flex flex-col space-y-space-md shadow-xl relative overflow-hidden">
+<div class="absolute -right-16 -top-16 w-48 h-48 bg-primary/20 rounded-full blur-3xl pointer-events-none"></div>
+<div class="flex items-center justify-between pb-space-xs">
+<div class="flex items-center gap-space-xs">
+<span class="w-3 h-3 rounded-full bg-secondary inline-block"></span>
+<span class="font-label-md text-label-md text-secondary font-semibold uppercase tracking-wider">Con Kimberlite</span>
+</div>
+<span class="font-label-sm text-label-sm text-primary font-medium">Flujo Acelerado</span>
+</div>
+<div class="space-y-space-sm">
+<div class="p-space-sm rounded-lg bg-surface-container-high flex items-start gap-space-sm text-on-surface">
+<span class="material-symbols-outlined text-secondary text-[20px]">check_circle</span>
+<div class="space-y-1">
+<span class="font-headline-sm text-body-md text-on-surface font-medium block">Repositorio indexado y con control de versiones</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Historial semántico con variables automáticas, diffs de prompts y sincronización cloud en tiempo real.</span>
+</div>
+</div>
+<div class="p-space-sm rounded-lg bg-surface-container-high flex items-start gap-space-sm text-on-surface">
+<span class="material-symbols-outlined text-secondary text-[20px]">check_circle</span>
+<div class="space-y-1">
+<span class="font-headline-sm text-body-md text-on-surface font-medium block">Inyección de contexto con un click</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Exporta paquetes de contexto precompilados directamente a VSCode, Cursor o tu interfaz web favorita.</span>
+</div>
+</div>
+<div class="p-space-sm rounded-lg bg-surface-container-high flex items-start gap-space-sm text-on-surface">
+<span class="material-symbols-outlined text-secondary text-[20px]">check_circle</span>
+<div class="space-y-1">
+<span class="font-headline-sm text-body-md text-on-surface font-medium block">Biblioteca compartida con tu equipo técnico</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Tus ingenieros y redactores aprovechan las mejores cadenas de razonamiento ya validadas y probadas.</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 4: TESTIMONIALS & CASE STUDIES -->
+<section class="w-full max-w-[1280px] mx-auto px-gutter py-space-xl">
+<div class="text-center max-w-2xl mx-auto mb-space-xl space-y-space-xs">
+<span class="font-label-md text-label-md text-primary tracking-widest uppercase font-semibold">Testimonios Reales</span>
+<h2 class="font-headline-lg text-headline-md lg:text-headline-lg text-on-surface font-bold tracking-tight">
+        Aprobado por quienes construyen con IA a diario
+      </h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-space-md">
+<!-- Review 1 -->
+<div class="bg-surface-container-low p-space-lg rounded-xl flex flex-col justify-between space-y-space-md">
+<div class="space-y-space-sm">
+<div class="flex items-center text-primary">
+<span class="material-symbols-outlined text-[18px]">star</span>
+<span class="material-symbols-outlined text-[18px]">star</span>
+<span class="material-symbols-outlined text-[18px]">star</span>
+<span class="material-symbols-outlined text-[18px]">star</span>
+<span class="material-symbols-outlined text-[18px]">star</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+            "Antes tenía un Notion con más de 200 prompts desordenados. Con Kimberlite no solo los encuentro en segundos, sino que sé exactamente qué modelo genera menos alucinaciones para cada tarea."
+          </p>
+</div>
+<div class="flex items-center gap-space-sm pt-space-xs">
+<div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center font-headline-sm text-label-md text-primary font-bold">
+            AR
+          </div>
+<div>
+<span class="font-headline-sm text-body-sm text-on-surface font-semibold block">Alejandro Ramos</span>
+<span class="font-label-sm text-label-sm text-outline">Lead AI Architect en ScaleWave</span>
+</div>
+</div>
+</div>
+<!-- Review 2 -->
+<div class="bg-surface-container-low p-space-lg rounded-xl flex flex-col justify-between space-y-space-md">
+<div class="space-y-space-sm">
+<div class="flex items-center text-secondary">
+<span class="material-symbols-outlined text-[18px]">star</span>
+<span class="material-symbols-outlined text-[18px]">star</span>
+<span class="material-symbols-outlined text-[18px]">star</span>
+<span class="material-symbols-outlined text-[18px]">star</span>
+<span class="material-symbols-outlined text-[18px]">star</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+            "El comparador side-by-side nos ahorró semanas al evaluar entre Claude 3.5 y GPT-4o para nuestro pipeline de atención médica. La memoria de equipo es incomparable."
+          </p>
+</div>
+<div class="flex items-center gap-space-sm pt-space-xs">
+<div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center font-headline-sm text-label-md text-secondary font-bold">
+            MS
+          </div>
+<div>
+<span class="font-headline-sm text-body-sm text-on-surface font-semibold block">Marina Solana</span>
+<span class="font-label-sm text-label-sm text-outline">CTO &amp; Cofundadora de MedFlow AI</span>
+</div>
+</div>
+</div>
+<!-- Review 3 -->
+<div class="bg-surface-container-low p-space-lg rounded-xl flex flex-col justify-between space-y-space-md">
+<div class="space-y-space-sm">
+<div class="flex items-center text-tertiary">
+<span class="material-symbols-outlined text-[18px]">star</span>
+<span class="material-symbols-outlined text-[18px]">star</span>
+<span class="material-symbols-outlined text-[18px]">star</span>
+<span class="material-symbols-outlined text-[18px]">star</span>
+<span class="material-symbols-outlined text-[18px]">star</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+            "El atajo global para guardar respuestas mientras programo en Cursor es una joya. Es la primera herramienta que de verdad entiende el ritmo de trabajo de un dev de prompts."
+          </p>
+</div>
+<div class="flex items-center gap-space-sm pt-space-xs">
+<div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center font-headline-sm text-label-md text-tertiary font-bold">
+            DC
+          </div>
+<div>
+<span class="font-headline-sm text-body-sm text-on-surface font-semibold block">Daniel Castro</span>
+<span class="font-label-sm text-label-sm text-outline">Senior Prompt Engineer en Synthetix</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 5: FINAL IMPACT CTA BANNER -->
+<section class="w-full max-w-[1280px] mx-auto px-gutter pb-space-xl">
+<div class="relative rounded-2xl bg-gradient-to-b from-surface-container to-surface-container-lowest p-space-lg lg:p-space-xl overflow-hidden text-center flex flex-col items-center space-y-space-md shadow-2xl">
+<!-- Glow ambient backdrop inside card -->
+<div class="absolute -top-32 left-1/2 -translate-x-1/2 w-[500px] h-[300px] bg-primary-container/20 rounded-full blur-[100px] pointer-events-none"></div>
+<div class="space-y-space-xs max-w-2xl relative z-10">
+<span class="font-label-md text-label-md text-secondary tracking-widest uppercase font-semibold">Comienza en 2 minutos</span>
+<h2 class="font-headline-lg text-headline-md lg:text-headline-lg text-on-surface font-bold tracking-tight">
+          Empieza a construir tu memoria de IA hoy
+        </h2>
+<p class="font-body-lg text-body-md lg:text-body-lg text-on-surface-variant">
+          Únete a miles de profesionales que ya no dependen del historial de un chat para conservar su trabajo.
+        </p>
+</div>
+<div class="flex flex-col sm:flex-row items-center gap-space-sm pt-space-xs relative z-10 w-full sm:w-auto">
+<a class="w-full sm:w-auto inline-flex items-center justify-center gap-space-xs px-space-xl py-space-sm rounded-lg bg-primary-container text-on-primary-container font-headline-sm text-label-md font-bold shadow-[0_0_32px_rgba(160,120,255,0.5)] hover:shadow-[0_0_48px_rgba(160,120,255,0.8)] hover:bg-primary transition-all" data-path="registro" href="#">
+<span>Comenzar gratis — No requiere tarjeta</span>
+<span class="material-symbols-outlined text-[18px]">bolt</span>
+</a>
+</div>
+<div class="flex flex-wrap items-center justify-center gap-space-md pt-space-xs text-outline font-label-sm text-label-sm relative z-10">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-secondary text-[16px]">verified</span> Configuración en menos de 2 minutos
+        </span>
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-secondary text-[16px]">sync</span> Compatible con todos los modelos
+        </span>
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-secondary text-[16px]">shield</span> Encriptación AES-256 local
+        </span>
+</div>
+</div>
+</section>
+<!-- Interactive Client-side Script for Demo Feedback -->
+<script>
+    document.getElementById('trigger-demo')?.addEventListener('click', function() {
+      const workspace = document.querySelector('.bg-surface-container-lowest');
+      if (workspace) {
+        workspace.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        workspace.classList.add('scale-[1.01]');
+        setTimeout(() => workspace.classList.remove('scale-[1.01]'), 400);
+      }
+    });
+  </script>
+</div></main><footer class="w-full bg-surface-container-lowest border-t border-outline-variant/20 pt-space-xl pb-space-lg"><div class="max-w-[1280px] mx-auto px-gutter"><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-space-xl pb-space-xl border-b border-outline-variant/15"><div class="lg:col-span-2 space-y-space-md"><div class="flex items-center gap-space-sm"><img alt="Kimberlite Logo" class="h-7 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/ALJJyrCtNLQlLLnP44ecBGto5nm9D1mU7oWWK9JPlyqHxgBi1TU2i2-71tfpOvQ5UzoU6OeQUTxVGsF6K63S9iz1dSFSac229sHwqtXEGExzfV4huXxMiZmOrwqwTBhyP8Bps9nIMxBSxJVejfefO04h-W945rxWE-KsvfETpO1WvyVEbm24U1z1POi0yuWN-Rra3BC-KBht-C2K80w2tfb9CRGFoWN8eDcEr-wg9GoGCKfy"/><span class="font-headline-sm text-headline-sm text-on-surface font-bold">Kimberlite</span></div><p class="font-body-md text-body-md text-on-surface-variant max-w-sm">Infraestructura de orquestación, memoria y biblioteca contextual de prompts para equipos avanzados de IA y desarrolladores de software.</p><div class="inline-flex items-center gap-space-xs px-space-sm py-space-xs rounded-full bg-surface-container border border-outline-variant/30 text-label-sm font-label-sm text-secondary"><span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-secondary"></span></span>Todos los sistemas operativos</div></div><div class="space-y-space-sm"><span class="font-label-md text-label-md text-on-surface uppercase tracking-wider font-semibold block">Producto</span><ul class="space-y-space-xs font-body-sm text-body-sm text-on-surface-variant"><li><a class="hover:text-primary transition-colors" data-path="biblioteca" href="#">Biblioteca</a></li><li><a class="hover:text-primary transition-colors" data-path="prompts" href="#">Prompts</a></li><li><a class="hover:text-primary transition-colors" data-path="comparativa" href="#">Comparativa</a></li><li><a class="hover:text-primary transition-colors" data-path="integraciones" href="#">Integraciones</a></li></ul></div><div class="space-y-space-sm"><span class="font-label-md text-label-md text-on-surface uppercase tracking-wider font-semibold block">Recursos</span><ul class="space-y-space-xs font-body-sm text-body-sm text-on-surface-variant"><li><a class="hover:text-primary transition-colors" data-path="docs" href="#">Docs</a></li><li><a class="hover:text-primary transition-colors" data-path="comunidad" href="#">Comunidad</a></li><li><a class="hover:text-primary transition-colors" data-path="blog" href="#">Blog</a></li><li><a class="hover:text-primary transition-colors" data-path="guias-ia" href="#">Guías IA</a></li></ul></div><div class="space-y-space-sm"><span class="font-label-md text-label-md text-on-surface uppercase tracking-wider font-semibold block">Newsletter</span><p class="font-body-sm text-body-sm text-on-surface-variant">Recibe novedades quincenales sobre técnicas de prompt engineering y updates.</p><form class="space-y-space-xs"><div class="relative"><input class="w-full bg-surface-container border border-outline-variant/40 rounded-lg px-space-sm py-space-xs font-body-sm text-body-sm text-on-surface placeholder:text-outline focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary transition-all" placeholder="tu@email.com" type="email"/><button class="absolute right-1 top-1 bottom-1 px-space-sm rounded bg-primary-container text-on-primary-container font-label-sm text-label-sm font-semibold hover:bg-primary transition-all flex items-center justify-center" type="button"><span class="material-symbols-outlined text-[16px]">send</span></button></div><span class="font-label-sm text-label-sm text-outline block">Cero spam. Cancela en cualquier momento.</span></form></div></div><div class="pt-space-lg flex flex-col md:flex-row items-center justify-between gap-space-md"><div class="flex flex-wrap items-center gap-space-md font-body-sm text-body-sm text-on-surface-variant"><span>© 2025 Kimberlite Technologies Inc.</span><a class="hover:text-on-surface transition-colors" data-path="privacidad" href="#">Privacidad</a><a class="hover:text-on-surface transition-colors" data-path="terminos" href="#">Términos</a><a class="hover:text-on-surface transition-colors" data-path="manifiesto" href="#">Manifiesto</a></div><div class="flex items-center gap-space-sm text-on-surface-variant"><a aria-label="Terminal de código" class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center hover:text-secondary hover:bg-surface-container-high transition-all" href="#"><span class="material-symbols-outlined text-[18px]">terminal</span></a><a aria-label="Comunidad" class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center hover:text-secondary hover:bg-surface-container-high transition-all" href="#"><span class="material-symbols-outlined text-[18px]">forum</span></a><a aria-label="Red global" class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center hover:text-secondary hover:bg-surface-container-high transition-all" href="#"><span class="material-symbols-outlined text-[18px]">hub</span></a></div></div></div></footer></body></html>

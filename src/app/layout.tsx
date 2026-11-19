@@ -14,8 +14,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Kimberlite",
-  description: "Your data, refined & resilient.",
+  title: "Kimberlite — Tu biblioteca de prompts, notas y Skills",
+  description:
+    "Guarda los prompts que funcionan, convierte cada charla con IA en una nota con contexto y crea Skills reutilizables para no volver a empezar de cero.",
   other: {
     "color-scheme": "dark",
   },
