@@ -476,7 +476,8 @@
 
 .kl-nav-item:focus-visible,
 .kl-btn:focus-visible,
-.kl-icon-btn:focus-visible {
+.kl-icon-btn:focus-visible,
+.kl-nav-action:focus-visible {
   outline: 2px solid var(--kld-secondary);
   outline-offset: 2px;
 }
@@ -488,7 +489,8 @@
   .kl-btn,
   .kl-icon-btn,
   .kl-input,
-  .kl-card--interactive {
+  .kl-card--interactive,
+  .kl-nav-action {
     transition: none;
   }
 
@@ -1041,6 +1043,178 @@
   .kl-panel--interactive,
   .kl-winner-btn,
   .kl-tag-remove {
+    transition: none;
+  }
+}
+
+/* ==========================================================================
+   FASE 4 — Toasts, confirmación destructiva y acabados
+   --------------------------------------------------------------------------
+   Cierra el restyle: piel de los toasts de react-hot-toast, icono del
+   diálogo de confirmación, scrollbars finas con los grises de la paleta,
+   ::selection violeta y los controles nativos que aún salían con el aspecto
+   del sistema (inputs type="date").
+   ========================================================================== */
+
+/* -------------------------------- Toasts -------------------------------- */
+/* Cada toast se pinta con una clase de goober (una sola clase, inyectada en
+   runtime al final del <head>). El contenedor recibe .kl-portal desde
+   AppToaster.tsx, así que el prefijo sube la especificidad a (0,2,0) y gana
+   sin depender del orden de inyección. Sin tocar max-width ni padding:
+   el apilado y las dimensiones siguen midiéndose igual que antes. */
+
+.kl-portal .kl-toast {
+  background: var(--kld-surface-container);
+  color: var(--kld-on-surface);
+  border: 1px solid rgba(73, 68, 84, 0.55);
+  border-radius: 12px;
+  font-family: var(--kld-font-body);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.45;
+  box-shadow:
+    0 18px 40px -18px rgba(0, 0, 0, 0.85),
+    var(--kld-glow-soft);
+}
+
+/* Icono del estado informativo (toast sin tipo). En las pantallas que no
+   cargan este bundle hereda el color del toast, como el resto de iconos. */
+.kl-portal .kl-toast-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--kld-primary);
+}
+
+/* ---------------------------- Selección de texto ------------------------ */
+/* Violeta de la paleta sobre la superficie del shell: #e3e1e9 sobre el
+   violeta mezclado ≈ 6.7:1, por encima de AA. */
+
+.kl-dash ::selection,
+.kl-portal ::selection {
+  background: rgba(160, 120, 255, 0.45);
+  color: var(--kld-on-surface);
+}
+
+/* ------------------------------ Scrollbars ------------------------------ */
+/* globals.css ya deja la app entera con `scrollbar-width: thin`, así que aquí
+   se repite el mismo valor (geometría idéntica, cero reflow) y sólo cambia el
+   color, que pasa de los grises zinc a los de la paleta.
+   - Chrome/Edge: pintan con las propiedades estándar (thin + thumb nuevo).
+   - Firefox:                     ídem (sólo soporta las estándar).
+   - Safari: no soporta las estándar, así que usan las reglas webkit; por eso
+     se mantiene la métrica de 5px de globals.css, cambiando sólo el color.
+   Las reglas usan dos clases (0,2,0) para ganar a `*` / `.dark *` de
+   globals.css y a `.dark ::-webkit-scrollbar-thumb`. */
+
+.kl-dash :is(.kl-dash-sidebar, .kl-dash-canvas, .kl-modal),
+.kl-dash :is(.kl-dash-sidebar, .kl-dash-canvas, .kl-modal) *,
+.kl-portal .kl-modal,
+.kl-portal .kl-modal * {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(149, 142, 160, 0.35) transparent;
+}
+
+.kl-dash :is(.kl-dash-sidebar, .kl-dash-canvas, .kl-modal)::-webkit-scrollbar,
+.kl-dash :is(.kl-dash-sidebar, .kl-dash-canvas, .kl-modal) *::-webkit-scrollbar,
+.kl-portal .kl-modal::-webkit-scrollbar,
+.kl-portal .kl-modal *::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+.kl-dash
+  :is(.kl-dash-sidebar, .kl-dash-canvas, .kl-modal)::-webkit-scrollbar-thumb,
+.kl-dash
+  :is(.kl-dash-sidebar, .kl-dash-canvas, .kl-modal)
+  *::-webkit-scrollbar-thumb,
+.kl-portal .kl-modal::-webkit-scrollbar-thumb,
+.kl-portal .kl-modal *::-webkit-scrollbar-thumb {
+  background: rgba(149, 142, 160, 0.35);
+  border-radius: 9999px;
+}
+
+.kl-dash
+  :is(
+    .kl-dash-sidebar,
+    .kl-dash-canvas,
+    .kl-modal
+  )::-webkit-scrollbar-thumb:hover,
+.kl-dash
+  :is(.kl-dash-sidebar, .kl-dash-canvas, .kl-modal)
+  *::-webkit-scrollbar-thumb:hover,
+.kl-portal .kl-modal::-webkit-scrollbar-thumb:hover,
+.kl-portal .kl-modal *::-webkit-scrollbar-thumb:hover {
+  background: rgba(149, 142, 160, 0.6);
+}
+
+/* -------------------------- Diálogo de confirmación --------------------- */
+/* Caja del icono de aviso: mismo rojo de la paleta que .kl-btn--danger. */
+
+.kl-confirm-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  margin-bottom: 0.875rem;
+  border-radius: var(--kld-radius);
+  border: 1px solid rgba(255, 180, 171, 0.35);
+  background: rgba(255, 180, 171, 0.1);
+  color: var(--kld-error);
+}
+
+/* --------------------------- Controles nativos -------------------------- */
+/* El icono del calendario de los inputs de fecha lo pinta el navegador; con
+   color-scheme dark y algo de opacidad queda integrado en el sidebar. No se
+   toca el padding: el campo mide lo mismo que un .kl-input--sm de texto. */
+
+.kl-input[type="date"] {
+  color-scheme: dark;
+}
+
+.kl-input[type="date"]::-webkit-calendar-picker-indicator {
+  opacity: 0.55;
+  cursor: pointer;
+  transition: opacity 180ms ease;
+}
+
+.kl-input[type="date"]::-webkit-calendar-picker-indicator:hover {
+  opacity: 0.9;
+}
+
+/* --------------------------- Utilidades nuevas -------------------------- */
+
+/* Acción discreta del sidebar ("Limpiar fechas"): 10px mono, la misma caja
+   que el antiguo text-[10px]/font-medium en sans. */
+.kl-nav-action {
+  font-family: var(--kld-font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--kld-outline);
+  transition: color 180ms ease;
+}
+
+.kl-nav-action:hover {
+  color: var(--kld-on-surface-variant);
+}
+
+/* Separador vertical del header (1px; el alto lo pone la utilidad h-6). */
+.kl-vr {
+  width: 1px;
+  background-color: rgba(73, 68, 84, 0.45);
+}
+
+/* Ayuda bajo un campo (11px, misma caja que el antiguo text-[11px]). */
+.kl-field-hint {
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--kld-outline);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kl-input[type="date"]::-webkit-calendar-picker-indicator {
     transition: none;
   }
 }

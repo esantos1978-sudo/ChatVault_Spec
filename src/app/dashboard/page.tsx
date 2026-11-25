@@ -24,6 +24,9 @@ import { PromptCardSkeleton } from "@/components/PromptCardSkeleton";
 import { SkillCardSkeleton } from "@/components/SkillCardSkeleton";
 import { ArenaCardSkeleton } from "@/components/ArenaCardSkeleton";
 
+// ✅ Confirmación destructiva con la piel del dashboard (sustituye a confirm())
+import { ConfirmDialog } from "@/components/ConfirmDialog";
+
 // ✅ Modales cargados bajo demanda (solo cuando se abren)
 const NoteModal = dynamic(() => import("@/components/NoteModal"), {
   ssr: false,
@@ -216,6 +219,33 @@ export default function Dashboard() {
   const [promptDetailModalOpen, setPromptDetailModalOpen] = useState(false);
   const [selectedPromptForDetail, setSelectedPromptForDetail] =
     useState<Prompt | null>(null);
+
+  // ==================== DIÁLOGO DE CONFIRMACIÓN ====================
+  // Sustituye a window.confirm(): los handlers de borrado esperan la respuesta
+  // y conservan su lógica intacta. Sólo puede haber uno abierto a la vez.
+  const [confirmDialog, setConfirmDialog] = useState<
+    | {
+        title: string;
+        message: string;
+        confirmLabel?: string;
+        resolve: (confirmed: boolean) => void;
+      }
+    | null
+  >(null);
+
+  const askConfirm = (options: {
+    title: string;
+    message: string;
+    confirmLabel?: string;
+  }) =>
+    new Promise<boolean>((resolve) => {
+      setConfirmDialog({ ...options, resolve });
+    });
+
+  const resolveConfirm = (confirmed: boolean) => {
+    confirmDialog?.resolve(confirmed);
+    setConfirmDialog(null);
+  };
 
   // ==================== OBTENER ETIQUETAS POR SECCIÓN ====================
   // ✅ SOLO UNA VEZ DEFINIDAS
@@ -516,7 +546,12 @@ export default function Dashboard() {
   };
 
   const handleDeleteArenaComparison = async (id: string) => {
-    if (!confirm("¿Eliminar esta comparación?")) return;
+    const confirmed = await askConfirm({
+      title: "Eliminar comparación",
+      message: "¿Eliminar esta comparación?",
+      confirmLabel: "Eliminar",
+    });
+    if (!confirmed) return;
     try {
       const { error } = await supabase
         .from("arena_comparisons")
@@ -717,7 +752,12 @@ export default function Dashboard() {
 
   // ==================== FUNCIONES CRUD PROMPTS ====================
   const handleDeletePrompt = async (id: string) => {
-    if (!confirm("¿Estás seguro de que quieres eliminar este prompt?")) return;
+    const confirmed = await askConfirm({
+      title: "Eliminar prompt",
+      message: "¿Estás seguro de que quieres eliminar este prompt?",
+      confirmLabel: "Eliminar",
+    });
+    if (!confirmed) return;
 
     try {
       const { error } = await supabase.from("prompts").delete().eq("id", id);
@@ -827,7 +867,12 @@ export default function Dashboard() {
 
   // ==================== FUNCIONES CRUD SKILLS ====================
   const handleDeleteSkill = async (id: string) => {
-    if (!confirm("¿Estás seguro de que quieres eliminar este skill?")) return;
+    const confirmed = await askConfirm({
+      title: "Eliminar skill",
+      message: "¿Estás seguro de que quieres eliminar este skill?",
+      confirmLabel: "Eliminar",
+    });
+    if (!confirmed) return;
 
     try {
       const { error } = await supabase.from("skills").delete().eq("id", id);
@@ -875,7 +920,12 @@ export default function Dashboard() {
   };
 
   const handleDeleteNote = async (id: string) => {
-    if (!confirm("¿Estás seguro de que quieres eliminar esta nota?")) return;
+    const confirmed = await askConfirm({
+      title: "Eliminar nota",
+      message: "¿Estás seguro de que quieres eliminar esta nota?",
+      confirmLabel: "Eliminar",
+    });
+    if (!confirmed) return;
     try {
       const { error } = await supabase.from("notes").delete().eq("id", id);
       if (error) throw error;
@@ -887,12 +937,12 @@ export default function Dashboard() {
   };
 
   const handleDeleteTag = async (tagToDelete: string) => {
-    if (
-      !confirm(
-        `¿Eliminar la etiqueta "#${tagToDelete}" de todas las ${activeTab}?`,
-      )
-    )
-      return;
+    const confirmed = await askConfirm({
+      title: "Eliminar etiqueta",
+      message: `¿Eliminar la etiqueta "#${tagToDelete}" de todas las ${activeTab}?`,
+      confirmLabel: "Eliminar",
+    });
+    if (!confirmed) return;
 
     try {
       if (activeTab === "notes") {
@@ -1185,7 +1235,8 @@ export default function Dashboard() {
                     </button>
                     <button
                       onClick={() => handleDeleteTag(t)}
-                      className="opacity-0 group-hover:opacity-100 p-1 mr-1 text-zinc-600 hover:text-red-400 transition-all"
+                      className="opacity-0 group-hover:opacity-100 focus-visible:opacity-100 p-1 mr-1 kl-tag-remove transition-all"
+                      aria-label={`Eliminar etiqueta ${t}`}
                     >
                       <span className="material-symbols-outlined text-[14px]">
                         close
@@ -1225,7 +1276,8 @@ export default function Dashboard() {
                     </button>
                     <button
                       onClick={() => handleDeleteTag(t)}
-                      className="opacity-0 group-hover:opacity-100 p-1 mr-1 text-zinc-600 hover:text-red-400 transition-all"
+                      className="opacity-0 group-hover:opacity-100 focus-visible:opacity-100 p-1 mr-1 kl-tag-remove transition-all"
+                      aria-label={`Eliminar etiqueta ${t}`}
                     >
                       <span className="material-symbols-outlined text-[14px]">
                         close
@@ -1262,7 +1314,7 @@ export default function Dashboard() {
                     </button>
                     <button
                       onClick={() => handleDeleteTag(t)}
-                      className="opacity-0 group-hover:opacity-100 p-1 mr-1 text-zinc-600 hover:text-red-400 transition-all"
+                      className="opacity-0 group-hover:opacity-100 focus-visible:opacity-100 p-1 mr-1 kl-tag-remove transition-all"
                       aria-label={`Eliminar etiqueta ${t}`}
                     >
                       <span className="material-symbols-outlined text-[14px]">
@@ -1355,7 +1407,7 @@ export default function Dashboard() {
                     setStartDate("");
                     setEndDate("");
                   }}
-                  className="w-full text-left text-[10px] text-zinc-600 hover:text-zinc-400 font-medium transition-colors"
+                  className="kl-nav-action w-full text-left"
                 >
                   Limpiar fechas
                 </button>
@@ -1526,7 +1578,7 @@ export default function Dashboard() {
               </button>
             </div>
 
-            <div className="h-6 w-px bg-zinc-200/50 dark:bg-zinc-800/40 hidden md:block" />
+            <div className="kl-vr h-6 hidden md:block" />
 
             {/* Botón Nueva nota */}
             <button
@@ -2073,6 +2125,16 @@ export default function Dashboard() {
         isOpen={promptDetailModalOpen}
         onClose={() => setPromptDetailModalOpen(false)}
         prompt={selectedPromptForDetail}
+      />
+
+      {/* ✅ CONFIRMACIÓN DESTRUCTIVA (sustituye a window.confirm) */}
+      <ConfirmDialog
+        isOpen={confirmDialog !== null}
+        title={confirmDialog?.title ?? ""}
+        message={confirmDialog?.message ?? ""}
+        confirmLabel={confirmDialog?.confirmLabel}
+        onConfirm={() => resolveConfirm(true)}
+        onCancel={() => resolveConfirm(false)}
       />
     </div>
   );

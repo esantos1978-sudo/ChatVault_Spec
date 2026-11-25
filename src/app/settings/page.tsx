@@ -212,7 +212,7 @@ export default function SettingsPage() {
                 className={`${inputClass} cursor-not-allowed opacity-60`}
                 tabIndex={-1}
               />
-              <p className="mt-1 text-[11px] text-zinc-600">
+              <p className="kl-field-hint mt-1">
                 El correo electrónico no se puede modificar actualmente.
               </p>
             </div>
