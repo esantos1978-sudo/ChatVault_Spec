@@ -116,7 +116,7 @@ Optimizaciones aplicadas para mejorar el rendimiento Lighthouse y la accesibilid
 
 - **Hero atractivo** con logo Kimberlite grande, eslogan "The rock where diamonds are", subtítulo y botones CTA.
 - **Sección "Enterprise Grade"** con features destacadas (E2E Encrypted, Zero-Knowledge, Your Knowledge Your Control).
-- **Footer** limpio y profesional con enlaces a Privacy Policy, Terms y Security Audit.
+- **Footer** limpio y profesional con enlaces a las páginas legales: Privacidad (`/privacidad`) y Términos (`/terminos`).
 - **Modo oscuro** integrado que respeta la preferencia del sistema operativo.
 
 ### 🔐 Autenticación de usuarios
@@ -322,6 +322,10 @@ El botón "Continuar con Google" necesita tres ajustes que viven **fuera** del r
 
 El retorno aterriza en `/auth/callback`, que es una **página de cliente**: la sesión de Supabase se guarda en el navegador (`localStorage`) y el verificador PKCE vive ahí, por lo que el canje del `code` (`exchangeCodeForSession`) tiene que ocurrir en el navegador y no en un Route Handler. Si el canje falla, la app vuelve a `/?auth=login` con el motivo del error en un toast.
 
+4. **Google Cloud Console** → *Pantalla de consentimiento OAuth → Información de la app*: al publicar la app en modo **In production** Google exige una URL pública de política de privacidad. Usa `https://tu-dominio.com/privacidad`; los términos están en `https://tu-dominio.com/terminos`.
+
+Las dos páginas legales son **Server Components estáticos** (`src/app/privacidad/page.tsx` y `src/app/terminos/page.tsx`): no consultan Supabase ni piden sesión, así que Google puede rastrearlas sin credenciales. El email de contacto y la fecha de actualización viven en `src/lib/legal.ts`.
+
 ### Iniciar en desarrollo
 
 ```bash
@@ -347,6 +351,10 @@ Kimberlite/
 │   │   │   └── page.tsx                # Dashboard con Notas, Prompts y Arena
 │   │   ├── settings/
 │   │   │   └── page.tsx                # Pantalla de Configuración (cuenta, seguridad, app)
+│   │   ├── privacidad/
+│   │   │   └── page.tsx                # Política de Privacidad (estática, pública)
+│   │   ├── terminos/
+│   │   │   └── page.tsx                # Términos de Servicio (estática, pública)
 │   │   ├── layout.tsx                  # Layout raíz con fuentes Geist + Toaster + Material Symbols
 │   │   ├── page.tsx                    # Landing page + lógica de autenticación
 │   │   └── globals.css                 # Estilos globales, animaciones, scroll premium, kimberlite-gradient
@@ -400,6 +408,8 @@ Kimberlite/
 | `src/app/auth/callback/`       | Ruta de callback OAuth para manejo de sesión post-autenticación y recovery de contraseña.              |
 | `src/app/auth/reset-password/` | Página de restablecimiento de contraseña con flujo completo de Supabase.                               |
 | `src/app/dashboard/`           | Dashboard principal con tabs de Notas, Prompts y Arena, sidebar responsive con filtros y estadísticas. |
+| `src/app/privacidad/`          | Política de Privacidad estática y pública (URL que Google exige al publicar la app OAuth).             |
+| `src/app/terminos/`            | Términos de Servicio estáticos y públicos, enlazados también desde el footer de la landing.            |
 | `src/components/`              | Componentes React atómicos y reutilizables (autenticación, tarjetas, modales, arena, renderizado).     |
 | `src/lib/`                     | Lógica compartida: cliente de Supabase, helpers, utilidades.                                           |
 | `supabase/migrations/`         | Migraciones SQL versionadas para la base de datos PostgreSQL.                                          |

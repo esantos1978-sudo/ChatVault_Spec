@@ -613,6 +613,20 @@ export default function LandingPage() {
               © {new Date().getFullYear()} Kimberlite. Hecho para quienes
               trabajan con IA todos los días.
             </p>
+            <nav aria-label="Legal" className="flex items-center gap-5">
+              <Link
+                href="/privacidad"
+                className="transition-colors hover:text-[var(--kl-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--kl-secondary)]"
+              >
+                Privacidad
+              </Link>
+              <Link
+                href="/terminos"
+                className="transition-colors hover:text-[var(--kl-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--kl-secondary)]"
+              >
+                Términos
+              </Link>
+            </nav>
             <span>Obsidian Lumina</span>
           </div>
         </div>
