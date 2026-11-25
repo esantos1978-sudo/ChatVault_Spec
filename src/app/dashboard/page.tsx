@@ -793,8 +793,19 @@ export default function Dashboard() {
 
   // ==================== HANDLE SUBMIT SKILLS ====================
   const handleSkillSubmit = async () => {
-    if (!skillTitle.trim() || !skillContent.trim()) {
-      toast.error("Por favor, completa el título y las instrucciones.");
+    const title = (skillTitle ?? "").trim();
+    const content = (skillContent ?? "").trim();
+
+    // Red de seguridad: el modal valida antes, pero nunca se avisa de un campo
+    // que sí está relleno.
+    if (!title || !content) {
+      toast.error(
+        !title && !content
+          ? "Añade un título y las instrucciones del skill."
+          : !title
+            ? "Añade un título al skill."
+            : "Añade las instrucciones del skill.",
+      );
       return;
     }
 
@@ -805,10 +816,10 @@ export default function Dashboard() {
       );
 
       const skillData = {
-        title: skillTitle.trim(),
-        description: skillDescription.trim() || null,
-        content: skillContent.trim(),
-        category: skillCategory.trim() || "General",
+        title,
+        description: (skillDescription ?? "").trim() || null,
+        content,
+        category: (skillCategory ?? "").trim() || "General",
         tags: skillTags.length > 0 ? skillTags : null,
         user_id: user.id,
       };
@@ -1558,28 +1569,7 @@ export default function Dashboard() {
           </div>
 
           {/* Botones de acción */}
-          <div className="flex items-center gap-2 md:gap-5 shrink-0">
-            <div className="flex items-center gap-1">
-              <button
-                className="kl-icon-btn"
-                aria-label="Notificaciones"
-              >
-                <span className="material-symbols-outlined text-[18px]">
-                  notifications
-                </span>
-              </button>
-              <button
-                className="kl-icon-btn"
-                aria-label="Ayuda"
-              >
-                <span className="material-symbols-outlined text-[18px]">
-                  help
-                </span>
-              </button>
-            </div>
-
-            <div className="kl-vr h-6 hidden md:block" />
-
+          <div className="flex items-center gap-2 shrink-0">
             {/* Botón Nueva nota */}
             <button
               onClick={() => {

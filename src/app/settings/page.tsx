@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { supabase } from "@/lib/supabaseClient";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
@@ -176,6 +177,16 @@ export default function SettingsPage() {
       <div className="mx-auto max-w-2xl px-6 py-12 md:py-16">
         {/* ==================== CABECERA ==================== */}
         <header className="mb-14">
+          <Link
+            href="/dashboard"
+            className="kl-btn kl-btn--sm kl-btn--ghost -ml-3 mb-6"
+          >
+            <span className="material-symbols-outlined text-[16px]">
+              arrow_back
+            </span>
+            Volver al dashboard
+          </Link>
+
           <p className="kl-eyebrow mb-2">Kimberlite</p>
           <h1 className="kl-page-title text-2xl tracking-tight">
             Configuración
@@ -192,23 +203,31 @@ export default function SettingsPage() {
           <div className="space-y-5">
             {/* Nombre */}
             <div>
-              <label className={labelClass}>Nombre</label>
+              <label htmlFor="settings-name" className={labelClass}>
+                Nombre
+              </label>
               <input
+                id="settings-name"
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Tu nombre"
+                autoComplete="name"
                 className={inputClass}
               />
             </div>
 
             {/* Correo electrónico (solo lectura) */}
             <div>
-              <label className={labelClass}>Correo electrónico</label>
+              <label htmlFor="settings-email" className={labelClass}>
+                Correo electrónico
+              </label>
               <input
+                id="settings-email"
                 type="email"
                 value={email}
                 readOnly
+                autoComplete="email"
                 className={`${inputClass} cursor-not-allowed opacity-60`}
                 tabIndex={-1}
               />
@@ -244,36 +263,51 @@ export default function SettingsPage() {
           <div className="space-y-5">
             {/* Contraseña actual */}
             <div>
-              <label className={labelClass}>Contraseña actual</label>
+              <label htmlFor="settings-current-password" className={labelClass}>
+                Contraseña actual
+              </label>
               <input
+                id="settings-current-password"
                 type="password"
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
                 placeholder="••••••••"
+                autoComplete="current-password"
                 className={inputClass}
               />
             </div>
 
             {/* Nueva contraseña */}
             <div>
-              <label className={labelClass}>Nueva contraseña</label>
+              <label htmlFor="settings-new-password" className={labelClass}>
+                Nueva contraseña
+              </label>
               <input
+                id="settings-new-password"
                 type="password"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 placeholder="••••••••"
+                autoComplete="new-password"
                 className={inputClass}
               />
+              <p className="kl-field-hint mt-1">
+                Mínimo 6 caracteres.
+              </p>
             </div>
 
             {/* Confirmar nueva contraseña */}
             <div>
-              <label className={labelClass}>Confirmar nueva contraseña</label>
+              <label htmlFor="settings-confirm-password" className={labelClass}>
+                Confirmar nueva contraseña
+              </label>
               <input
+                id="settings-confirm-password"
                 type="password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="••••••••"
+                autoComplete="new-password"
                 className={inputClass}
               />
             </div>
@@ -363,10 +397,11 @@ export default function SettingsPage() {
         </section>
 
         {/* ==================== CERRAR SESIÓN ==================== */}
-        <section className="mt-6">
+        <section className="mt-8">
+          <div className="kl-divider mb-6" />
           <button
             onClick={handleLogout}
-            className="kl-nav-item kl-nav-item--muted justify-start"
+            className="kl-btn kl-btn--ghost -ml-3"
           >
             <span className="material-symbols-outlined text-[18px]">
               logout

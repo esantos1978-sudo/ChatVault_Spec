@@ -308,6 +308,20 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=tu-anon-key-aqui
 
 > **🚨 ADVERTENCIA CRÍTICA:** El archivo `.env.local` contiene credenciales sensibles de tu proyecto. **NUNCA** lo subas a Git. Este proyecto ya lo tiene incluido en `.gitignore`, pero asegúrate de **no forzar su inclusión** con `git add --force` o `git commit` con la bandera `--no-verify`. Si las credenciales se filtran, cualquier persona podría acceder a tu base de datos.
 
+### 🔑 Inicio de sesión con Google (configuración externa)
+
+El botón "Continuar con Google" necesita tres ajustes que viven **fuera** del repositorio. Las URLs deben coincidir exactamente con el origen donde corre la app (`http://localhost:3000` en desarrollo y tu dominio en producción):
+
+1. **Google Cloud Console** → *APIs y servicios → Credenciales* → cliente OAuth 2.0 de tipo *Aplicación web*:
+   - `Authorized JavaScript origins`: `http://localhost:3000` y `https://tu-dominio.com`
+   - `Authorized redirect URIs`: `https://<tu-proyecto>.supabase.co/auth/v1/callback` (la URL de Supabase, **no** la de la app).
+2. **Supabase Dashboard** → *Authentication → Providers → Google*: activa el proveedor y pega el *Client ID* y el *Client Secret* de Google.
+3. **Supabase Dashboard** → *Authentication → URL Configuration*:
+   - `Site URL`: `http://localhost:3000` (o tu dominio de producción).
+   - `Redirect URLs`: `http://localhost:3000/auth/callback` y, además, la variante de producción (`https://tu-dominio.com/auth/callback`).
+
+El retorno aterriza en `/auth/callback`, que es una **página de cliente**: la sesión de Supabase se guarda en el navegador (`localStorage`) y el verificador PKCE vive ahí, por lo que el canje del `code` (`exchangeCodeForSession`) tiene que ocurrir en el navegador y no en un Route Handler. Si el canje falla, la app vuelve a `/?auth=login` con el motivo del error en un toast.
+
 ### Iniciar en desarrollo
 
 ```bash
@@ -326,7 +340,7 @@ Kimberlite/
 │   ├── app/                            # Rutas y páginas (App Router de Next.js)
 │   │   ├── auth/
 │   │   │   ├── callback/
-│   │   │   │   └── route.ts            # Callback OAuth y recovery (manejo de sesión post-autenticación)
+│   │   │   │   └── page.tsx            # Callback OAuth y recovery (canjea la sesión en el navegador)
 │   │   │   └── reset-password/
 │   │   │       └── page.tsx            # Página de restablecimiento de contraseña
 │   │   ├── dashboard/

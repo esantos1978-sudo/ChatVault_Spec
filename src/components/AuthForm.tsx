@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { supabase } from "@/lib/supabaseClient";
@@ -21,6 +21,13 @@ const getErrorMessage = (error: unknown) =>
   error instanceof Error
     ? error.message
     : "Algo salió mal. Inténtalo de nuevo.";
+
+/* Códigos de error de Supabase/OAuth con un texto propio; el resto se muestra
+   tal cual para poder diagnosticar la configuración del proveedor. */
+const AUTH_ERROR_MESSAGES: Record<string, string> = {
+  access_denied: "Has cancelado el inicio de sesión con Google.",
+  server_error: "Supabase no pudo completar el inicio de sesión con Google.",
+};
 
 export default function AuthForm({
   onAuth,
@@ -100,6 +107,34 @@ export default function AuthForm({
   const handleGitHubLogin = async () => {
     toast("Inicio de sesión con GitHub próximamente.");
   };
+
+  // ==================== ERRORES DEVUELTOS POR SUPABASE ====================
+  // El callback de OAuth/recuperación vuelve aquí con ?error=... para que el
+  // fallo sea visible en lugar de rebotar al login sin explicación.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get("error_code") || params.get("error");
+    const description = params.get("error_description");
+    if (!code && !description) return;
+
+    toast.error(
+      (code && AUTH_ERROR_MESSAGES[code]) ||
+        description ||
+        code ||
+        "No se pudo completar el inicio de sesión.",
+    );
+
+    // Se limpia el error de la URL para que recargar no repita el aviso.
+    params.delete("error");
+    params.delete("error_code");
+    params.delete("error_description");
+    const query = params.toString();
+    window.history.replaceState(
+      null,
+      "",
+      `${window.location.pathname}${query ? `?${query}` : ""}`,
+    );
+  }, []);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-zinc-950 p-4 relative overflow-hidden">

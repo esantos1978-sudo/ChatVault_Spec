@@ -312,6 +312,17 @@
     var(--kld-glow-soft);
 }
 
+/* Campo con error de validación: borde y foco en el tono de error del sistema */
+.kl-input--error,
+.kl-input--error:hover {
+  border-color: rgba(255, 180, 171, 0.55);
+}
+
+.kl-input--error:focus {
+  border-color: rgba(255, 180, 171, 0.8);
+  box-shadow: 0 0 0 3px rgba(255, 180, 171, 0.14);
+}
+
 /* Hueco para el icono absoluto de la búsqueda del header */
 .kl-input--search {
   padding-left: 2.5rem;
@@ -1211,6 +1222,11 @@
   font-size: 11px;
   line-height: 1.5;
   color: var(--kld-outline);
+}
+
+/* Mismo hueco que .kl-field-hint pero en el tono de error del sistema. */
+.kl-field-hint--error {
+  color: var(--kld-error);
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -238,6 +238,26 @@ export default function SkillModal({
   setSelectedSuggestion,
   editingId,
 }: SkillModalProps) {
+  /* Validación de campos obligatorios en el propio formulario: los mensajes se
+     pintan junto al campo que falta y nunca se avisa de un campo ya relleno. */
+  const [errors, setErrors] = useState<{ title?: string; content?: string }>({});
+  const titleRef = useRef<HTMLInputElement>(null);
+  const contentRef = useRef<HTMLTextAreaElement>(null);
+  const titleErrorRef = useRef<HTMLParagraphElement>(null);
+  const contentErrorRef = useRef<HTMLParagraphElement>(null);
+
+  // Lleva el foco al primer campo que falta y deja su aviso a la vista, por
+  // encima del pie fijo del modal.
+  useEffect(() => {
+    if (errors.title) {
+      titleRef.current?.focus();
+      titleErrorRef.current?.scrollIntoView({ block: "nearest" });
+    } else if (errors.content) {
+      contentRef.current?.focus();
+      contentErrorRef.current?.scrollIntoView({ block: "nearest" });
+    }
+  }, [errors]);
+
   if (!isOpen) return null;
 
   const categoryOptions = CATEGORIES.map((c) => ({
@@ -245,12 +265,30 @@ export default function SkillModal({
     label: c.label,
   }));
 
+  // Al cerrar se descartan los avisos para que la próxima apertura empiece limpia.
+  const handleClose = () => {
+    setErrors({});
+    onClose();
+  };
+
+  const handleSubmit = () => {
+    if (saving) return;
+
+    const nextErrors: { title?: string; content?: string } = {};
+    if (!title.trim()) nextErrors.title = "El título es obligatorio.";
+    if (!content.trim())
+      nextErrors.content = "Las instrucciones del skill son obligatorias.";
+
+    setErrors(nextErrors);
+    if (!nextErrors.title && !nextErrors.content) onSubmit();
+  };
+
   return (
     <div
       className="kl-portal kl-modal-backdrop fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto"
       onClick={(e) => {
         if (e.target === e.currentTarget) {
-          onClose();
+          handleClose();
         }
       }}
     >
@@ -278,7 +316,7 @@ export default function SkillModal({
           </div>
           <button
             type="button"
-            onClick={onClose}
+            onClick={handleClose}
             aria-label="Cerrar modal"
             className="kl-icon-btn shrink-0"
           >
@@ -309,12 +347,30 @@ export default function SkillModal({
             </label>
             <input
               id="skill-title"
+              ref={titleRef}
               type="text"
               value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              onChange={(e) => {
+                setTitle(e.target.value);
+                if (errors.title) setErrors((prev) => ({ ...prev, title: undefined }));
+              }}
               placeholder="Ej: Revisor de código React"
-              className="kl-input kl-input--title"
+              className={`kl-input kl-input--title ${
+                errors.title ? "kl-input--error" : ""
+              }`}
+              aria-required="true"
+              aria-invalid={errors.title ? true : undefined}
+              aria-describedby={errors.title ? "skill-title-error" : undefined}
             />
+            {errors.title && (
+              <p
+                id="skill-title-error"
+                ref={titleErrorRef}
+                className="kl-field-hint kl-field-hint--error mt-1 scroll-mb-28"
+              >
+                {errors.title}
+              </p>
+            )}
           </div>
 
           {/* Categoría */}
@@ -353,14 +409,33 @@ export default function SkillModal({
             </label>
             <textarea
               id="skill-content"
+              ref={contentRef}
               rows={14}
               value={content}
-              onChange={(e) => setContent(e.target.value)}
+              onChange={(e) => {
+                setContent(e.target.value);
+                if (errors.content)
+                  setErrors((prev) => ({ ...prev, content: undefined }));
+              }}
               placeholder={
                 "# Rol\nEres un ingeniero senior especializado en...\n\n## Reglas\n- ...\n- ...\n\n## Formato de respuesta\n..."
               }
-              className={`${textareaClass} kl-input--mono resize-y min-h-[240px]`}
+              className={`${textareaClass} kl-input--mono resize-y min-h-[240px] ${
+                errors.content ? "kl-input--error" : ""
+              }`}
+              aria-required="true"
+              aria-invalid={errors.content ? true : undefined}
+              aria-describedby={errors.content ? "skill-content-error" : undefined}
             />
+            {errors.content && (
+              <p
+                id="skill-content-error"
+                ref={contentErrorRef}
+                className="kl-field-hint kl-field-hint--error mt-1 scroll-mb-28"
+              >
+                {errors.content}
+              </p>
+            )}
             <p className="kl-meta mt-1.5">
               {content.length} caracteres · Markdown admitido
             </p>
@@ -510,7 +585,7 @@ export default function SkillModal({
         <div className="kl-modal-footer sticky bottom-0 px-5 sm:px-6 pb-5 sm:pb-6 pt-5 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-3">
           <button
             type="button"
-            onClick={onClose}
+            onClick={handleClose}
             className="kl-btn kl-btn--ghost"
           >
             Cancelar
@@ -518,7 +593,7 @@ export default function SkillModal({
 
           <button
             type="button"
-            onClick={onSubmit}
+            onClick={handleSubmit}
             disabled={saving}
             className="kl-btn kl-btn--primary w-full sm:w-auto"
           >
