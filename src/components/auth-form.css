@@ -1,0 +1,188 @@
+/* ==========================================================================
+   Kimberlite — Auth (login / registro)
+   --------------------------------------------------------------------------
+   Complementa src/app/dashboard-tokens.css en la pantalla de acceso:
+   - Control segmentado con pastilla deslizante (login ⇄ registro).
+   - Bloque exclusivo por modo con altura reservada común.
+   - Micro-transición fade + slide al cambiar de modo.
+
+   Todo va scopeado con clases .kl-auth-* para no tocar la landing, que se
+   renderiza en la misma ruta (/) y carga landing.css con sus propias reglas.
+   ========================================================================== */
+
+/* --------------------- Control segmentado (login/registro) ---------------- */
+
+.kl-auth-segment {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.25rem;
+  padding: 0.25rem;
+  border-radius: 999px;
+  border: 1px solid rgba(73, 68, 84, 0.45);
+  background: var(--kld-surface-lowest);
+}
+
+/* Pastilla que se desliza al modo activo (decorativa: el estado real lo
+   marcan aria-current y .kl-segment--active en el enlace). */
+.kl-auth-segment__thumb {
+  position: absolute;
+  top: 0.25rem;
+  bottom: 0.25rem;
+  left: 0.25rem;
+  width: calc((100% - 0.75rem) / 2);
+  border-radius: 999px;
+  border: 1px solid rgba(160, 120, 255, 0.5);
+  background: linear-gradient(
+    120deg,
+    rgba(160, 120, 255, 0.34) 0%,
+    rgba(139, 92, 246, 0.22) 100%
+  );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 8px 18px -12px rgba(139, 92, 246, 0.9);
+  pointer-events: none;
+  transition: transform 200ms ease;
+}
+
+.kl-auth-segment[data-mode="register"] .kl-auth-segment__thumb {
+  transform: translateX(calc(100% + 0.25rem));
+}
+
+.kl-auth-segment__option {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  padding: 0 0.75rem;
+  border-radius: 999px;
+  font-family: var(--kld-font-body);
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+}
+
+/* La pastilla la pinta el thumb: el enlace activo no necesita fondo propio.
+   Se dobla la clase para ganar a `.kl-segment:hover` sin depender del orden. */
+.kl-auth-segment .kl-segment.kl-segment--active,
+.kl-auth-segment .kl-segment.kl-segment--active:hover {
+  background: transparent;
+  color: var(--kld-on-surface);
+}
+
+/* ------------------------- Bloque exclusivo por modo --------------------- */
+
+/* La altura reservada es la misma en ambos modos: al alternar login/registro
+   el formulario no se mueve (sin saltos de layout). */
+.kl-auth-exclusive {
+  display: flex;
+  align-items: stretch;
+  min-height: 6.5rem;
+  margin-top: 1.25rem;
+}
+
+.kl-auth-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border-radius: var(--kld-radius-md);
+  border: 1px solid rgba(73, 68, 84, 0.4);
+  background: rgba(26, 27, 33, 0.55);
+}
+
+/* Registro — 3 beneficios con check violeta */
+.kl-auth-benefits {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.kl-auth-benefits li {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--kld-on-surface-variant);
+}
+
+.kl-auth-check {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+  color: var(--kld-primary);
+}
+
+.kl-auth-check svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* Login — recuperación de contraseña (mismo handler de siempre) */
+.kl-auth-recovery {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.kl-auth-recovery__link {
+  align-self: flex-start;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-family: var(--kld-font-body);
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1.4;
+  text-align: left;
+  color: var(--kld-primary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  transition: color 180ms ease;
+}
+
+.kl-auth-recovery__link:hover {
+  color: #e9ddff;
+}
+
+.kl-auth-recovery__link:focus-visible {
+  border-radius: 2px;
+  outline: 2px solid var(--kld-secondary);
+  outline-offset: 2px;
+}
+
+/* --------------------------- Micro-transición ---------------------------- */
+
+@keyframes kl-auth-swap {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.kl-auth-swap {
+  animation: kl-auth-swap 180ms ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kl-auth-swap {
+    animation: none;
+  }
+
+  .kl-auth-segment__thumb {
+    transition: none;
+  }
+}

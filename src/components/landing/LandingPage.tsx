@@ -627,7 +627,6 @@ export default function LandingPage() {
                 Términos
               </Link>
             </nav>
-            <span>Obsidian Lumina</span>
           </div>
         </div>
       </footer>
