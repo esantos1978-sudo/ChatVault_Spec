@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -301,6 +301,8 @@ export default function LandingPage() {
             <ProductPreview />
           </div>
         </section>
+
+        <VideoShowcase />
 
         <section className="kl-integrations" aria-labelledby="kl-arena-title">
           <div className="kl-container kl-integrations-inner">
@@ -774,3 +776,75 @@ function ProductPreview() {
     </div>
   );
 }
+
+/* Recursos del vídeo de presentación (primer bloque tras el hero) */
+const SHOWCASE_VIDEO = "/video/kimberlite_v3.mp4";
+const SHOWCASE_POSTER = "/video/poster.jpg";
+
+/**
+ * Sección con el vídeo de presentación: reproductor HTML5 nativo (sin
+ * librerías), `preload="metadata"` para no descargar el mp4 completo y
+ * aparición suave al entrar en viewport (desactivada con reduced-motion).
+ */
+function VideoShowcase() {
+  const frameRef = useRef<HTMLDivElement>(null);
+
+  // El atributo data-reveal lo controla el observer (no React): así la sección
+  // no re-renderiza ni parpadea, y sin JS el marco se queda visible.
+  useEffect(() => {
+    const frame = frameRef.current;
+    if (!frame || typeof IntersectionObserver === "undefined") return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    // Si el marco ya asoma al montar, no se arma la animación: nunca se oculta
+    // un elemento que el usuario ya está viendo.
+    if (frame.getBoundingClientRect().top <= window.innerHeight) return;
+
+    frame.dataset.reveal = "pending";
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((entry) => entry.isIntersecting)) return;
+        frame.dataset.reveal = "in";
+        observer.disconnect();
+      },
+      { rootMargin: "0px 0px -10% 0px", threshold: 0.2 },
+    );
+
+    observer.observe(frame);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <section
+      id="video"
+      className="kl-section kl-video-section"
+      aria-labelledby="kl-video-title"
+    >
+      <div className="kl-container">
+        <div className="kl-section-head kl-video-head">
+          <span className="kl-eyebrow">Míralo en menos de 30 segundos</span>
+          <h2 id="kl-video-title" className="kl-section-title">
+            Así funciona Kimberlite
+          </h2>
+        </div>
+
+        <div ref={frameRef} className="kl-video-frame">
+          <video
+            className="kl-video"
+            controls
+            playsInline
+            preload="metadata"
+            poster={SHOWCASE_POSTER}
+            aria-label="Vídeo de presentación de Kimberlite: cómo guardar, organizar y reutilizar prompts, notas y Skills."
+          >
+            <source src={SHOWCASE_VIDEO} type="video/mp4" />
+            Tu navegador no puede reproducir este vídeo.{" "}
+            <a href={SHOWCASE_VIDEO}>Descárgalo en MP4</a>.
+          </video>
+        </div>
+      </div>
+    </section>
+  );
+}
+
